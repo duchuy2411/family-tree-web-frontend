@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { Button, Grid, Input, Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 // logo
-import logo from "./../../assets/tree-shape-of-straight-lines.svg";
+import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
 import { Link as RRDLink } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -65,6 +65,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     color: "#905842",
     marginBottom: theme.spacing(1),
+    "&:hover": {
+      color: "#fff",
+    },
   },
 }));
 
