@@ -1,11 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import pageRoutes from "./pages/routes";
+import CustomBackDrop from "./components/BackDrop/CustomBackDrop";
 
 function App() {
   return (
     <Router>
-      <React.Suspense fallback={<div>Loading . . .</div>}>
+      <React.Suspense fallback={<CustomBackDrop />}>
         <Switch>
           {pageRoutes.map((route, key) => {
             return (
