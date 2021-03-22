@@ -7,14 +7,19 @@ const pageRoutes = [
     component: lazy(() => import("./Home")),
   },
   {
-    path: "/login",
+    path: "/home",
     exact: false,
-    component: lazy(() => import("./LogIn")),
+    component: lazy(() => import("./Home")),
   },
   {
-    path: "/signup",
+    path: "/calendar",
     exact: false,
-    component: lazy(() => import("./SignUp")),
+    component: lazy(() => import("./Calendar")),
+  },
+  {
+    path: "/user",
+    exact: false,
+    component: lazy(() => import("./User")),
   },
 ];
 
