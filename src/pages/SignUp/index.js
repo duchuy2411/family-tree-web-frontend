@@ -186,7 +186,7 @@ export default function SignUpPage() {
             alignItems="baseline"
           >
             <div className={classes.link}>
-              <RRDLink to="/signup" className={classes.link}>
+              <RRDLink to="/login" className={classes.link}>
                 Sign in
               </RRDLink>
             </div>
