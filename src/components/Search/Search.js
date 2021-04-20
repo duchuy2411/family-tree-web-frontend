@@ -1,30 +1,41 @@
-import { InputBase, Paper } from "@material-ui/core";
 import React from "react";
 
+// MUI
+import { InputBase, makeStyles, Paper } from "@material-ui/core";
+
+// icons
 import SearchIcon from "@material-ui/icons/Search";
-import { makeStyles } from "@material-ui/core";
+
+import classNames from "classnames";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  searchBox: {
     backgroundColor: "#F2E1DA",
-    borderRadius: theme.spacing(1),
+    borderRadius: 10,
     display: "flex",
+    flexGrow: 1,
     alignItems: "center",
-    width: 400,
-    padding: "2px 8px",
+    padding: theme.spacing(1, 2),
   },
   searchIcon: {
     marginRight: "4px",
+    height: "100%",
   },
 }));
-export default function SearchBox() {
+
+export default function SearchBox({ className, ariaLabel }) {
   const classes = useStyles();
+  const searchBoxClasses = classNames({
+    [classes.searchBox]: true,
+    [className]: className !== undefined,
+  });
+
   return (
-    <Paper className={classes.root} evaluation={3}>
+    <Paper className={searchBoxClasses} elevation={9}>
       <InputBase
         fullWidth
         startAdornment={<SearchIcon className={classes.searchIcon} />}
-        inputProps={{ "aria-label": "search person in your family tree" }}
+        inputProps={{ "aria-label": ariaLabel || "Search box" }}
       />
     </Paper>
   );

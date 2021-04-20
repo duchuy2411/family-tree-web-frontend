@@ -8,31 +8,41 @@ const useTreeItemStyles = makeStyles((theme) => ({
     alignItems: "center",
     marginBottom: theme.spacing(2),
     //
-    transition: "0.5s",
+    transition: "0.2s",
     "&:hover": {
-      transform: "scale(1.03) ",
+      transform: "scale(1.01) ",
       boxShadow: "0px 4px 4px 2px rgb(123,123,123,0.4)",
     },
   },
-  // img & name
-  gridAvaName: {
-    backgroundColor: "purple",
+
+  // ava + info
+  gridTree: {
+    // backgroundColor: "purple",
     padding: theme.spacing(2),
+    [theme.breakpoints.down("sm")]: {
+      padding: theme.spacing(1),
+    },
+  },
+  gridInfo: {
+    // backgroundColor: "yellow",
   },
   imgFamily: {
     height: 100,
-    // margin: theme.spacing(2),
     borderRadius: 16,
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.down("sm")]: {
+      marginRight: theme.spacing(1),
+    },
   },
   typoName: {
+    // backgroundColor: "purple",
     fontWeight: 900,
     fontSize: 20,
-    marginLeft: theme.spacing(2),
   },
 
   // updatedAt
   gridUpdatedAt: {
-    backgroundColor: "green",
+    // backgroundColor: "green",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -44,24 +54,51 @@ const useTreeItemStyles = makeStyles((theme) => ({
     // backgroundColor: "green",
   },
 
-  // author
-  gridAuthor: {
-    backgroundColor: "pink",
-  },
-
   // contributors
   gridAvatarGroup: {
-    backgroundColor: "cyan",
+    // backgroundColor: "cyan",
   },
   avatarGroup: {
-    marginLeft: theme.spacing(1),
-    backgroundColor: "cyan",
-    // flexGrow: 1,
+    // backgroundColor: "cyan",
+    [theme.breakpoints.up("lg")]: {
+      marginLeft: theme.spacing(1),
+    },
   },
+
+  // for owner style: bigger than others
+  avatarBorder: {
+    border: `2px solid ${theme.palette.background.paper}`,
+  },
+  avatarOwner: {
+    transform: "scale(1.3)",
+  },
+  // -- end for owner style: bigger
 
   // action buttons
   gridActions: {
-    backgroundColor: "orange",
+    // backgroundColor: "orange",
+    padding: theme.spacing(2),
+    [theme.breakpoints.up("xl")]: {
+      "& :not(:first-child)": {
+        // backgroundColor: "blue",
+        marginLeft: theme.spacing(1),
+      },
+    },
+    // },
+    [theme.breakpoints.only("lg")]: {
+      // backgroundColor: "blue",
+      display: "flex",
+      flexDirection: "column",
+      "& :first-child": {
+        marginBottom: theme.spacing(2),
+      },
+    },
+    [theme.breakpoints.down("md")]: {
+      // backgroundColor: "blue",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   },
   actionBtn: {
     textDecoration: "none",
@@ -69,7 +106,6 @@ const useTreeItemStyles = makeStyles((theme) => ({
     border: "3px solid grey",
     borderRadius: "8px",
     padding: theme.spacing(1),
-    marginRight: theme.spacing(2),
 
     display: "flex",
     justifyContent: "center",

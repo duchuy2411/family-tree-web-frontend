@@ -1,8 +1,10 @@
-import { Grid, IconButton, Paper } from "@material-ui/core";
 import React from "react";
+import classNames from "classnames";
 
-import { makeStyles } from "@material-ui/core";
-import { ReactComponent as SelectIcon } from "./../../assets/svg/select.svg";
+// MUI
+import { Grid, IconButton, Paper } from "@material-ui/core";
+
+// icons
 import PanToolIcon from "@material-ui/icons/PanTool";
 import ZoomInIcon from "@material-ui/icons/ZoomIn";
 import ZoomOutIcon from "@material-ui/icons/ZoomOut";
@@ -12,42 +14,19 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import LinkIcon from "@material-ui/icons/Link";
 import LinkOffIcon from "@material-ui/icons/LinkOff";
+import { ReactComponent as SelectIcon } from "../../../../assets/svg/select.svg";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: 110,
-    margin: theme.spacing(2),
-  },
-  horizontalSet: {
-    backgroundColor: "#905842",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderRadius: 10,
-  },
-  verticalSet: {
-    backgroundColor: "#905842",
-    display: "flex",
-    flexDirection: "column",
-    borderRadius: 10,
-  },
-  icon: {
-    width: 25,
-    height: 25,
-    fill: "#fff",
-  },
-}));
-export default function ToolSet({ tools }) {
-  const classes = useStyles();
+import useToolSetStyles from "./useToolSetStyles";
+
+export default function ToolSet({ className }) {
+  const classes = useToolSetStyles();
+  const toolSetClasses = classNames({
+    [classes.toolSet]: true,
+    [className]: className !== undefined,
+  });
 
   return (
-    <Grid
-      container
-      direction="column"
-      //   alignItems="center"
-      className={classes.root}
-      spacing={1}
-    >
+    <Grid container direction="column" className={toolSetClasses} spacing={1}>
       <Grid item container direction="row" justify="space-between" xs={12}>
         {/* item 0: 2 tools vertically placed */}
         <Paper className={classes.verticalSet} elevation={3}>
