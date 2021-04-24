@@ -23,7 +23,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchBox({ className, ariaLabel }) {
+export default function SearchBox(props) {
+  const {
+    ariaLabel,
+    className,
+    search,
+    handleChangeSearch,
+  } = props;
+
   const classes = useStyles();
   const searchBoxClasses = classNames({
     [classes.searchBox]: true,
@@ -36,6 +43,8 @@ export default function SearchBox({ className, ariaLabel }) {
         fullWidth
         startAdornment={<SearchIcon className={classes.searchIcon} />}
         inputProps={{ "aria-label": ariaLabel || "Search box" }}
+        value={search}
+        onChange={handleChangeSearch}
       />
     </Paper>
   );
