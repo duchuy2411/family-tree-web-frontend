@@ -8,8 +8,7 @@ export const slice = createSlice({
   name: 'customTree',
   initialState: {
     nodeDataArrayRedux: [],
-    linkDataArrayReduxRedux: [],
-    it: "adsf",
+    linkDataArrayReduxRedux: []
   },
   reducers: {
     updateNodeDataArrayRedux: (state, action) => {
@@ -23,9 +22,6 @@ export const slice = createSlice({
 
 export const { updateNodeDataArrayRedux, updateLinkDataArrayRedux} = slice.actions;
 
-export const test = (id) => dispatch => {
-  console.log("Id: ", id);
-}
 
 export const fetchFamiyTreeById = (id) => async (dispatch) => {
   const rs = await axios.get(`${api.API}/tree-management/tree/${id}`);

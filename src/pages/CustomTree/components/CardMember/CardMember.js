@@ -36,13 +36,13 @@ export default function CardMember(props) {
           {/* <Typography variant="body2">{`(${birth} - ${
             dead ? dead : "Alive"
           })`}</Typography> */}
-          <Typography variant="body2">{model.dob}</Typography>
+          <Typography variant="body2">{model.dob}</Typography>  
           <IconButton size="small">
             <EditIcon />
           </IconButton>
         </div>
         <div className={classes.infoRow}>
-          <Typography>{`Gender: ${model.sex}`}</Typography>
+          <Typography>{`Gender: ${model.gender}`}</Typography>
           <IconButton size="small">
             <EditIcon />
           </IconButton>

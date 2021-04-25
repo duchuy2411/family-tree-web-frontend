@@ -16,35 +16,31 @@ function TreeDiagram(props) {
   const diagramRef = useRef();
 
   useEffect(() => {
-    if (nodeDataArray) {
+    if (!diagramRef.current) return;
+      const diagram = diagramRef.current.getDiagram();
+      if (diagram instanceof go.Diagram) {
+        diagram.addDiagramListener('ChangedSelection', props.handleDiagramEvent);
+      }
+    return () => {
       if (!diagramRef.current) return;
-        const diagram = diagramRef.current.getDiagram();
-        if (diagram instanceof go.Diagram) {
-          diagram.addDiagramListener('ChangedSelection', props.handleDiagramEvent);
-        }
-      return () => {
-        if (!diagramRef.current) return;
-        const diagram = diagramRef.current.getDiagram();
-        if (diagram instanceof go.Diagram) {
-          diagram.removeDiagramListener('ChangedSelection', props.handleDiagramEvent);
-        }
+      const diagram = diagramRef.current.getDiagram();
+      if (diagram instanceof go.Diagram) {
+        diagram.removeDiagramListener('ChangedSelection', props.handleDiagramEvent);
       }
     }
   }, []);
 
   return (
     <React.Fragment>
-      { nodeDataArray &&
-        <ReactDiagram
-          ref={diagramRef}
-          divClassName='myDiagramDiv'
-          initDiagram={initDiagram}
-          nodeDataArray={nodeDataArray}
-          linkDataArray={linkDataArray}
-          onModelChange={handleModelChange}
-          onDiagramEvent={handleDiagramEvent}
-        />
-      }
+      <ReactDiagram
+        ref={diagramRef}
+        divClassName='myDiagramDiv'
+        initDiagram={initDiagram}
+        nodeDataArray={nodeDataArray}
+        linkDataArray={linkDataArray}
+        onModelChange={handleModelChange}
+        onDiagramEvent={handleDiagramEvent}
+      />
     </React.Fragment>
     
   );

@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from "react";
 import * as go from 'gojs';
-import _ from 'lodash';
+import _, { find } from 'lodash';
+import moment from 'moment';
 import GenogramLayout from '../../layouts/GenogramLayout/GenogramLayout';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  updateLinkDataArrayRedux,
-  updateNodeDataArrayRedux,
-  fetchFamiyTreeById,
-  selectLinkDataArrayRedux,
-  selectNodeDataArrayRedux,
-  selectIt,
-  test,
-} from './customTreeSlice';
+import { fetchFamiyTreeById, selectLinkDataArrayRedux, selectNodeDataArrayRedux } from './customTreeSlice';
 import './style.css';
 // MUI
 import { Container, Grid, Paper, Typography } from "@material-ui/core";
 
 import CONSTAIN from '../../utils/const';
-import Utils from '../../utils/api';
 import Adapter from '../../utils/adapter';
 
 // custom components
@@ -30,29 +22,20 @@ import TreeDiagram from './components/TreeDiagram';
 import ModalAlert from './components/ModalAlert';
 import ModalAddTree from './components/ModalAddTree';
 import EditNodeForm from './components/EditNodeForm';
+import AlertNotConfirm from './components/AlertNotConfirm';
 
 import data from "../../data";
 import useCustomTreePageStyles from "./useCustomTreePageStyles";
 
 // sample data
-const memberInfo = data.memberInfoSample;
-
 export default function CustomTreePage() {
   const classes = useCustomTreePageStyles();
   const dispatch = useDispatch();
   const { GENDER, RELATIONSHIP } = CONSTAIN;
 
-  const nodeDataArrayRedux = useSelector(selectNodeDataArrayRedux);
-  const linkDataArrayRedux = useSelector(selectLinkDataArrayRedux);
-
-  const [nodeDataArray, setNodeDataArray] = useState();
+  const [nodeDataArray, setNodeDataArray] = useState([]);
   const [linkDataArray, setLinkDataArray] = useState();
-  const [model, setModel] = useState(
-    {
-      key: '',
-      name: ''
-    }
-  );
+  const [model, setModel] = useState({ key: '', name: '', dob: '', dod: '', note: '' });
   const [diagram, setDiagram] = useState();
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
@@ -60,7 +43,11 @@ export default function CustomTreePage() {
     gender: 'male',
     desNode: 1,
     relationship: 'child',
-    isNew: false
+    isNew: false,
+    isDeath: false,
+    dod: null,
+    dob: null,
+    note: '',
   });
   const [relationship, setRelationship] = useState(RELATIONSHIP);
   const [gender, setGender] = useState(GENDER);
@@ -73,13 +60,14 @@ export default function CustomTreePage() {
   const [listSearch, setListSearch] = useState([]);
   const [formUpd, setFormUpd] = useState({});
   const [showFormUpdate, setShowFormUpdate] = useState(false);
+  const [showAlternativeNotConfirm, setAlternativeNotConfirm] = useState({ show: false, warningAlternativeNode: false, warningUpdateForMarriage: false })
 
   useEffect(() => {
     dispatch(fetchFamiyTreeById(1)).then(rs => {
       const parseTree = Adapter.parse(_.get(rs.data, 'people', []));
-      console.log(parseTree);
+      console.log("Parse Tree: ", parseTree);
       setNodeDataArray([...parseTree]);
-      setAlterLink([...parseTree]);
+      setAlterLink(parseTree);
       setListSearch([...parseTree]);
     });
   }, []);
@@ -105,10 +93,16 @@ export default function CustomTreePage() {
     switch (name) {
       case 'ChangedSelection': {
         const sel = e.subject.first();
+        console.log("Sel: ",sel);
         if (sel) {
           setModel({
+            ...model,
             key: sel.data.key,
+            gender: sel.data.s === 'F' ? 'Female' : 'Male',
             name: sel.data.n,
+            dod: sel.data.dod,
+            dob: sel.data.dob,
+            note: sel.data.note,
           })
         } else {
           console.log('None');
@@ -140,8 +134,13 @@ export default function CustomTreePage() {
     if (node !== null) {
       diagram.select(node);
       setModel({
+        ...model,
         key: node.data.key,
         name: node.data.n,
+        gender: node.data.s === 'F' ? 'Female' : 'Male',
+        dob: node.data.dob,
+        dod: node.data.dod,
+        note: node.data.note,
       })
       // remove any spouse for the person under focus:
     // node.linksConnected.each(function(l) {
@@ -166,8 +165,11 @@ export default function CustomTreePage() {
     var nodeB = diagram.findNodeForKey(b);
     if (nodeA !== null && nodeB !== null) {
       var it = nodeA.findLinksBetween(nodeB);  // in either direction
+      console.log(nodeA.key, ' ', nodeB.key);
+      
       while (it.next()) {
         var link = it.value;
+        console.log("Link: ", link)
         // Link.data.category === "Marriage" means it's a marriage relationship
         if (link.data !== null && link.data.category === "Marriage") return link;
       }
@@ -272,10 +274,16 @@ export default function CustomTreePage() {
           { width: 150, height: 170, strokeWidth: 2, fill: "#7EABD0", stroke: "#919191" }),
       ),
       $(go.Panel, "Vertical",
-        $(go.Picture, { width: 120, height: 120, margin: 2 }, new go.Binding("source", "image")),
+        $(go.Picture, { width: 110, height: 110, margin: 2 }, new go.Binding("source", "image")),
         $(go.TextBlock,
           { textAlign: "center", stroke: 'white', margin: 5, font: '14px arial', alignment: go.Spot.Center },
           new go.Binding("text", "n")),
+        $(go.TextBlock,
+          { textAlign: "center", stroke: 'white', font: '14px arial', alignment: go.Spot.Center },
+          new go.Binding("text", "dob")),
+        $(go.TextBlock,
+          { textAlign: "center", stroke: 'white', font: '14px arial', alignment: go.Spot.Center },
+          new go.Binding("text", "dod")),
       ),
       {
         contextMenu:
@@ -291,10 +299,9 @@ export default function CustomTreePage() {
                     ...form,
                     desNode: nodedata.key,
                   })
-                  const getNode = alterLinkDataArray.find(ele => ele.key === nodedata.key);
-                  console.log("Get node: ", getNode);
-                  const getNodeMarriage = alterLinkDataArray.find(ele => ele.ux === nodedata.key || ele.vir === nodedata.key);
-                  console.log("Node marriage: ", getNodeMarriage);
+                  const newArr = myDiagram.model.nodeDataArray;
+                  const getNode = Adapter.getNode(newArr, nodedata.key);
+                  const getNodeMarriage = Adapter.getMarriageByKey(newArr, nodedata.key);
                   let tempRelationship = [];
                   // Father && Mother
                   if (_.isNil(_.get(getNode, 'f'))) tempRelationship.push(RELATIONSHIP[1]);
@@ -316,14 +323,18 @@ export default function CustomTreePage() {
               click: function(e, button) {
                 var nodedata = button.part.adornedPart.data;
                 console.log("Edit node", nodedata.key);
+                setNodeSelect(nodedata);
                 setFormUpd({
                   ...formUpd,
                   name: nodedata.n,
                   gender: nodedata.s,
-                  dob: '',
+                  dob: _.get(nodedata, 'dob'),
                   image: nodedata.image,
-                  dod: '',
-                })
+                  dod: _.get(nodedata, 'dod'),
+                  isDeath: _.get(nodedata, 'dod'),
+                  note: _.get(nodedata, 'note'),
+                });
+                setShowFormUpdate(true);
               }
             }
             ),
@@ -354,10 +365,16 @@ export default function CustomTreePage() {
           { width: 150, height: 170, strokeWidth: 2, fill: "#FED3DD", stroke: "#919191" }),
       ),
       $(go.Panel, "Vertical",
-        $(go.Picture, { width: 120, height: 120, margin: 2 }, new go.Binding("source", "image")),
+        $(go.Picture, { width: 110, height: 110, margin: 2 }, new go.Binding("source", "image")),
         $(go.TextBlock,
           { textAlign: "center", stroke: 'white', margin: 5, font: '14px arial', alignment: go.Spot.Center },
           new go.Binding("text", "n")),
+          $(go.TextBlock,
+            { textAlign: "center", stroke: 'white', font: '14px arial', alignment: go.Spot.Center },
+            new go.Binding("text", "dob")),
+          $(go.TextBlock,
+            { textAlign: "center", stroke: 'white', font: '14px arial', alignment: go.Spot.Center },
+            new go.Binding("text", "dod")),
         ),
         {
           contextMenu:
@@ -373,16 +390,17 @@ export default function CustomTreePage() {
                       ...form,
                       desNode: nodedata.key,
                     })
-                    const getNode = alterLinkDataArray.find(ele => ele.key === nodedata.key);
-                    console.log("Get node: ", getNode);
-                    const getNodeMarriage = alterLinkDataArray.find(ele => ele.ux === nodedata.key || ele.vir === nodedata.key);
-                    console.log("Node marriage: ", getNodeMarriage);
+                    const newArr = myDiagram.model.nodeDataArray;
+                    const getNode = Adapter.getNode(newArr, nodedata.key);
+                    const getNodeMarriage = Adapter.getMarriageByKey(newArr, nodedata.key);
                     let tempRelationship = [];
+                    console.log("node: ", getNode);
                     // Father && Mother
                     if (_.isNil(_.get(getNode, 'f'))) tempRelationship.push(RELATIONSHIP[1]);
                     if (_.isNil(_.get(getNode, 'm'))) tempRelationship.push(RELATIONSHIP[2]);
                     tempRelationship.push(RELATIONSHIP[0]);
                     tempRelationship.push(RELATIONSHIP[3]);
+                    console.log("RELA:", tempRelationship)
                     setRelationship(tempRelationship);
                     
                     setShowModal(true);
@@ -397,15 +415,16 @@ export default function CustomTreePage() {
               {
                 click: function(e, button) {
                   var nodedata = button.part.adornedPart.data;
-                  console.log("Edit node", nodedata.key);
                   setNodeSelect(nodedata);
                   setFormUpd({
                     ...formUpd,
                     name: nodedata.n,
                     gender: nodedata.s,
-                    dob: '',
+                    dob: nodedata.dob,
                     image: nodedata.image,
-                    dod: '',
+                    dod: nodedata.dod,
+                    isDeath: !!_.get(nodedata, 'dod'),
+                    note: _.get(nodedata, 'note'),
                   })
                   setShowFormUpdate(true);
                 }
@@ -461,30 +480,29 @@ export default function CustomTreePage() {
   }
 
   const handleSave = () => {
-    // const key = nodeDataArray.length + 1;
-    const key = alterLinkDataArray.length;
-
+    const tempArray = [...alterLinkDataArray];
+    console.log("Temp array: ", alterLinkDataArray);
+    const key = Math.abs(alterLinkDataArray[alterLinkDataArray.length-1].key) + 1;
+    console.log("KEy: ", key);
     const newNode = {
       key: key,
       s: form.gender === 'male' ? 'M' : 'F',
       n: form.name,
+      dob: form.dob,
+      dod: form.dod,
+      note: form.note,
     }
     let updateAlter = false;
     let alterNode = {};
-    let newNodeLinkLabel = {}; 
-    let newLink = {};
-    let newLinkLabels = {};
-    console.log("before Link", alterLinkDataArray);
-    const tempArray = [...alterLinkDataArray];
 
     switch(form.relationship) {
       case 'marriage': {
-        const desNode = alterLinkDataArray.find(ele => ele.key === form.desNode);
-        const alterMarriage = alterLinkDataArray.find(ele => ele.key === _.get(desNode, 'ux') || ele.key === _.get(desNode, 'vir'));
-        if (_.get(alterMarriage, 'n') === 'Alternative') {
-          console.log('Alter')
+        const desNode = Adapter.getNode(alterLinkDataArray, form.desNode);
+        const marriageNode = Adapter.getMarriageByKey(alterLinkDataArray, form.desNode);
+
+        if (Adapter.isAlterNode(marriageNode)) {
           updateAlter = true;
-          const indexAlter = _.findIndex(alterLinkDataArray, { key: alterMarriage.key });
+          const indexAlter = Adapter.getIndex(alterLinkDataArray, marriageNode.key);
           if (indexAlter > -1) alterLinkDataArray[indexAlter].n = form.name;
           break;
         }
@@ -493,94 +511,73 @@ export default function CustomTreePage() {
       }
       case 'f': {
         // CheckAlter
-        const desNode = alterLinkDataArray.find(ele => ele.key === form.desNode);
-        const alterFather = alterLinkDataArray.find(ele => ele.key === _.get(desNode, 'f'));
-        if (_.get(alterFather, 'n') === 'Alternative') {
-          console.log('Alter')
+        const desNode = Adapter.getNode(alterLinkDataArray, form.desNode);
+        const getFather = Adapter.getFather(alterLinkDataArray, _.get(desNode, 'f'));
+        if (Adapter.isAlterNode(getFather)) {
           updateAlter = true;
-          const indexAlter = _.findIndex(alterLinkDataArray, { key: alterFather.key });
+          const indexAlter = Adapter.getIndex(alterLinkDataArray, getFather.key);
           if (indexAlter > -1) alterLinkDataArray[indexAlter].n = form.name;
           break;
         }
         // Node Alter
         const keyAlter = key + 1;
-        alterNode = {
-          key: keyAlter,
-          s: 'F',
-          n: 'Alternative',
-        }
+        alterNode = { key: keyAlter, s: 'F', n: 'Alternative' };
         _.set(newNode, 's', 'M');
         _.set(newNode, 'ux', keyAlter);
-        const childNode = nodeDataArray.find(ele => ele.key === form.desNode);
-        const index = tempArray.findIndex(ele => ele.key === form.desNode);
+        const childNode = Adapter.getNode(alterLinkDataArray, form.desNode);
+        const index = Adapter.getIndex(alterLinkDataArray, form.desNode);
         _.set(childNode, 'f', key);
         _.set(childNode, 'm', keyAlter);
-        tempArray[index] = childNode;
-        // Node Link Label
-        const keyNodeLinkLabel =  - (key + 2);
-        newNodeLinkLabel = { s: "LinkLabel", key: keyNodeLinkLabel };
-        // Link Label Marriage
-        newLinkLabels = { key: - (linkDataArray.length + 1), from: key, to: keyAlter, labelKeys: [keyNodeLinkLabel], category: "Marriage" };
-        // Link Parents
-        newLink = { key: - (linkDataArray.length + 2), from: form.desNode, to: keyNodeLinkLabel };
+        tempArray[index] = childNode;       
         break;
       }
       case 'm': {
-        const desNode = alterLinkDataArray.find(ele => ele.key === form.desNode);
-        const alterMother = alterLinkDataArray.find(ele => ele.key === _.get(desNode, 'm'));
-        if (_.get(alterMother, 'n') === 'Alternative') {
-          console.log('Alter')
+        const desNode = Adapter.getNode(alterLinkDataArray, form.desNode);
+        console.log("Desnode: ", desNode);
+        const getMother = Adapter.getMother(alterLinkDataArray, _.get(desNode, 'm'));
+        console.log("Get mother: ", getMother);
+        if (Adapter.isAlterNode(getMother)) {
           updateAlter = true;
-          const indexAlter = _.findIndex(alterLinkDataArray, { key: alterMother.key });
+          const indexAlter = Adapter.getIndex(alterLinkDataArray, getMother.key );
           if (indexAlter > -1) alterLinkDataArray[indexAlter].n = form.name;
           break;
         }
         // Node Alter
         const keyAlter = key + 1;
-        alterNode = {
-          key: keyAlter,
-          s: 'M',
-          n: 'Alternative',
-          ux: key,
-        }
-        const childNode = nodeDataArray.find(ele => ele.key === form.desNode);
-        const index = _.findIndex(tempArray, ele => ele.key === form.desNode);
+        alterNode = { key: keyAlter, s: 'M', n: 'Alternative' };
+        _.set(newNode, 's', 'F');
+        _.set(newNode, 'vir', keyAlter);
+        const childNode = Adapter.getNode(alterLinkDataArray, form.desNode);
+        const index = Adapter.getIndex(alterLinkDataArray, form.desNode);
         _.set(childNode, 'm', key);
         _.set(childNode, 'f', keyAlter);
         tempArray[index] = childNode;
-        // Node Link Label
-        const keyNodeLinkLabel =  - (key +1);
-        newNodeLinkLabel = { s: "LinkLabel", key: keyNodeLinkLabel };
-        // Link Label
-        newLinkLabels = { key: -(linkDataArray.length + 1), from: key, to: keyAlter, labelKeys: [keyNodeLinkLabel], category: "Marriage" };
-        // Link Parents
-        newLink = { key: - (linkDataArray.length + 2), from: form.desNode, to: keyNodeLinkLabel };
         break;
       }
       case 'child': {
-        const findNode = nodeDataArray.find(ele => ele.key === form.desNode);
-        const findMarriageNode = nodeDataArray.find(ele => ele.ux === form.desNode
-          || ele.vir === form.desNode
-          || (_.isArray(ele.vir) && ele.vir.includes(form.desNode))
-          || (_.isArray(ele.ux) && ele.ux.includes(form.desNode)));
+        const findNode = Adapter.getNode(alterLinkDataArray, form.desNode);
+        const findMarriageNode = Adapter.getMarriageByKey(alterLinkDataArray, form.desNode);
+        console.log("findMarriageNode:", findMarriageNode)
+        if(!findMarriageNode) {
+          const keyAlter = key + 1;
+          const indexSelfKey = Adapter.getIndex(alterLinkDataArray, form.desNode);
+          const sexDesnode = alterLinkDataArray[indexSelfKey].s;
+          _.set(alterLinkDataArray[indexSelfKey], `${sexDesnode === 'M' ? 'ux' : 'vir'}`, keyAlter);
+          alterNode = { key: keyAlter, s: sexDesnode === 'M' ? 'F' : 'M', n: 'Alternative' };
+          _.set(newNode, 's', 'F');
+          _.set(newNode, sexDesnode === 'M' ? 'f' : 'm', form.desNode);
+          _.set(newNode, sexDesnode === 'M' ? 'm' : 'f', form.desNode);
+        }
         if (findNode.ux || findMarriageNode.vir) {
           const self = _.isArray(findNode.ux) ? findNode.ux[0] : findNode.ux;
           _.set(newNode, `f`, form.desNode);
           _.set(newNode, `m`, self || findMarriageNode.key);
         } 
         else if (findNode.vir || findMarriageNode.ux) {
-          const self = _.isArray(findNode.ux) ? findNode.ux[0] : findNode.ux;
+          const self = _.isArray(findNode.vir) ? findNode.vir[0] : findNode.vir;
           _.set(newNode, `m`, form.desNode);
           _.set(newNode, `f`, self || findMarriageNode.key);
         }
-        console.log("Link: ", linkDataArray);
-        const findLabelLinkParents = linkDataArray.find(ele => ele.from === form.desNode || ele.to === form.desNode)
-        const labelLink = _.get(findLabelLinkParents, 'labelKeys.0', null);
-
-        if (labelLink) {
-          newLink = { key: -(linkDataArray.length + 1), from: labelLink, to: key};
-        }
-
         break;
       }
       default: {
@@ -590,10 +587,10 @@ export default function CustomTreePage() {
     // Check and push node//link
     if (updateAlter === false) tempArray.push(newNode);
     if (alterNode.key) tempArray.push(alterNode);
-    console.log(newNode);
     // if (newNodeLinkLabel.key) tempArray.push(newNodeLinkLabel);
-    setAlterLink(tempArray);
-    setupDiagram(diagram, [...tempArray], key);
+    setAlterLink([...tempArray]);
+    setupDiagram(diagram, tempArray, key);
+    setShowModal(false);
   }
 
   const deleteNode = () => {
@@ -601,14 +598,6 @@ export default function CustomTreePage() {
     const node = nodeSelect;
     const cloneArr = [...alterLinkDataArray];
     _.remove(cloneArr, {key: node.key});
-    // Step 2: Check Marriage => move tree lam` sau
-    // const isSelfMarriage = node.ux || node.vir;
-    // Vir / Ux have parents
-    // const arrTreeOfNode = [];
-    // recursionParentsNode(node, arrTreeOfNode, 1);
-    // console.log("====arrTreeOfNode======", arrTreeOfNode);
-
-    console.log("Clone Array: ", cloneArr);
     setAlterLink(cloneArr);
     setupDiagram(diagram, cloneArr, 0);
     setNodeSelect(null);
@@ -623,22 +612,70 @@ export default function CustomTreePage() {
     return rs;
   }
 
-  const handleChangeName = (e) => {
-    setForm({...form, name: e.target.value});
-  }
-
-  const handleChange = (e) => {
-    setForm({...form, gender: e.target.value});
-  }
-
-  const handleChangeNodeRelationship = (e) => {
-    setForm({...form, desNode: e.target.value});
-    const getNode = nodeDataArray.find(ele => ele.key === e.target.value);
-    let tempRelationship = [...RELATIONSHIP];
-    if (!_.isNil(getNode.m)) tempRelationship = tempRelationship.filter(ele => ele.value !== 'm');
-    if (!_.isNil(getNode.f)) tempRelationship = tempRelationship.filter(ele => ele.value !== 'f');
-    setRelationship(tempRelationship);
-    setGender(GENDER);
+  const handleChangeAddForm = (e, label, isDeath = false) => {
+    console.log(e.target.value)
+    switch (label) {
+      case 'name': {
+        setForm({
+          ...form,
+          name: e.target.value,
+        })
+        break;
+      }
+      case 'gender': {
+        setForm({
+          ...form,
+          gender: e.target.value,
+        })
+        break;
+      }
+      case 'dob': {
+        setForm({
+          ...form,
+          dob: moment(e.target.value).format("YYYY-MM-DD"),
+        })
+        break;
+      }
+      case 'dod': {
+        setForm({
+          ...form,
+          dod: moment(e.target.value).format("YYYY-MM-DD"),
+        })
+        break;
+      }
+      case 'isDeath': {
+        setForm({
+          ...form,
+          isDeath: isDeath,
+          dod: !isDeath ? null : form.isDeath, 
+        });
+        break;
+      }
+      case 'note': {
+        setForm({
+          ...form,
+          note: e.target.value,
+        })
+        break;
+      }
+      case 'nodeRelationship': {
+        setForm({...form, desNode: e.target.value});
+        const getNode = nodeDataArray.find(ele => ele.key === e.target.value);
+        let tempRelationship = [...RELATIONSHIP];
+        if (!_.isNil(getNode.m)) tempRelationship = tempRelationship.filter(ele => ele.value !== 'm');
+        if (!_.isNil(getNode.f)) tempRelationship = tempRelationship.filter(ele => ele.value !== 'f');
+        setRelationship(tempRelationship);
+        setGender(GENDER);
+        break;
+      }
+      case 'relationship': {
+        handleChangeRelationship(e);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 
   const handleChangeRelationship = (e) => {
@@ -646,15 +683,40 @@ export default function CustomTreePage() {
     console.log(e.target.value);
     switch(e.target.value) {
       case 'f':  {
+        const mother = Adapter.getMother(alterLinkDataArray, form.desNode);
+        const father = Adapter.getFather(alterLinkDataArray, form.desNode);
+        if (!mother && !father) {
+          setAlternativeNotConfirm({
+            show: true,
+            warningAlternativeNode: true
+          })
+        }
         setGender([{ label: 'Male', value: 'm' }]);
         break;
       }
       case 'm': {
+        const mother = Adapter.getMother(alterLinkDataArray, form.desNode);
+        const father = Adapter.getFather(alterLinkDataArray, form.desNode);
+        if (!mother && !father) {
+          setAlternativeNotConfirm({
+            show: true,
+            warningAlternativeNode: true
+          })
+        }
         setGender([{ label: 'Female', value: 'f' }]);
         break;
-      } case 'marriage': {
+      }
+      case 'marriage': {
         const findDesNode = nodeDataArray.find(ele => ele.key === form.desNode);
-        console.log(findDesNode);
+        const getMarriages = Adapter.getMarriageByArray(alterLinkDataArray, form.desNode);
+        console.log(getMarriages);
+        const getAlternative = getMarriages.filter(ele => Adapter.isAlterNode(ele));
+        if (getAlternative.length > 0) {
+          setAlternativeNotConfirm({
+            show: true,
+            warningUpdateForMarriage: true,
+          })
+        }
         setGender([{ label: findDesNode.s === 'm' ? 'Male' : 'Female', value: findDesNode.s === 'm' ? 'm' : 'f' }]);
         break;
       } default: {
@@ -662,28 +724,6 @@ export default function CustomTreePage() {
       }
     }
   }
-
-  useEffect(() => {
-    if (diagram) {
-      setupDiagram(diagram, alterLinkDataArray, 1);
-    }
-  }, [alterLinkDataArray])
-
-
-  const handleClickAddBtn = (node) => {
-    if (nodeDataArray.length === 0) {
-      setForm({
-        ...form,
-        isNew: true
-      })
-    } else {
-      setForm({
-        ...form,
-        isNew: false
-      })
-    }
-    setShowModal(true)
-  };
 
   const isLeaf = (key) => {
     const selfKey = alterLinkDataArray.find(ele => ele.key === key);
@@ -712,8 +752,6 @@ export default function CustomTreePage() {
     if (arrow !== 2) {
     const father = alterLinkDataArray.find(ele => ele.key === _.get(node, 'f'));
     const mother = alterLinkDataArray.find(ele => ele.key === _.get(node, 'm'));
-    console.log("Father: ", father);
-    console.log("Mother: ", mother);
     if (father && !arrayRecursion.find(ele => ele.key === father.key))
       recursionParentsNode(father, arrayRecursion, 0); // check up/down 
     if (mother && !arrayRecursion.find(ele => ele.key === mother.key))
@@ -743,7 +781,7 @@ export default function CustomTreePage() {
     diagram.select(nodeFocus);
   }
 
-  const handleChangeFormUpdate = (e, label) => {
+  const handleChangeFormUpdate = (e, label, isDeath = true) => {
     console.log("Form: ", e.target.value);
     console.log("FormUpd: ", formUpd);
     switch (label) {
@@ -761,17 +799,32 @@ export default function CustomTreePage() {
         })
         break;
       }
-      case 'dod': {
-        setFormUpd({
-          ...formUpd,
-          dob: e.target.value,
-        })
-        break;
-      }
       case 'dob': {
         setFormUpd({
           ...formUpd,
-          dod: e.target.value,
+          dob: moment(e.target.value).format("YYYY-MM-DD"),
+        })
+        break;
+      }
+      case 'dod': {
+        setFormUpd({
+          ...formUpd,
+          dod: moment(e.target.value).format("YYYY-MM-DD"),
+        })
+        break;
+      }
+      case 'isDeath': {
+        setFormUpd({
+          ...formUpd,
+          isDeath: isDeath,
+          dod: !isDeath ? null : formUpd.isDeath, 
+        });
+        break;
+      }
+      case 'note': {
+        setFormUpd({
+          ...formUpd,
+          note: e.target.value,
         })
         break;
       }
@@ -782,23 +835,33 @@ export default function CustomTreePage() {
   }
 
   const handleSaveFormUpdate = () => {
-    console.log("Form UPD: ", formUpd);
-    const indexNode = _.findIndex(alterLinkDataArray, ele => ele.key === nodeSelect.key);
+    console.log("Form UPD: ", nodeSelect);
+    const indexNode = Adapter.getIndex(alterLinkDataArray, nodeSelect.key);
     const temp = [...alterLinkDataArray];
     temp[indexNode] = {
       ...temp[indexNode],
       n: formUpd.name,
       s: formUpd.gender,
-      dob: formUpd.dob,
-      dod: formUpd.dod
+      dob: moment(formUpd.dob).format("YYYY-MM-DD"),
+      dod: moment(formUpd.dod).format("YYYY-MM-DD"),
+      note: formUpd.note,
     }
     setAlterLink(temp);
     setupDiagram(diagram, temp, nodeSelect.key);
+    setShowFormUpdate(false);
   }
 
   const handleCancelEditForm = () => {
     setShowFormUpdate(false);
     setNodeSelect(null);
+  }
+
+  const handleHideAlertAlternative = () => {
+    setAlternativeNotConfirm({
+      show: false,
+      warningAlternativeNode: false,
+      warningUpdateForMarriage: false,
+    });
   }
 
   return (
@@ -865,8 +928,8 @@ export default function CustomTreePage() {
                 component="p"
                 className={classes.actionTitle}
               >
-                SELECT MODE
-              </Typography>
+              SELECT MODE
+            </Typography>
             </Grid>
             <Grid
               item
@@ -887,6 +950,7 @@ export default function CustomTreePage() {
                   borderRadius: "24px",
                 }}
               >
+              { nodeDataArray.length > 0 &&
                 <TreeDiagram
                   nodeDataArray={nodeDataArray}
                   linkDataArray={linkDataArray}
@@ -896,6 +960,7 @@ export default function CustomTreePage() {
                   initDiagram={initDiagram}
                   modelData={modelData}
                 />
+              }
                 {/* <ToolSet className={classes.toolSet} /> */}
               </Paper>
             </Grid>
@@ -919,10 +984,7 @@ export default function CustomTreePage() {
           nodeRelationship={nodeRelationship}
           handleCancel={handleCancel}
           handleSave={handleSave}
-          handleChange={handleChange}
-          handleChangeName={handleChangeName}
-          handleChangeNodeRelationship={handleChangeNodeRelationship}
-          handleChangeRelationship={handleChangeRelationship}
+          handleChangeAddForm={handleChangeAddForm}
         />
       }
       { showAlert &&
@@ -930,6 +992,14 @@ export default function CustomTreePage() {
           handleHideAlert={handleHideAlert}
           deleteNode={deleteNode}
           warning={warning}
+        />
+      }
+      {
+        showAlternativeNotConfirm.show &&
+        <AlertNotConfirm
+          warningAlternativeNode={showAlternativeNotConfirm.warningAlternativeNode}
+          warningUpdateForMarriage={showAlternativeNotConfirm.warningUpdateForMarriage}
+          handleHideAlertAlternative={handleHideAlertAlternative}
         />
       }
     </Container>
