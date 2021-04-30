@@ -14,37 +14,53 @@ const useStyles = makeStyles((theme) => ({
   root: {},
   typoBold: {
     fontWeight: 900,
+    backgroundColor: '#905842',
+    marginTop: '2px',
+    borderRadius: '5px',
+    cursor: "pointer",
+    padding: '4px 20px',
+    color: 'white',
+    "&:hover": {
+      backgroundColor: '#ac7a67',
+    }
   },
 }));
-export default function ListMember({ className, members }) {
+export default function ListMember(props) {
+  const {
+    className,
+    listSearch,
+    handleClickItemSearch
+  } = props;
+
   const classes = useStyles();
   const listMemberClasses = classNames({
     [classes.root]: true,
     [className]: className,
   });
 
-  const memberRows = members.map((member, index) => {
+  const memberRows = listSearch.map((member, index) => {
     return (
-      <div key={index}>
+      <div onClick={() => handleClickItemSearch(member.key)} key={index}>
         <Grid container>
-          <Grid item xs={5}>
-            <Typography className={classes.typoBold}>{member.name}</Typography>
+          <Grid item xs={12}>
+            <Typography className={classes.typoBold}>{member.n}</Typography>
           </Grid>
-          <Grid item xs={2}>
+          {/* <Grid item xs={2}>
             <Typography variant="body2">{member.id}</Typography>
-          </Grid>
-          <Grid item xs={5} container justify="space-between">
+          </Grid> */}
+          {/* <Grid item xs={5} container justify="space-between">
             <Typography className={classes.typoBold}>
-              {member.gender}
+              {member.s}
             </Typography>
             <ButtonBase>
               <ArrowDropDown />
             </ButtonBase>
-          </Grid>
+          </Grid> */}
         </Grid>
       </div>
     );
   });
+
   return (
     <Paper elevation={9} className={listMemberClasses}>
       {memberRows}
