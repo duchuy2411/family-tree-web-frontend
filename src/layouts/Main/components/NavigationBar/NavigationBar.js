@@ -11,6 +11,8 @@ import { ReactComponent as LogoutIcon } from "../../../../assets/svg/log-out.svg
 
 import useNavigationBarStyles from "./useNavigationBarStyles";
 import pageRoutes from "../../../../pages/routes";
+import { useDispatch } from "react-redux";
+import { logout } from "./../../../../store/authSlice";
 
 const useStyles = useNavigationBarStyles;
 
@@ -41,6 +43,11 @@ export default function NavigationBar({ className }) {
     </>
   );
 
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <Paper className={navBarClasses} elevation={9}>
       <NavLink to="/" exact={true}>
@@ -52,8 +59,9 @@ export default function NavigationBar({ className }) {
 
       <div style={{ flexGrow: 1 }}></div>
       <IconButton
-        component={NavLink}
-        to="/logout"
+        // component={NavLink}
+        // to="/logout"
+        onClick={handleLogout}
         className={classes.iconBtn}
         aria-label="log out"
       >

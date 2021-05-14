@@ -9,17 +9,32 @@ import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
 import { Link as RRDLink } from "react-router-dom";
 
 import useLoginPageStyles from "./useLoginPageStyles";
+import { useDispatch } from "react-redux";
+import { login } from "./../../store/authSlice";
+import axios from "axios";
+import api from "../../utils/api";
 
 export default function LogInPage() {
   const classes = useLoginPageStyles();
   const usernameRef = React.useRef();
   const passwordRef = React.useRef();
-  const handleLogin = () => {
+  const dispatch = useDispatch();
+
+  const handleLogin = async () => {
     console.log(
       `Login button clicked\n
       Username: ${usernameRef.current.value}\n
       Password: ${passwordRef.current.value}`
     );
+    const loginData = {
+      usernameOrEmail: usernameRef.current.value,
+      password: passwordRef.current.value,
+    }
+
+    const response = await axios.post(`${api.API}/authentication/login`, loginData)
+    console.log("login response: ", response);
+    
+    dispatch(login());
   };
 
   return (

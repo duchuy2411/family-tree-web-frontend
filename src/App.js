@@ -15,9 +15,11 @@ import LogInPage from "./pages/LogIn";
 import SignUpPage from "./pages/SignUp";
 import HomePage from "./pages/Home";
 import Main from "./layouts/Main/Main";
+import { useSelector } from "react-redux";
 
 function App() {
-  const isAuthenticated = true;
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   return (
     <Router>
       <React.Suspense fallback={<CustomBackDrop />}>
