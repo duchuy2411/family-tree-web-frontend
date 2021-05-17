@@ -1,5 +1,6 @@
-import _ from 'lodash';
+import _, { set } from 'lodash';
 import moment from 'moment';
+import CONSTAINT from './const';
 
 class Adapter {
   parse(data) {
@@ -10,6 +11,7 @@ class Adapter {
         s: ele.gender === 0 ? 'M' : 'F',
         dob: moment(ele.dateOfBirth).format('L'),
         dod: ele.dateOfDead ? moment(ele.dateOfDead).format('L') : null,
+        type: ele.dateOfDead ? 'D' : (ele.gender === 0 ? 'M' : 'F'),
         note: ele.note,
       };
       const parent1Id = _.get(ele, 'parent1Id');
@@ -34,8 +36,7 @@ class Adapter {
   }
 
   getWithoutLinkLabel(data) {
-    const arr = data.filter(ele => _.get(ele, 's') !== 'LinkLabel');
-    console.log("Get arr: ", arr);
+    const arr = _.filter(data, ele => _.get(ele, 'type') !== 'LinkLabel');
     return arr;
   }
 
@@ -78,14 +79,12 @@ class Adapter {
     if (ux.length > 0 && ux[0] !== undefined) return ux.map(ele => this.getNode(arr, ele));
     const getVir = _.get(node, 'vir');
     const vir = _.isArray(getVir) && getVir ? getVir : [getVir];
-    console.log("Vir: ", vir);
     if (vir.length > 0 && vir[0] !== undefined) return vir.map(ele => this.getNode(arr, ele));
     const marriageFrom = arr.filter((ele) => {
       const uxs = _.get(ele, 'ux');
       const virs = _.get(ele, 'vir');
       const ux = _.isArray(uxs) ? _.includes(uxs, key) : uxs === key;
       const vir = _.isArray(virs) ? _.includes(virs, key) : virs === key;
-      console.log("uxx", ux, "virr", vir);
       return ux || vir;
     });
     if (marriageFrom) return marriageFrom;
@@ -116,6 +115,91 @@ class Adapter {
     return _.findIndex(arr, { key });
   }
 
+  removeNodeAndRelationshipOfSpouse (arr, node) { // If have 1 spouse
+    const clone = [...arr];
+    const getMarriage = this.getMarriageByArray(arr, node);
+    if (getMarriage.length === 1) {
+      const index = this.getIndex(arr, getMarriage[0].key);
+      const ux = _.get(arr[index], 'ux', []);
+      const vir = _.get(arr[index], 'vir', []);
+      if (ux.length > 1 && ux.includes(node.key)) {
+        const arrMarriage = arr[index].ux.filter(ele => ele !== node.key);
+        clone[index].ux = arrMarriage;
+      } else if(ux.length === 1 && ux.includes(node.key)) {
+        delete clone[index].ux;
+      }
+
+      if (vir.length > 0 && vir.includes(node.key)) {
+        const arrMarriage = arr[index].vir.filter(ele => ele !== node.key);
+        clone[index].vir = arrMarriage;
+      } else if(vir.length === 1 && vir.includes(node.key)) {
+        delete clone[index].vir;
+      }
+    }
+    return clone.filter(ele => ele.key !== node.key);
+  }
+
+  removeParentAndRelationship (arr, node) { // Case have 1 child, 1 mother || father
+    const clone = [...arr];
+    const father = this.getNode(clone, node.f);
+    const mother = this.getNode(clone, node.m);
+    let res = [];
+    if (father.n === CONSTAINT.UNDEFINED)
+      res = this.removeNodeAndRelationshipOfSpouse(clone, node.father);
+    if (mother.n === CONSTAINT.UNDEFINED)
+      res = this.removeNodeAndRelationshipOfSpouse(clone, node.mother);
+    return res.filter(ele => ele.key !== node.key);
+  }
+
+  formatData (model) {
+    const obj = {
+      s: model.gender === 'male' ? 'M' : 'F',
+      n: `${_.get(model, 'lastName', '')} ${_.get(model, 'firstName', '')}` || "New",
+      dob: _.get(model, 'dob', null),
+      dod: _.get(model, 'dod', null),
+      note: _.get(model, 'note', ''),
+      occupation: _.get(model, 'occupation', null),
+      address: _.get(model, 'address', ''),
+      phone: _.get(model, 'phone', ''),
+      lastName: _.get(model, 'lastName', ''),
+      firstName: _.get(model, 'firstName', '')
+    }
+    if (model.n === CONSTAINT.UNDEFINED) {
+      _.set(obj, 'type', 'UND');
+      return obj;
+    }
+    if (model.n === CONSTAINT.TYPE.DEAD) {
+      _.set(obj, 'type', 'D');
+      return obj;
+    }
+
+    _.set(obj, 'type', model.gender === 'male' ? 'M' : 'F');
+    return obj;
+  }
+
+  createLinkForParentToChilds(diagram, arrayLink, arrayNode, parent, node) {
+    const linkParent = _.find(arrayLink, ele => ele.category === CONSTAINT.MARRIAGE && (ele.from === parent.key || ele.to === parent.key));
+    const newLink = { from: linkParent.labelKeys[0], to: node.key };
+    diagram.model.addLinkData(newLink);
+  }
+
+  createLinkForMarriages(diagram, arrayLink, arrNode, self, spouse) {
+    const linkLabel = { s: "LinkLabel", type: "LinkLabel" };
+    diagram.model.addNodeData(linkLabel);
+    const linkMarriage = { from: self, to: spouse, labelKeys: [linkLabel.key], category: "Marriage"};
+    diagram.model.addLinkData(linkMarriage);
+  }
+
+  editNode(diagram, model, key) {
+    const part = diagram.findPartForKey(key);
+    const arrProperty = Object.keys(model);
+    arrProperty.forEach(ele => {
+      console.log("model: ", ele, model[`${ele}`]);
+      
+      diagram.model.setDataProperty(part.data, ele, model[`${ele}`]);
+    })
+    return diagram.findPartForKey(key).data;
+  }
 }
 
 export default new Adapter();
