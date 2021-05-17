@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as go from 'gojs';
-import _, { find } from 'lodash';
+import _, { find, set } from 'lodash';
 import moment from 'moment';
 import GenogramLayout from '../../layouts/GenogramLayout/GenogramLayout';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,8 +9,9 @@ import './style.css';
 // MUI
 import { Container, Grid, Paper, Typography } from "@material-ui/core";
 
-import CONSTAIN from '../../utils/const';
+import CONSTAINT from '../../utils/const';
 import Adapter from '../../utils/adapter';
+import UtilDiagram from './utilDiagram';
 
 // custom components
 import SearchBox from "../../components/Search/Search";
@@ -27,27 +28,34 @@ import AlertNotConfirm from './components/AlertNotConfirm';
 import data from "../../data";
 import useCustomTreePageStyles from "./useCustomTreePageStyles";
 
+const { SPOUSE, MOTHER, FATHER, CHILDREN } = CONSTAINT;
+
 // sample data
 export default function CustomTreePage() {
   const classes = useCustomTreePageStyles();
   const dispatch = useDispatch();
-  const { GENDER, RELATIONSHIP } = CONSTAIN;
-
+  const { GENDER, RELATIONSHIP } = CONSTAINT;
+  const tempDiagram = useRef(null)
   const [nodeDataArray, setNodeDataArray] = useState([]);
   const [linkDataArray, setLinkDataArray] = useState();
   const [model, setModel] = useState({ key: '', name: '', dob: '', dod: '', note: '' });
   const [diagram, setDiagram] = useState();
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState({show: false, select: null, step: 0, mode: '', rel: [] });
   const [form, setForm] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     gender: 'male',
-    desNode: 1,
+    nodeMarriage: null,
     relationship: 'child',
     isNew: false,
     isDeath: false,
     dod: null,
     dob: null,
     note: '',
+    occupation: '',
+    address: '',
+    phone: '',
+    nodeRelationship: null,
   });
   const [relationship, setRelationship] = useState(RELATIONSHIP);
   const [gender, setGender] = useState(GENDER);
@@ -58,17 +66,14 @@ export default function CustomTreePage() {
   const [warning, setWarning] = useState(false);
   const [search, setSearch] = useState('');
   const [listSearch, setListSearch] = useState([]);
-  const [formUpd, setFormUpd] = useState({});
-  const [showFormUpdate, setShowFormUpdate] = useState(false);
   const [showAlternativeNotConfirm, setAlternativeNotConfirm] = useState({ show: false, warningAlternativeNode: false, warningUpdateForMarriage: false })
-
+  
   useEffect(() => {
-    dispatch(fetchFamiyTreeById(1)).then(rs => {
-      const parseTree = Adapter.parse(_.get(rs.data, 'people', []));
-      console.log("Parse Tree: ", parseTree);
+    dispatch(fetchFamiyTreeById(3)).then(rs => {
+      const parseTree = Adapter.parse(_.get(rs.data, 'data.people', []));
       setNodeDataArray([...parseTree]);
-      setAlterLink(parseTree);
-      setListSearch([...parseTree]);
+      setAlterLink([...parseTree]);
+      setListSearch([...Adapter.getWithoutLinkLabel(parseTree)]);
     });
   }, []);
 
@@ -79,10 +84,9 @@ export default function CustomTreePage() {
     const insertedLinkKeys = data.insertedLinkKeys;
     const modifiedLinkData = data.modifiedLinkData;
     const removedLinkKeys = data.removedLinkKeys;
-
+    if (modifiedNodeData) {
+    }
     if (removedLinkKeys && removedNodeKeys) {
-      console.log("Remove link key: ", removedLinkKeys);
-      console.log("Remove node key: ", removedNodeKeys);
     } else {
       return;
     }
@@ -93,7 +97,6 @@ export default function CustomTreePage() {
     switch (name) {
       case 'ChangedSelection': {
         const sel = e.subject.first();
-        console.log("Sel: ",sel);
         if (sel) {
           setModel({
             ...model,
@@ -105,7 +108,6 @@ export default function CustomTreePage() {
             note: sel.data.note,
           })
         } else {
-          console.log('None');
         }
         break;
       }
@@ -113,13 +115,13 @@ export default function CustomTreePage() {
     }
   };
 
-  function setupDiagram(diagram, array, focusId) {
-    diagram.model =
+  function setupDiagram(newDiagram, array, focusId) {
+    newDiagram.model =
       go.GraphObject.make(go.GraphLinksModel,
         { // declare support for link label nodes
           linkLabelKeysProperty: "labelKeys",
           // this property determines which template is used
-          nodeCategoryProperty: "s",
+          nodeCategoryProperty: "type",
           // if a node data object is copied, copy its data.a Array
           copiesArrays: true,
           // create all of the nodes for people
@@ -127,12 +129,12 @@ export default function CustomTreePage() {
           linkKeyProperty: 'key',
         });
 
-    setupMarriages(diagram);
-    setupParents(diagram);
+    setupMarriages(newDiagram);
+    setupParents(newDiagram);
 
-    var node = diagram.findNodeForKey(focusId);
+    var node = newDiagram.findNodeForKey(focusId);
     if (node !== null) {
-      diagram.select(node);
+      newDiagram.select(node);
       setModel({
         ...model,
         key: node.data.key,
@@ -151,13 +153,8 @@ export default function CustomTreePage() {
     //   spouse.opacity = 0;
     //   spouse.pickable = false;
     // });
-    }
-
-    setNodeDataArray([...diagram.model.nodeDataArray]);
-    setLinkDataArray([...diagram.model.linkDataArray]);
-    console.log("====nodeData===", diagram.model.nodeDataArray);
-    console.log("====linkData====", diagram.model.linkDataArray);
-    return diagram;
+    };
+    return newDiagram;
   }
 
   function findMarriage(diagram, a, b) {  // A and B are node keys
@@ -165,11 +162,9 @@ export default function CustomTreePage() {
     var nodeB = diagram.findNodeForKey(b);
     if (nodeA !== null && nodeB !== null) {
       var it = nodeA.findLinksBetween(nodeB);  // in either direction
-      console.log(nodeA.key, ' ', nodeB.key);
       
       while (it.next()) {
         var link = it.value;
-        console.log("Link: ", link)
         // Link.data.category === "Marriage" means it's a marriage relationship
         if (link.data !== null && link.data.category === "Marriage") return link;
       }
@@ -195,7 +190,7 @@ export default function CustomTreePage() {
           var link = findMarriage(diagram, key, wife);
           if (link === null) {
             // add a label node for the marriage link
-            var mlab = { s: "LinkLabel" };
+            var mlab = { s: "LinkLabel", type: "LinkLabel" };
             model.addNodeData(mlab);
             // add the marriage link itself, also referring to the label node
             var mdata = { from: key, to: wife, labelKeys: [mlab.key], category: "Marriage" };
@@ -215,7 +210,7 @@ export default function CustomTreePage() {
           var link = findMarriage(diagram, key, husband);
           if (link === null) {
             // add a label node for the marriage link
-            var mlab = { s: "LinkLabel" };
+            var mlab = { s: "LinkLabel", type: "LinkLabel" };
             model.addNodeData(mlab);
             // add the marriage link itself, also referring to the label node
             var mdata = { from: key, to: husband, labelKeys: [mlab.key], category: "Marriage" };
@@ -267,7 +262,7 @@ export default function CustomTreePage() {
         $(GenogramLayout, { direction: 90, layerSpacing: 80, columnSpacing: 30 })
     });
 
-    myDiagram.nodeTemplateMap.add("M",  // male
+    myDiagram.nodeTemplateMap.add(CONSTAINT.TYPE.MALE,  // male
     $(go.Node, "Auto",
       $(go.Panel,
         $(go.Shape, "RoundedRectangle",
@@ -285,80 +280,10 @@ export default function CustomTreePage() {
           { textAlign: "center", stroke: 'white', font: '14px arial', alignment: go.Spot.Center },
           new go.Binding("text", "dod")),
       ),
-      {
-        contextMenu:
-          $(go.Adornment, "Vertical",
-            $("ContextMenuButton",
-            $(go.TextBlock,
-              { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
-              "Add node",
-              {
-                click: function(e, button) {
-                  var nodedata = button.part.adornedPart.data;
-                  setForm({
-                    ...form,
-                    desNode: nodedata.key,
-                  })
-                  const newArr = myDiagram.model.nodeDataArray;
-                  const getNode = Adapter.getNode(newArr, nodedata.key);
-                  const getNodeMarriage = Adapter.getMarriageByKey(newArr, nodedata.key);
-                  let tempRelationship = [];
-                  // Father && Mother
-                  if (_.isNil(_.get(getNode, 'f'))) tempRelationship.push(RELATIONSHIP[1]);
-                  if (_.isNil(_.get(getNode, 'm'))) tempRelationship.push(RELATIONSHIP[2]);
-                  tempRelationship.push(RELATIONSHIP[0]);
-                  tempRelationship.push(RELATIONSHIP[3]);
-                  setRelationship(tempRelationship);
-                  
-                  setShowModal(true);
-                }
-              }
-            ),
-          ),
-          $("ContextMenuButton",
-            $(go.TextBlock,
-              { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
-              "Edit node",
-            {
-              click: function(e, button) {
-                var nodedata = button.part.adornedPart.data;
-                console.log("Edit node", nodedata.key);
-                setNodeSelect(nodedata);
-                setFormUpd({
-                  ...formUpd,
-                  name: nodedata.n,
-                  gender: nodedata.s,
-                  dob: _.get(nodedata, 'dob'),
-                  image: nodedata.image,
-                  dod: _.get(nodedata, 'dod'),
-                  isDeath: _.get(nodedata, 'dod'),
-                  note: _.get(nodedata, 'note'),
-                });
-                setShowFormUpdate(true);
-              }
-            }
-            ),
-          ),
-          $("ContextMenuButton",
-            $(go.TextBlock,
-              { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
-              "Remove node",
-            {
-              click: function(e, button) {
-                var nodedata = button.part.adornedPart.data;
-                setNodeSelect(nodedata);
-                if (isLeaf(nodedata.key)) setWarning(false);
-                else setWarning(true);
-                setAlert(true);
-              }
-            }
-          ),
-        )
-        )
-      }
+      { contextMenu: contextHandler($, myDiagram) }
     ));
     
-    myDiagram.nodeTemplateMap.add("F",  // female
+    myDiagram.nodeTemplateMap.add(CONSTAINT.TYPE.FEMALE,  // female
     $(go.Node, "Auto",
       $(go.Panel,
         $(go.Shape, "RoundedRectangle",
@@ -376,78 +301,28 @@ export default function CustomTreePage() {
             { textAlign: "center", stroke: 'white', font: '14px arial', alignment: go.Spot.Center },
             new go.Binding("text", "dod")),
         ),
-        {
-          contextMenu:
-            $(go.Adornment, "Vertical",
-              $("ContextMenuButton",
-                $(go.TextBlock,
-                  { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
-                  "Add node",
-                {
-                  click: function(e, button) {
-                    var nodedata = button.part.adornedPart.data;
-                    setForm({
-                      ...form,
-                      desNode: nodedata.key,
-                    })
-                    const newArr = myDiagram.model.nodeDataArray;
-                    const getNode = Adapter.getNode(newArr, nodedata.key);
-                    const getNodeMarriage = Adapter.getMarriageByKey(newArr, nodedata.key);
-                    let tempRelationship = [];
-                    console.log("node: ", getNode);
-                    // Father && Mother
-                    if (_.isNil(_.get(getNode, 'f'))) tempRelationship.push(RELATIONSHIP[1]);
-                    if (_.isNil(_.get(getNode, 'm'))) tempRelationship.push(RELATIONSHIP[2]);
-                    tempRelationship.push(RELATIONSHIP[0]);
-                    tempRelationship.push(RELATIONSHIP[3]);
-                    console.log("RELA:", tempRelationship)
-                    setRelationship(tempRelationship);
-                    
-                    setShowModal(true);
-                  }
-                }
-              ),
-            ),
-            $("ContextMenuButton",
-              $(go.TextBlock,
-                { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
-                "Edit node",
-              {
-                click: function(e, button) {
-                  var nodedata = button.part.adornedPart.data;
-                  setNodeSelect(nodedata);
-                  setFormUpd({
-                    ...formUpd,
-                    name: nodedata.n,
-                    gender: nodedata.s,
-                    dob: nodedata.dob,
-                    image: nodedata.image,
-                    dod: nodedata.dod,
-                    isDeath: !!_.get(nodedata, 'dod'),
-                    note: _.get(nodedata, 'note'),
-                  })
-                  setShowFormUpdate(true);
-                }
-              }
-              ),
-            ),
-            $("ContextMenuButton",
-              $(go.TextBlock,
-                { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
-                "Remove node",
-              {
-                click: function(e, button) {
-                  var nodedata = button.part.adornedPart.data;
-                  setNodeSelect(nodedata);
-                  if (isLeaf(nodedata.key)) setWarning(false);
-                  else setWarning(true);
-                  setAlert(true);
-                }
-              }
-              ),
-            )
-          )
-        }
+        { contextMenu: contextHandler($, myDiagram) }
+      ));
+
+    myDiagram.nodeTemplateMap.add(CONSTAINT.TYPE.DEAD,  // female
+    $(go.Node, "Auto",
+      $(go.Panel,
+        $(go.Shape, "RoundedRectangle",
+          { width: 150, height: 170, strokeWidth: 2, fill: "#C0C0C0", stroke: "#919191" }),
+      ),
+      $(go.Panel, "Vertical",
+        $(go.Picture, { width: 110, height: 110, margin: 2 }, new go.Binding("source", "image")),
+        $(go.TextBlock,
+          { textAlign: "center", stroke: 'white', margin: 5, font: '14px arial', alignment: go.Spot.Center },
+          new go.Binding("text", "n")),
+          $(go.TextBlock,
+            { textAlign: "center", stroke: 'white', font: '14px arial', alignment: go.Spot.Center },
+            new go.Binding("text", "dob")),
+          $(go.TextBlock,
+            { textAlign: "center", stroke: 'white', font: '14px arial', alignment: go.Spot.Center },
+            new go.Binding("text", "dod")),
+        ),
+        { contextMenu: contextHandler($, myDiagram) }
       ));
 
     myDiagram.nodeTemplateMap.add("LinkLabel",
@@ -468,208 +343,431 @@ export default function CustomTreePage() {
         { selectable: false },
         $(go.Shape, { strokeWidth: 2.5, stroke: "#5d8cc1" /* blue */ })
       ));
-    console.log("Node: ", nodeDataArray);
     setupDiagram(myDiagram, nodeDataArray, 1);
-    
-    setDiagram(myDiagram);
+    tempDiagram.current = myDiagram;
     return myDiagram;
   }
+
+  const contextHandler = ($, myDiagram) => {
+    return $(go.Adornment, "Vertical",
+      $("ContextMenuButton",
+        $(go.TextBlock,
+          { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
+          "Add node",
+        {click: function(e, button) {handleContextMenuAdd(button, myDiagram)}}
+        ),
+      ),
+      $("ContextMenuButton",
+        $(go.TextBlock,
+          { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
+          "Edit node",
+        {click: function(e, button) {handleContextMenuEdit(button, myDiagram)}}
+        ),
+      ),
+      $("ContextMenuButton",
+        $(go.TextBlock,
+          { textAlign: "center", stroke: 'black', margin: 5, width: 120, font: '16px arial', alignment: go.Spot.Center }, 
+          "Remove node",
+        {click: function(e, button) {handleContextMenuDelete(button, myDiagram)}}
+        ),
+      )
+    )
+  }
+
+  const handleContextMenuAdd = (button, myDiagram) => {
+    var nodedata = button.part.adornedPart.data;
+    const newArr = myDiagram.model.nodeDataArray;
+    const rel = handleForRelOption(button, myDiagram);
+    setShowModal({ ...showModal, show: true, step: 1, mode: CONSTAINT.MODE_FORM.ADD, rel });
+    setNodeSelect({...nodedata});
+  }
+
+  const handleForRelOption = (button, diagram) => {
+    const nodedata = button.part.adornedPart.data;
+    const arrNode = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray);
+    const rel = [CHILDREN];
+    // For spouse
+    const spouses = Adapter.getMarriageByArray(arrNode, nodedata.key);
+    
+    if (spouses.length >= 1) {
+      const getLengthSpouse = Adapter.getMarriageByArray(arrNode, spouses[0].key);      
+      if (getLengthSpouse.length === 1) rel.push(SPOUSE); // Spouse have only 1 spouse
+    } else {
+      rel.push(SPOUSE);
+    }
+    // For father
+    const getFather = Adapter.getFather(arrNode, nodedata);
+    if (_.get(getFather, 'n') === CONSTAINT.UNDEFINED || !getFather) rel.push(FATHER);
+    const getMother = Adapter.getMother(arrNode, nodedata);
+    if (_.get(getMother, 'n') === CONSTAINT.UNDEFINED || !getMother) rel.push(MOTHER);
+    return rel;
+  }
+    
+  const handleContextMenuEdit = (button, myDiagram) => {
+    var nodedata = button.part.adornedPart.data;
+    setNodeSelect(nodedata);
+  };
 
   const handleCancel = () => {
     setShowModal(false);
   }
 
   const handleSave = () => {
-    const tempArray = [...alterLinkDataArray];
-    console.log("Temp array: ", alterLinkDataArray);
-    const key = Math.abs(alterLinkDataArray[alterLinkDataArray.length-1].key) + 1;
-    console.log("KEy: ", key);
-    const newNode = {
-      key: key,
-      s: form.gender === 'male' ? 'M' : 'F',
-      n: form.name,
-      dob: form.dob,
-      dod: form.dod,
-      note: form.note,
-    }
-    let updateAlter = false;
-    let alterNode = {};
-
-    switch(form.relationship) {
-      case 'marriage': {
-        const desNode = Adapter.getNode(alterLinkDataArray, form.desNode);
-        const marriageNode = Adapter.getMarriageByKey(alterLinkDataArray, form.desNode);
-
-        if (Adapter.isAlterNode(marriageNode)) {
-          updateAlter = true;
-          const indexAlter = Adapter.getIndex(alterLinkDataArray, marriageNode.key);
-          if (indexAlter > -1) alterLinkDataArray[indexAlter].n = form.name;
-          break;
-        }
-        _.set(newNode, `${form.gender === 'male' ? 'ux' : 'vir'}`, form.desNode);
+    const diagram = tempDiagram.current;
+    const getName = form.lastName + form.firstName;
+    const getGender = form.gender === CONSTAINT.MALE ? CONSTAINT.TYPE.MALE : CONSTAINT.TYPE.FEMALE;
+    switch(showModal.select) {
+      case CONSTAINT.SPOUSE: {
+        processAddSpouse(nodeSelect, diagram);
         break;
       }
-      case 'f': {
-        // CheckAlter
-        const desNode = Adapter.getNode(alterLinkDataArray, form.desNode);
-        const getFather = Adapter.getFather(alterLinkDataArray, _.get(desNode, 'f'));
-        if (Adapter.isAlterNode(getFather)) {
-          updateAlter = true;
-          const indexAlter = Adapter.getIndex(alterLinkDataArray, getFather.key);
-          if (indexAlter > -1) alterLinkDataArray[indexAlter].n = form.name;
-          break;
-        }
-        // Node Alter
-        const keyAlter = key + 1;
-        alterNode = { key: keyAlter, s: 'F', n: 'Alternative' };
-        _.set(newNode, 's', 'M');
-        _.set(newNode, 'ux', keyAlter);
-        const childNode = Adapter.getNode(alterLinkDataArray, form.desNode);
-        const index = Adapter.getIndex(alterLinkDataArray, form.desNode);
-        _.set(childNode, 'f', key);
-        _.set(childNode, 'm', keyAlter);
-        tempArray[index] = childNode;       
+      case CONSTAINT.FATHER:
+      case CONSTAINT.MOTHER: {
+        processAddParent(nodeSelect, diagram);
         break;
       }
-      case 'm': {
-        const desNode = Adapter.getNode(alterLinkDataArray, form.desNode);
-        console.log("Desnode: ", desNode);
-        const getMother = Adapter.getMother(alterLinkDataArray, _.get(desNode, 'm'));
-        console.log("Get mother: ", getMother);
-        if (Adapter.isAlterNode(getMother)) {
-          updateAlter = true;
-          const indexAlter = Adapter.getIndex(alterLinkDataArray, getMother.key );
-          if (indexAlter > -1) alterLinkDataArray[indexAlter].n = form.name;
-          break;
-        }
-        // Node Alter
-        const keyAlter = key + 1;
-        alterNode = { key: keyAlter, s: 'M', n: 'Alternative' };
-        _.set(newNode, 's', 'F');
-        _.set(newNode, 'vir', keyAlter);
-        const childNode = Adapter.getNode(alterLinkDataArray, form.desNode);
-        const index = Adapter.getIndex(alterLinkDataArray, form.desNode);
-        _.set(childNode, 'm', key);
-        _.set(childNode, 'f', keyAlter);
-        tempArray[index] = childNode;
-        break;
-      }
-      case 'child': {
-        const findNode = Adapter.getNode(alterLinkDataArray, form.desNode);
-        const findMarriageNode = Adapter.getMarriageByKey(alterLinkDataArray, form.desNode);
-        console.log("findMarriageNode:", findMarriageNode)
-        if(!findMarriageNode) {
-          const keyAlter = key + 1;
-          const indexSelfKey = Adapter.getIndex(alterLinkDataArray, form.desNode);
-          const sexDesnode = alterLinkDataArray[indexSelfKey].s;
-          _.set(alterLinkDataArray[indexSelfKey], `${sexDesnode === 'M' ? 'ux' : 'vir'}`, keyAlter);
-          alterNode = { key: keyAlter, s: sexDesnode === 'M' ? 'F' : 'M', n: 'Alternative' };
-          _.set(newNode, 's', 'F');
-          _.set(newNode, sexDesnode === 'M' ? 'f' : 'm', form.desNode);
-          _.set(newNode, sexDesnode === 'M' ? 'm' : 'f', form.desNode);
-        }
-        if (findNode.ux || findMarriageNode.vir) {
-          const self = _.isArray(findNode.ux) ? findNode.ux[0] : findNode.ux;
-          _.set(newNode, `f`, form.desNode);
-          _.set(newNode, `m`, self || findMarriageNode.key);
-        } 
-        else if (findNode.vir || findMarriageNode.ux) {
-          const self = _.isArray(findNode.vir) ? findNode.vir[0] : findNode.vir;
-          _.set(newNode, `m`, form.desNode);
-          _.set(newNode, `f`, self || findMarriageNode.key);
-        }
+      case CONSTAINT.CHILDREN: {
+        processAddChild(nodeSelect, diagram);
         break;
       }
       default: {
         break;
       }
     }
-    // Check and push node//link
-    if (updateAlter === false) tempArray.push(newNode);
-    if (alterNode.key) tempArray.push(alterNode);
-    // if (newNodeLinkLabel.key) tempArray.push(newNodeLinkLabel);
-    setAlterLink([...tempArray]);
-    setupDiagram(diagram, tempArray, key);
-    setShowModal(false);
+    setShowModal({ ...showModal, show: false, rel: [] });
   }
 
-  const deleteNode = () => {
-    // Step 1: Delete from alter array
-    const node = nodeSelect;
-    const cloneArr = [...alterLinkDataArray];
-    _.remove(cloneArr, {key: node.key});
-    setAlterLink(cloneArr);
-    setupDiagram(diagram, cloneArr, 0);
-    setNodeSelect(null);
-    setAlert(false);
+  const processAddSpouse = (node, diagram) => {
+    addNodeSpouse(node, diagram);
   }
 
-  const nodeRelationship = () => {
-    const rs = _.filter(nodeDataArray, ele => !_.isNil(ele.n)).map(ele => new Object({
-      label: ele.n,
-      value: ele.key
-    }));
-    return rs;
+  const processAddChild = (node, diagram) => {
+    const arrNode = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray);
+    const getSpouse = Adapter.getMarriageByArray(arrNode, node.key);
+    let nodeSync = {};
+    if (getSpouse.length === 0) { // process add spouse
+      const gender = node.s === 'M' ? 'F' : 'M';
+      const obj = { type: gender, s: gender, n: gender === 'M' ? CONSTAINT.FATHER_OF(node.n) : CONSTAINT.MOTHER_OF(node.n) };
+      _.set(obj, gender === 'M' ? 'ux' : 'vir', [node.key]);
+      nodeSync = addNodeSpouse(node, diagram);
+    }
+    setForm({ ...form, nodeRelationship: nodeSync.key });
+    addNodeChild(node, diagram);
+  }
+
+  const processAddParent = (node, diagram) => {
+    addParent(node, diagram);
+  }
+
+  const handleUpdate = () => {
+    const indexNode = Adapter.getIndex(alterLinkDataArray, nodeSelect.key);
+    const temp = [...alterLinkDataArray];
+    const getName = form.lastName + ' ' + form.firstName;
+    const getGender = form.gender === CONSTAINT.MALE ? CONSTAINT.TYPE.MALE : CONSTAINT.TYPE.FEMALE;
+    temp[indexNode] = {
+      ...temp[indexNode],
+      n: getName,
+      s: getGender,
+      firstName: form.firstName,
+      lastName: form.lastName,
+      dob: moment(form.dob).format("YYYY-MM-DD"),
+      dod: moment(form.dod).format("YYYY-MM-DD"),
+      note: form.note,
+      occupation: form.occupation,
+      address: form.address,
+      phone: form.phone,
+      type: form.dod ? CONSTAINT.TYPE.DEAD : getGender,
+    }
+    setAlterLink(temp);
+    setupDiagram(diagram, temp, nodeSelect.key);
+    setShowModal({...showModal, show: false, mode: '', step: 0});
+  }
+
+  const addNodeChild = (node, diagram) => {
+    const getForm = Adapter.formatData(form);
+    const getSpouse = Adapter.getMarriageByArray(diagram.model.nodeDataArray, node.key);
+    _.set(getForm, node.s === 'F' ? 'm' : 'f', node.key);
+    _.set(getForm, node.s === 'F' ? 'f' : 'm', form.nodeRelationship || (getSpouse.length > 0 && getSpouse[0].key));
+    
+    diagram.model.addNodeData(getForm);
+    const getNodeArr = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray)
+    Adapter.createLinkForParentToChilds(diagram, diagram.model.linkDataArray, getNodeArr, node, getForm);
+  }
+
+  const addNodeSpouse = (node, diagram) => {
+    const getForm = Adapter.formatData(form);
+    _.set(getForm, node.s === CONSTAINT.TYPE.F ? 'vir' : 'ux', [node.key]);
+    diagram.model.addNodeData(getForm);
+    if (node.s === 'F') {
+      const model = { vir: [..._.get(node, 'vir', []), getForm.key] };
+      Adapter.editNode(diagram, model, node.key);
+    } else {
+      const model = { ux: [..._.get(node, 'ux', []), getForm.key] };
+      Adapter.editNode(diagram, model, node.key);
+    }
+    const getNodeArr = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray)
+    Adapter.createLinkForMarriages(diagram, diagram.model.linkDataArray, getNodeArr, node.key, getForm.key);
+    return getForm;
+  }
+
+  const addParent = (node, diagram) => {
+    const getForm = Adapter.formatData(form);
+    if (!_.get(node, 'f') && !_.get(node, 'm')) { // chua co cha me
+      diagram.model.addNodeData(getForm);
+      const spouse = {};
+      spouse.name = getForm.s === 'M' ? CONSTAINT.MOTHER_OF(node.n) : CONSTAINT.FATHER_OF(node.n);
+      spouse.gender = getForm.s === 'M' ? 'F' : 'M';
+      const formatSpouse = Adapter.formatData(spouse);
+      _.set(formatSpouse, getForm.s === 'M' ? 'ux' : 'vir', [getForm.key]);
+      diagram.model.addNodeData(formatSpouse);
+      const model = {};
+      _.set(model, getForm.s === 'M' ? 'vir' : 'ux', [formatSpouse.key]);
+      Adapter.editNode(diagram, model, getForm.key);
+      const nodeArr = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray);
+      Adapter.createLinkForMarriages(diagram, diagram.model.linkDataArray, nodeArr, getForm.key, formatSpouse.key);
+      Adapter.createLinkForParentToChilds(diagram, diagram.model.linkDataArray, nodeArr, getForm, node);
+      return formatSpouse;
+    }
+    else { // get node delete and update
+      const und = _.get(node, getForm.s === 'F' ? 'm' : 'f');
+      return Adapter.editNode(diagram, getForm, und);
+    }
+  }
+
+  const handleContextMenuDelete  = (button, diagram) => {
+    const node = button.part.adornedPart.data;
+    const arrayNode = Adapter.getWithoutLinkLabel([...diagram.model.nodeDataArray]);
+    if (conditionDelete1(arrayNode, node)) {
+      deleteForNodeNoSpouseNoChilds(node, arrayNode, diagram);
+    }
+    if (conditionDelete2(arrayNode, node)) {
+      deleteForNodeNoSpouseNoParentsHaveAChild(node, arrayNode, diagram);
+    }
+    if (conditionDelete3(arrayNode, node)) {
+      deleteForNodeHaveSpouse(node, arrayNode, diagram);
+    }
+    setNodeDataArray([...diagram.model.nodeDataArray]);
+  }
+
+  const deleteForNodeNoSpouseNoChilds = (node, arr, diagram) => {
+    const getSpouseRemove = Adapter.getMarriageByArray(arr, node);
+    if (getSpouseRemove.length !== 0 && getSpouseRemove[0].n === CONSTAINT.UNDEFINED) {
+      diagram.model.removeNodeData(diagram.model.findNodeDataForKey(getSpouseRemove[0].key));
+    }
+    diagram.remove(diagram.findPartForKey(node.key));
+    const getFather = Adapter.getFather(arr, node);
+    const getMother = Adapter.getMother(arr, node);
+    const getChildsFather = Adapter.getChilds(arr, getFather);
+    const getChildsMother = Adapter.getChilds(arr, getMother);
+    if (getChildsFather.map(ele => Object.values(_.pick(ele, ["key"])))[0].includes(node.key) 
+      && getFather.n === CONSTAINT.UNDEFINED) {
+    // Remove father node
+      arr = UtilDiagram.removeSpouseIfSpouseUndefined(getFather, diagram);
+    }
+    if (getChildsMother.map(ele => Object.values(_.pick(ele, ["key"])))[0].includes(node.key)
+      && getMother.n === CONSTAINT.UNDEFINED) {
+      // Remove mother node
+      arr = UtilDiagram.removeSpouseIfSpouseUndefined(getMother, diagram);
+    }
+  }
+
+  const deleteForNodeHaveSpouse = (node, arr, diagram) => {
+    const getChilds = Adapter.getChilds(arr, node);
+    if (getChilds.length === 0) {
+      const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+      const indexMarriage = Adapter.getIndex(arr, getMarriage[0].key);
+      delete diagram.model.nodeDataArray[indexMarriage].ux;
+      delete diagram.model.nodeDataArray[indexMarriage].vir;
+      diagram.remove(diagram.findPartForKey(node.key));
+    } else {
+      const getNode = diagram.findPartForKey(node.key);
+      diagram.model.setDataProperty(getNode.data, 'n', CONSTAINT.UNDEFINED);
+      diagram.model.setDataProperty(getNode.data, 'type', CONSTAINT.TYPE.DEAD);
+    }
+  }
+
+  const deleteForNodeNoSpouseNoParentsHaveAChild = (node, arr, diagram) => {
+    const getChilds = Adapter.getChilds(arr, node);
+    getChilds.forEach(ele => {
+      const getIndex = Adapter.getIndex(arr, ele.key);
+      delete diagram.model.nodeDataArray[getIndex].m;
+      delete diagram.model.nodeDataArray[getIndex].f;
+    })
+    const getSpouseRemove = Adapter.getMarriageByArray(arr, node.key);
+    
+    if (getSpouseRemove.length !== 0 && getSpouseRemove[0].n === CONSTAINT.UNDEFINED) {
+      diagram.remove(diagram.findPartForKey(getSpouseRemove[0].key));
+    } 
+    diagram.remove(diagram.findPartForKey(node.key));
+  }
+
+  const conditionDelete1 = (arr, node) => { // no spouse, no childs
+    const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+    const isAlone = getMarriage.length === 0 || getMarriage.n === CONSTAINT.UNDEFINED;
+    const getChilds = Adapter.getChilds(arr, node);
+      
+    return isAlone && getChilds.length === 0;
+  }
+
+  const conditionDelete2 = (arr, node) => { // no spouse, no parent, have atleast 1 
+    const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+    const isAlone = getMarriage.length === 0 || (getMarriage.length === 1 && getMarriage[0].n === CONSTAINT.UNDEFINED);
+    const noParents = !Adapter.getFather(arr, node) && !Adapter.getMother(arr, node);
+    const getChilds = Adapter.getChilds(arr, node);
+    return isAlone && noParents && getChilds.length <= 1;
+  }
+
+  const conditionDelete3 = (arr, node) => { // have 1 spouse, no parent      
+    const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+    const noParents = !Adapter.getFather(arr, node) && !Adapter.getMother(arr, node);
+    return getMarriage.length === 1 && getMarriage[0].n !== CONSTAINT.UNDEFINED && noParents;
+  }
+
+  const deleteForCondition1 = (list, node) => {
+    let arr = [...list];
+    //Remove this
+    const getSpouseRemove = Adapter.getMarriageByArray(arr, node);
+    if (getSpouseRemove.length !== 0 && getSpouseRemove[0].n === CONSTAINT.UNDEFINED) {
+      arr = _.filter(arr, ele => ele.key !== getSpouseRemove[0].key);
+    }
+    const getFather = Adapter.getFather(arr, node);
+    const getMother = Adapter.getMother(arr, node);
+    const getChildsFather = Adapter.getChilds(arr, getFather);
+
+    const getChildsMother = Adapter.getChilds(arr, getMother);
+
+    if (getChildsMother.map(ele => Object.values(_.pick(ele, ["key"])))[0].includes(node.key) 
+      && getFather.n === CONSTAINT.UNDEFINED) {
+      // Remove father node
+      arr = Adapter.removeNodeAndRelationshipOfSpouse(arr, getFather)
+    }
+    if (getChildsMother.map(ele => Object.values(_.pick(ele, ["key"])))[0].includes(node.key)
+      && getMother.n === CONSTAINT.UNDEFINED
+      ) {
+      // Remove mother node
+      arr = Adapter.removeNodeAndRelationshipOfSpouse(arr, getMother)
+    }
+    return _.filter(arr, ele => ele.key !== node.key);
+  }
+
+  const deleteForCondition2 = (list, node) => {
+    const arr = [...list];
+    const getChilds = Adapter.getChilds(arr, node);
+    getChilds.forEach(ele => {
+      const getIndex = Adapter.getIndex(list, node);
+      delete arr[getIndex].m;
+      delete arr[getIndex].f;
+    })
+    const getSpouseRemove = Adapter.getMarriageByArray(arr, node);
+    if (getSpouseRemove.length !== 0 && getSpouseRemove[0].n === CONSTAINT.UNDEFINED) {
+      _.remove(arr, {key: getSpouseRemove[0].key})
+    } 
+    const rmv = _.remove(arr, {key: node.key});
+  }
+
+  const deleteForCondition3 = (list, node) => {
+    const arr = [...list];
+    const getChilds = Adapter.getChilds(arr, node);
+    if (getChilds.length === 0) {
+      const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+      const indexMarriage = Adapter.getIndex(arr, getMarriage[0].key);
+      delete arr[indexMarriage].ux;
+      delete arr[indexMarriage].vir;
+      const temp = _.filter(arr, ele => ele.key !== node.key);
+      return temp;
+    } else {
+      const getIndex = Adapter.getIndex(arr, node.key);
+      arr[getIndex].n = CONSTAINT.UNDEFINED;
+      arr[getIndex].type = CONSTAINT.TYPE.DEAD;
+    }
+    return arr;
+  }
+
+  const handleDelete = (temp, myDiagram) => {
+    const clone = [...temp];
+    setupDiagram(myDiagram, clone, 1)
+    setAlterLink(temp)
   }
 
   const handleChangeAddForm = (e, label, isDeath = false) => {
-    console.log(e.target.value)
     switch (label) {
-      case 'name': {
-        setForm({
-          ...form,
-          name: e.target.value,
-        })
+      case 'firstName': {
+        setForm({...form, firstName: e.target.value})
+        break;
+      }
+      case 'lastName': {
+        setForm({...form, lastName: e.target.value});
         break;
       }
       case 'gender': {
-        setForm({
-          ...form,
-          gender: e.target.value,
-        })
+        setForm({...form, gender: e.target.value});
         break;
       }
       case 'dob': {
-        setForm({
-          ...form,
-          dob: moment(e.target.value).format("YYYY-MM-DD"),
-        })
+        setForm({...form, dob: moment(e.target.value).format("YYYY-MM-DD")});
         break;
       }
       case 'dod': {
-        setForm({
-          ...form,
-          dod: moment(e.target.value).format("YYYY-MM-DD"),
-        })
+        setForm({...form, dod: moment(e.target.value).format("YYYY-MM-DD")});
         break;
       }
       case 'isDeath': {
-        setForm({
-          ...form,
-          isDeath: isDeath,
-          dod: !isDeath ? null : form.isDeath, 
-        });
+        setForm({...form, isDeath: isDeath, dod: !isDeath ? null : form.isDeath});
         break;
       }
       case 'note': {
-        setForm({
-          ...form,
-          note: e.target.value,
-        })
+        setForm({...form, note: e.target.value});
+        break;
+      }
+      case 'occupation': {
+        setForm({...form, occupation: e.target.value});
+        break;
+      }
+      case 'phone': {
+        setForm({...form, phone: e.target.value});
+        break;
+      }
+      case 'address': {
+        setForm({...form, address: e.target.value});
         break;
       }
       case 'nodeRelationship': {
-        setForm({...form, desNode: e.target.value});
-        const getNode = nodeDataArray.find(ele => ele.key === e.target.value);
-        let tempRelationship = [...RELATIONSHIP];
-        if (!_.isNil(getNode.m)) tempRelationship = tempRelationship.filter(ele => ele.value !== 'm');
-        if (!_.isNil(getNode.f)) tempRelationship = tempRelationship.filter(ele => ele.value !== 'f');
-        setRelationship(tempRelationship);
-        setGender(GENDER);
+        setForm({...form, nodeRelationship: e.target.value});
+      }
+      default: {
         break;
       }
-      case 'relationship': {
-        handleChangeRelationship(e);
+    }
+  }
+
+  const nodeRelationship = () => {
+    const diagram = tempDiagram.current;
+    const arrNode = diagram.model.nodeDataArray;
+    const arrSelect = Adapter.getMarriageByArray(arrNode, nodeSelect.key);
+    const res = arrSelect.map(ele => {
+      const getNodeSpouse = Adapter.getNode(arrNode, ele.key);
+      return { label: getNodeSpouse.n, value: getNodeSpouse.key }
+    });
+    return res;
+  }
+
+  const handleSelectRelationship = (label) => {
+    // const nodeSelect = nodeSelect;
+    switch(label) {
+      case CONSTAINT.CHILDREN: {
+        setShowModal({...showModal, step: 2, select: CHILDREN})
+        break;
+      }
+      case CONSTAINT.SPOUSE: {
+        setShowModal({...showModal, step: 2, select: SPOUSE})
+        break;
+      }
+      case CONSTAINT.MOTHER: {
+        setShowModal({...showModal, step: 2, select: MOTHER})
+        break;
+      }
+      case CONSTAINT.FATHER: {
+        setShowModal({...showModal, step: 2, select: FATHER})
         break;
       }
       default: {
@@ -680,7 +778,6 @@ export default function CustomTreePage() {
 
   const handleChangeRelationship = (e) => {
     setForm({...form, relationship: e.target.value});
-    console.log(e.target.value);
     switch(e.target.value) {
       case 'f':  {
         const mother = Adapter.getMother(alterLinkDataArray, form.desNode);
@@ -709,7 +806,6 @@ export default function CustomTreePage() {
       case 'marriage': {
         const findDesNode = nodeDataArray.find(ele => ele.key === form.desNode);
         const getMarriages = Adapter.getMarriageByArray(alterLinkDataArray, form.desNode);
-        console.log(getMarriages);
         const getAlternative = getMarriages.filter(ele => Adapter.isAlterNode(ele));
         if (getAlternative.length > 0) {
           setAlternativeNotConfirm({
@@ -723,17 +819,6 @@ export default function CustomTreePage() {
         setGender(GENDER);
       }
     }
-  }
-
-  const isLeaf = (key) => {
-    const selfKey = alterLinkDataArray.find(ele => ele.key === key);
-    if (_.get(selfKey, 'vir') || _.get(selfKey, 'ux')) return false;
-    const findRelationship = alterLinkDataArray.find(ele => _.get(ele, 'f') === key 
-      || _.get(ele, 'm') === key 
-      || _.get(ele ,'ux') === key 
-      || _.get(ele, 'vir') === key);
-    if (findRelationship) return false;
-    return true;
   }
 
   const indexMarriage = (key) => {
@@ -779,81 +864,6 @@ export default function CustomTreePage() {
     const node = alterLinkDataArray.find(ele => ele.key === key);
     const nodeFocus = diagram.findNodeForKey(key);
     diagram.select(nodeFocus);
-  }
-
-  const handleChangeFormUpdate = (e, label, isDeath = true) => {
-    console.log("Form: ", e.target.value);
-    console.log("FormUpd: ", formUpd);
-    switch (label) {
-      case 'name': {
-        setFormUpd({
-          ...formUpd,
-          name: e.target.value,
-        })
-        break;
-      }
-      case 'gender': {
-        setFormUpd({
-          ...formUpd,
-          gender: e.target.value,
-        })
-        break;
-      }
-      case 'dob': {
-        setFormUpd({
-          ...formUpd,
-          dob: moment(e.target.value).format("YYYY-MM-DD"),
-        })
-        break;
-      }
-      case 'dod': {
-        setFormUpd({
-          ...formUpd,
-          dod: moment(e.target.value).format("YYYY-MM-DD"),
-        })
-        break;
-      }
-      case 'isDeath': {
-        setFormUpd({
-          ...formUpd,
-          isDeath: isDeath,
-          dod: !isDeath ? null : formUpd.isDeath, 
-        });
-        break;
-      }
-      case 'note': {
-        setFormUpd({
-          ...formUpd,
-          note: e.target.value,
-        })
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  }
-
-  const handleSaveFormUpdate = () => {
-    console.log("Form UPD: ", nodeSelect);
-    const indexNode = Adapter.getIndex(alterLinkDataArray, nodeSelect.key);
-    const temp = [...alterLinkDataArray];
-    temp[indexNode] = {
-      ...temp[indexNode],
-      n: formUpd.name,
-      s: formUpd.gender,
-      dob: moment(formUpd.dob).format("YYYY-MM-DD"),
-      dod: moment(formUpd.dod).format("YYYY-MM-DD"),
-      note: formUpd.note,
-    }
-    setAlterLink(temp);
-    setupDiagram(diagram, temp, nodeSelect.key);
-    setShowFormUpdate(false);
-  }
-
-  const handleCancelEditForm = () => {
-    setShowFormUpdate(false);
-    setNodeSelect(null);
   }
 
   const handleHideAlertAlternative = () => {
@@ -967,30 +977,24 @@ export default function CustomTreePage() {
           </Grid>
         </Grid>
       </Grid>
-      { showFormUpdate && 
-        <EditNodeForm
-          gender={gender}
-          formUpd={formUpd}
-          handleCancelEditForm={handleCancelEditForm}
-          handleChangeFormUpdate={handleChangeFormUpdate}
-          handleSaveFormUpdate={handleSaveFormUpdate}
-        />
-      }
-      { showModal &&
+      { showModal.show &&
         <ModalAddTree
+          showModal={showModal}
           form={form}
           gender={gender}
           relationship={relationship}
           nodeRelationship={nodeRelationship}
           handleCancel={handleCancel}
           handleSave={handleSave}
+          handleUpdate={handleUpdate}
           handleChangeAddForm={handleChangeAddForm}
+          handleChangeRelationship={handleChangeRelationship}
+          handleSelectRelationship={handleSelectRelationship}
         />
       }
       { showAlert &&
         <ModalAlert
           handleHideAlert={handleHideAlert}
-          deleteNode={deleteNode}
           warning={warning}
         />
       }
