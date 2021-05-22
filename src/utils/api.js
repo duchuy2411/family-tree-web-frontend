@@ -1,9 +1,3 @@
-// class Utils {
-//   API = 'https://family-tree.azurewebsites.net/api/v1/';
-// }
-
-// export default new Utils();
-
 import axios from "axios";
 
 const version = 1;
@@ -70,10 +64,13 @@ const api = {
     return axios.delete(`${baseUrl}/authentication/logout`, body);
   },
   // trees
-
   getAllTrees: () => {
     // for test purpose
     return axios.get(`${baseUrl}/tree-management/tree`);
+  },
+  // custom-tree
+  fetchFamilyTreeById: (id) => {
+    return axios.get(`${baseUrl}/tree-management/tree/${id}`);
   },
 };
 

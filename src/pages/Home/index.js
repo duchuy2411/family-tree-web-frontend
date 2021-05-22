@@ -30,7 +30,6 @@ import CustomToggleButton from "./components/ToggleButton/CustomToggleButtons";
 import TreeItem from "./components/TreeItem/TreeItem";
 
 // data sample
-import data from "../../data";
 import familyLogoSample from "../../assets/img/face/marc.jpg";
 import UserAvatar from "../../assets/img/face/marc.jpg";
 
