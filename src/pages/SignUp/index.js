@@ -1,5 +1,6 @@
 import React from "react";
-import { Link as RRDLink, Redirect, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link as RRDLink, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
 // MUI components
@@ -10,8 +11,7 @@ import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
 
 import useSignupPageStyles from "./useSignupPageStyles";
 import api from "../../utils/api";
-import { useDispatch, useSelector } from "react-redux";
-import { authActions, selectUser } from "../../store/authSlice";
+import { authActions } from "../../store/authSlice";
 
 export default function SignUpPage() {
   const classes = useSignupPageStyles();

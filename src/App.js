@@ -1,12 +1,6 @@
 import React, { useEffect } from "react";
 // react-router-dom
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-  useHistory,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 // material-ui (MUI)
 import { CssBaseline } from "@material-ui/core";
 // components
@@ -16,21 +10,10 @@ import LogInPage from "./pages/LogIn";
 import SignUpPage from "./pages/SignUp";
 import HomePage from "./pages/Home";
 import Main from "./layouts/Main/Main";
-import { useDispatch, useSelector } from "react-redux";
-import { authActions, selectIsLoading, selectUser } from "./store/authSlice";
+import { useDispatch } from "react-redux";
+import { authActions } from "./store/authSlice";
 
 function App() {
-  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  // const isLoading = useSelector(selectIsLoading);
-  // const history = useHistory();
-
-  // if (isAuthenticated) {
-  //   history.goBack();
-  //   return;
-  // }
-
-  const user = useSelector(selectUser);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -53,18 +36,11 @@ function App() {
         {/* Public routes */}
         <Switch>
           <Route path="/login">
-            <LogInPage
-            // isLoading={isLoading}
-            />
+            <LogInPage />
           </Route>
           <Route path="/signup">
-            <SignUpPage
-            // isLoading={isLoading}
-            />
+            <SignUpPage />
           </Route>
-          {/* <Route path="/forget-password">
-            <ForgetPasswordPage />
-          </Route> */}
 
           <Main />
 

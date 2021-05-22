@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import { Switch } from "react-router";
 
 // MUI
@@ -10,8 +10,6 @@ import NavigationBar from "./components/NavigationBar/NavigationBar";
 import useMainLayoutStyles from "./useMainStyles";
 import pageRoutes from "../../pages/routes";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import { useDispatch } from "react-redux";
-import { authActions } from "../../store/authSlice";
 
 const privateRoutes = (
   <Switch>
@@ -28,19 +26,6 @@ const privateRoutes = (
 
 export default function Main() {
   const classes = useMainLayoutStyles();
-  // const dispatch = useDispatch();
-
-  // const getUserFromLocalStorage = useCallback(() => {
-  //   const user = JSON.parse(localStorage.getItem("user"));
-  //   console.log("getUserFromLocalStorage - user: ", user);
-
-  //   dispatch(authActions.setUser(user));
-  // }, [dispatch]);
-
-  // // get user on mount
-  // useEffect(() => {
-  //   getUserFromLocalStorage();
-  // }, [getUserFromLocalStorage]);
 
   return (
     // Level 0 (root container)

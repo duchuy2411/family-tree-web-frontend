@@ -1,5 +1,4 @@
 import _ from "lodash";
-import axios from "axios";
 import api from "../../utils/api";
 import Utils from "../../utils/adapter";
 import { createSlice } from "@reduxjs/toolkit";
@@ -23,7 +22,7 @@ export const slice = createSlice({
 export const { updateNodeDataArrayRedux, updateLinkDataArrayRedux } =
   slice.actions;
 
-export const fetchFamiyTreeById = (id) => async (dispatch) => {
+export const fetchFamilyTreeById = (id) => async (dispatch) => {
   // const rs = await axios.get(`${api.API}/tree-management/tree/${id}`);
   const rs = await api.fetchFamilyTreeById(id);
   dispatch(updateNodeDataArrayRedux(Utils.parse(_.get(rs, "data.people", []))));

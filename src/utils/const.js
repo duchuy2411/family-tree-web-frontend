@@ -1,46 +1,46 @@
-const CONSTAINT = {
+const CONSTANTS = {
   RELATIONSHIP: [
     {
-      label: 'Marriages',
-      value: 'marriage'
+      label: "Marriages",
+      value: "marriage",
     },
     {
-      label: 'Father',
-      value: 'f'
+      label: "Father",
+      value: "f",
     },
     {
-      label: 'Mother',
-      value: 'm'
+      label: "Mother",
+      value: "m",
     },
     {
-      label: 'Child',
-      value: 'child'
-    }
+      label: "Child",
+      value: "child",
+    },
   ],
   GENDER: [
     {
-      label: 'Male',
-      value: 'male'
+      label: "Male",
+      value: "male",
     },
     {
-      label: 'Female',
-      value: 'female'
-    }
+      label: "Female",
+      value: "female",
+    },
   ],
-  FATHER: 'father',
-  MOTHER: 'mother',
-  SPOUSE: 'spouse',
-  CHILDREN: 'children',
-  MALE: 'male',
-  FEMALE: 'female',
+  FATHER: "father",
+  MOTHER: "mother",
+  SPOUSE: "spouse",
+  CHILDREN: "children",
+  MALE: "male",
+  FEMALE: "female",
   TYPE: {
-    DEAD: 'D',
-    MALE: 'M',
-    FEMALE: 'F',
+    DEAD: "D",
+    MALE: "M",
+    FEMALE: "F",
   },
   MODE_FORM: {
-    ADD: 'add',
-    UPDATE: 'update',
+    ADD: "add",
+    UPDATE: "update",
   },
   DELETE: {
     NORMAL: 1, // case leaf
@@ -49,8 +49,8 @@ const CONSTAINT = {
   },
   MOTHER_OF: (name) => `Mother of ${name}`,
   FATHER_OF: (name) => `Father of ${name}`,
-  UNDEFINED: 'Undefined',
-  MARRIAGE: 'Marriage',
+  UNDEFINED: "Undefined",
+  MARRIAGE: "Marriage",
 };
 
-export default CONSTAINT;
+export default CONSTANTS;

@@ -48,6 +48,7 @@ export default function HomePage() {
   // eslint-disable-next-line no-unused-vars
   const [sortOrder, setSortOrder] = useState("all");
 
+  // eslint-disable-next-line no-unused-vars
   const handleSortOrder = (event, newOrder) => {
     if (newOrder !== null) {
       console.log("Change sort order");
@@ -61,10 +62,9 @@ export default function HomePage() {
   const getTrees = useCallback(async () => {
     try {
       const response = await api.getAllTrees();
+      // eslint-disable-next-line no-unused-vars
       const { data, message, errors } = response.data;
       const trees = data;
-
-      console.log("trees:", trees);
 
       if (trees) {
         setTrees(trees);

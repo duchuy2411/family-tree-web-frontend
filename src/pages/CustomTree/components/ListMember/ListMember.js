@@ -1,36 +1,25 @@
 import React from "react";
-import {
-  Paper,
-  makeStyles,
-  Grid,
-  ButtonBase,
-  Typography,
-} from "@material-ui/core";
+import { Paper, makeStyles, Grid, Typography } from "@material-ui/core";
 
 import classNames from "classnames";
-import { ArrowDropDown } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
   typoBold: {
     fontWeight: 900,
-    backgroundColor: '#905842',
-    marginTop: '2px',
-    borderRadius: '5px',
+    backgroundColor: "#905842",
+    marginTop: "2px",
+    borderRadius: "5px",
     cursor: "pointer",
-    padding: '4px 20px',
-    color: 'white',
+    padding: "4px 20px",
+    color: "white",
     "&:hover": {
-      backgroundColor: '#ac7a67',
-    }
+      backgroundColor: "#ac7a67",
+    },
   },
 }));
 export default function ListMember(props) {
-  const {
-    className,
-    listSearch,
-    handleClickItemSearch
-  } = props;
+  const { className, listSearch, handleClickItemSearch } = props;
 
   const classes = useStyles();
   const listMemberClasses = classNames({

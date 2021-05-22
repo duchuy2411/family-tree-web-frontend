@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
+import { Link as RRDLink, Redirect, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import classNames from "classnames";
 
 // MUI components
@@ -13,15 +15,11 @@ import {
   useTheme,
 } from "@material-ui/core";
 
-import colors from "../../assets/colorPalette";
-
 // logo
 import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
-import { Link as RRDLink, Redirect, useLocation } from "react-router-dom";
 
 import useLoginPageStyles from "./useLoginPageStyles";
-import { useDispatch, useSelector } from "react-redux";
-import { authActions, selectUser } from "./../../store/authSlice";
+import { authActions } from "./../../store/authSlice";
 import api from "../../utils/api";
 
 const LogInPage = () => {
