@@ -74,26 +74,30 @@ export default function TreeItem({
                 <Typography>Contributed by </Typography>
               </Hidden>
               <AvatarGroup max={4} className={classes.avatarGroup}>
-                {/* Owner - the first in contributors list*/}
-                <Tooltip key={0} title={`${contributors[0].name} - Owner`}>
-                  <Avatar
-                    alt={contributors[0].name}
-                    src={contributors[0].avatarUrl}
-                    className={classNames(
-                      classes.avatarBorder,
-                      classes.avatarOwner
-                    )}
-                  />
-                </Tooltip>
-                {/* Other contributors */}
-                {contributors.slice(1).map((contributor, index) => (
-                  <Tooltip key={index} title={contributor.name}>
-                    <Avatar
-                      alt={contributor.name}
-                      src={contributor.avatarUrl}
-                    />
-                  </Tooltip>
-                ))}
+                {contributors && (
+                  <>
+                    {/* Owner - the first in contributors list*/}
+                    <Tooltip key={0} title={`${contributors[0].name} - Owner`}>
+                      <Avatar
+                        alt={contributors[0].name}
+                        src={contributors[0].avatarUrl}
+                        className={classNames(
+                          classes.avatarBorder,
+                          classes.avatarOwner
+                        )}
+                      />
+                    </Tooltip>
+                    {/* Other contributors */}
+                    {contributors.slice(1).map((contributor, index) => (
+                      <Tooltip key={index} title={contributor.name}>
+                        <Avatar
+                          alt={contributor.name}
+                          src={contributor.avatarUrl}
+                        />
+                      </Tooltip>
+                    ))}
+                  </>
+                )}
               </AvatarGroup>
             </Grid>
 
@@ -108,7 +112,7 @@ export default function TreeItem({
             >
               <WatchLaterIcon className={classes.iconTime} />
               <Typography className={classes.typoUpdatedAt}>
-                {updatedAt}
+                {updatedAt || "No update"}
               </Typography>
             </Grid>
           </Grid>

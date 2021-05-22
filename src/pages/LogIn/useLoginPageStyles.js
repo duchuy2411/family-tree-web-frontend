@@ -1,29 +1,28 @@
 import { makeStyles } from "@material-ui/core";
+import colors from "../../assets/colorPalette";
 
 const useLoginPageStyles = makeStyles((theme) => ({
   root: {
-    padding: "0 20%",
-    backgroundColor: "#F2E1DA",
+    // backgroundColor: "#F2E1DA",
   },
-  wrapper: {
+  container: {
     padding: theme.spacing(5, 0),
     height: "100vh",
   },
   leftSide: {
     // backgroundColor: "red",
   },
-  paperLeftSide: {
+  wrapper: {
     backgroundColor: "#905842",
-    height: "600px",
-    width: "600px",
+    height: "100%",
+    width: "100%",
     display: "flex",
-    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 24,
+    borderRadius: 16,
   },
   logo: {
-    maxHeight: "300px",
+    maxHeight: "15rem",
   },
   appTitle: {
     color: "#fff",
@@ -31,6 +30,16 @@ const useLoginPageStyles = makeStyles((theme) => ({
   },
   rightSide: {
     // backgroundColor: "blue",
+    backgroundColor: colors.pink,
+    height: "100%",
+  },
+  formAsColumnBorder: {
+    borderBottomLeftRadius: theme.spacing(2),
+    borderBottomRightRadius: theme.spacing(2),
+  },
+  formAsRowBorder: {
+    borderTopRightRadius: theme.spacing(2),
+    borderBottomRightRadius: theme.spacing(2),
   },
   withSpace: {
     margin: theme.spacing(1, 0),

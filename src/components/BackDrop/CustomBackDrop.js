@@ -1,9 +1,23 @@
-import { Backdrop, CircularProgress } from "@material-ui/core";
+import React from "react";
+import { Backdrop, CircularProgress, makeStyles } from "@material-ui/core";
 
-export default function CustomBackDrop({ open }) {
+const useStyles = makeStyles((theme) => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+  },
+}));
+
+const SimpleBackdrop = ({ color }) => {
+  const classes = useStyles();
+
   return (
-    <Backdrop open={open}>
-      <CircularProgress />
-    </Backdrop>
+    <div>
+      <Backdrop className={classes.backdrop} open={true}>
+        <CircularProgress color={color} />
+      </Backdrop>
+    </div>
   );
-}
+};
+
+export default React.memo(SimpleBackdrop);
