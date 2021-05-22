@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 
@@ -19,6 +19,7 @@ import {
   Card,
   Hidden,
 } from "@material-ui/core";
+import { useSelector } from "react-redux";
 
 // icons
 import { NotificationsActiveOutlined } from "@material-ui/icons";
@@ -29,25 +30,54 @@ import CustomToggleButton from "./components/ToggleButton/CustomToggleButtons";
 import TreeItem from "./components/TreeItem/TreeItem";
 
 // data sample
-import data from "../../data";
 import familyLogoSample from "../../assets/img/face/marc.jpg";
 import UserAvatar from "../../assets/img/face/marc.jpg";
 
 import useHomePageStyles from "./useHomePageStyles";
+import { selectUser } from "../../store/authSlice";
+import api from "../../utils/api";
 
 export default function HomePage() {
-  const name = data.redux.name; // using redux instead
-  const trees = data.familyTreeList; // call API here with sortOrder parameter
+  const { firstName, midName, lastName } = useSelector(selectUser);
+  const name = `${firstName ? firstName : ""} ${midName ? midName : ""} ${
+    lastName ? lastName : ""
+  }`;
   const classes = useHomePageStyles();
+  // eslint-disable-next-line no-unused-vars
   const [notificationCount, setNotificationCount] = useState(0); // using redux instead
+  // eslint-disable-next-line no-unused-vars
   const [sortOrder, setSortOrder] = useState("all");
 
+  // eslint-disable-next-line no-unused-vars
   const handleSortOrder = (event, newOrder) => {
     if (newOrder !== null) {
       console.log("Change sort order");
       setSortOrder(newOrder);
     }
   };
+
+  // trees
+  const [trees, setTrees] = useState([]);
+
+  const getTrees = useCallback(async () => {
+    try {
+      const response = await api.getAllTrees();
+      // eslint-disable-next-line no-unused-vars
+      const { data, message, errors } = response.data;
+      const trees = data;
+
+      if (trees) {
+        setTrees(trees);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    getTrees();
+  }, [getTrees]);
+  // end trees
 
   //-- start User avatar
   const [userAvatarOpen, setUserAvatarOpen] = React.useState(false);
@@ -89,7 +119,7 @@ export default function HomePage() {
       {trees.map((tree, index) => {
         return (
           <Fade
-            key={index}
+            key={tree.id}
             in={true}
             style={{
               transitionDelay: true ? `${300 + index * 200}ms` : "0ms",
@@ -100,7 +130,7 @@ export default function HomePage() {
               {/* Fade need a ref: solved by wrap element in a div */}
               <TreeItem
                 logo={familyLogoSample}
-                name={tree.familyName}
+                name={tree.name}
                 updatedAt={tree.updatedAt}
                 author={tree.author}
                 contributors={tree.contributors}

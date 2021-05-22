@@ -10,6 +10,9 @@ const useNavBarStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
     backgroundColor: colors.brown,
     borderRadius: theme.spacing(3),
+
+    position: "sticky",
+    top: "2vh",
   },
   imgLogo: {
     width: 40,

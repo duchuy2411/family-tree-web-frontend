@@ -1,11 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 // react-router-dom
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 // material-ui (MUI)
 import { CssBaseline } from "@material-ui/core";
 // components
@@ -15,14 +10,28 @@ import LogInPage from "./pages/LogIn";
 import SignUpPage from "./pages/SignUp";
 import HomePage from "./pages/Home";
 import Main from "./layouts/Main/Main";
+import { useDispatch } from "react-redux";
+import { authActions } from "./store/authSlice";
 
 function App() {
-  const isAuthenticated = true;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const authData = JSON.parse(localStorage.getItem("auth"));
+    console.log("authData: ", authData);
+
+    if (authData) {
+      const { isAuthenticated, user } = authData;
+
+      dispatch(authActions.setIsAuthenticated(isAuthenticated));
+      dispatch(authActions.setUser(user));
+    }
+  }, [dispatch]);
+
   return (
     <Router>
       <React.Suspense fallback={<CustomBackDrop />}>
         <CssBaseline />
-        {isAuthenticated ? <Main /> : <Redirect to="/login" />}
 
         {/* Public routes */}
         <Switch>
@@ -32,9 +41,8 @@ function App() {
           <Route path="/signup">
             <SignUpPage />
           </Route>
-          {/* <Route path="/forget-password">
-            <ForgetPasswordPage />
-          </Route> */}
+
+          <Main />
 
           {/* Test */}
           <Route path="/test">
