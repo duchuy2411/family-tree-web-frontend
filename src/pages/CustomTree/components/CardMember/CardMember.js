@@ -6,7 +6,6 @@ import {
   CardContent,
   IconButton,
   Typography,
-  Tooltip,
 } from "@material-ui/core";
 
 // icons
@@ -15,9 +14,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import useCardMemberStyles from "./useCardMemberStyles";
 
 export default function CardMember(props) {
-  const {
-    model
-  } = props;
+  const { model } = props;
   const classes = useCardMemberStyles();
 
   return (

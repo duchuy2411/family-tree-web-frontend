@@ -1,18 +1,18 @@
-import _, { set } from 'lodash';
-import moment from 'moment';
-import CONSTAINT from './const';
+import _ from "lodash";
+import moment from "moment";
+import CONSTANTS from "./const";
 
 class Adapter {
   parse(data) {
-    const results = data.map((ele, index) => { 
+    const results = data.map((ele, index) => {
       const member = {
         id: ele.id,
         key: ele.id,
         n: ele.firstName + ele.lastName,
-        s: ele.gender === 0 ? 'M' : 'F',
-        dob: moment(ele.dateOfBirth).format('L'),
-        dod: ele.dateOfDead ? moment(ele.dateOfDead).format('L') : null,
-        type: ele.dateOfDead ? 'D' : (ele.gender === 0 ? 'M' : 'F'),
+        s: ele.gender === 0 ? "M" : "F",
+        dob: moment(ele.dateOfBirth).format("L"),
+        dod: ele.dateOfDead ? moment(ele.dateOfDead).format("L") : null,
+        type: ele.dateOfDead ? "D" : ele.gender === 0 ? "M" : "F",
         note: ele.note,
         firstName: ele.firstName,
         lastName: ele.lastName,
@@ -43,7 +43,7 @@ class Adapter {
   countMemoForKey (array) {
     let count = 0;
     for (let i = 0; i < array.length; i += 1) {
-      if (array[i].type === CONSTAINT.TYPE.UNDEFINED) 
+      if (array[i].type === CONSTANTS.TYPE.UNDEFINED) 
         count++;
     }
     return -(count + 1);
@@ -51,8 +51,8 @@ class Adapter {
 
   nodeMemo (vir = null, ux = null, father = null, mother = null) {
     const rs = {
-      type: CONSTAINT.TYPE.UNDEFINED,
-      n: CONSTAINT.UNDEFINED,
+      type: CONSTANTS.TYPE.UNDEFINED,
+      n: CONSTANTS.UNDEFINED,
     }
     if (vir) rs.vir = [vir];
     if (ux) rs.ux = [ux];
@@ -91,12 +91,12 @@ class Adapter {
   }
 
   getWithoutLinkLabel(data) {
-    const arr = _.filter(data, ele => _.get(ele, 'type') !== 'LinkLabel');
+    const arr = _.filter(data, (ele) => _.get(ele, "type") !== "LinkLabel");
     return arr;
   }
 
   getNode(arr, key) {
-    return arr.find(ele => ele.key === key);
+    return arr.find((ele) => ele.key === key);
   }
 
   /**
@@ -105,15 +105,15 @@ class Adapter {
    * @param {*} key key of self
    */
   getMarriageByKey(arr, key) {
-    const getUx = _.get(key, 'ux');
+    const getUx = _.get(key, "ux");
     const ux = _.isArray(getUx) && getUx ? getUx[0] : getUx;
     if (ux) return ux;
-    const getVir = _.get(key, 'vir');
+    const getVir = _.get(key, "vir");
     const vir = _.isArray(getVir) && getVir ? getVir[0] : getVir;
     if (vir) return vir;
     const marriageFrom = arr.find((ele) => {
-      const uxs = _.get(ele, 'ux');
-      const virs = _.get(ele, 'vir');
+      const uxs = _.get(ele, "ux");
+      const virs = _.get(ele, "vir");
       const ux = _.isArray(uxs) ? _.includes(uxs, key) : uxs === key;
       const vir = _.isArray(virs) ? _.includes(virs, key) : virs === key;
       return (ux || vir) && ele.key;
@@ -129,15 +129,17 @@ class Adapter {
    */
   getMarriageByArray(arr, key) {
     const node = this.getNode(arr, key);
-    const getUx = _.get(node, 'ux');
+    const getUx = _.get(node, "ux");
     const ux = _.isArray(getUx) && getUx ? getUx : [getUx];
-    if (ux.length > 0 && ux[0] !== undefined) return ux.map(ele => this.getNode(arr, ele));
-    const getVir = _.get(node, 'vir');
+    if (ux.length > 0 && ux[0] !== undefined)
+      return ux.map((ele) => this.getNode(arr, ele));
+    const getVir = _.get(node, "vir");
     const vir = _.isArray(getVir) && getVir ? getVir : [getVir];
-    if (vir.length > 0 && vir[0] !== undefined) return vir.map(ele => this.getNode(arr, ele));
+    if (vir.length > 0 && vir[0] !== undefined)
+      return vir.map((ele) => this.getNode(arr, ele));
     const marriageFrom = arr.filter((ele) => {
-      const uxs = _.get(ele, 'ux');
-      const virs = _.get(ele, 'vir');
+      const uxs = _.get(ele, "ux");
+      const virs = _.get(ele, "vir");
       const ux = _.isArray(uxs) ? _.includes(uxs, key) : uxs === key;
       const vir = _.isArray(virs) ? _.includes(virs, key) : virs === key;
       return ux || vir;
@@ -147,66 +149,71 @@ class Adapter {
   }
 
   getChilds(arr, node) {
-    const filterChilds = _.filter(arr, ele => _.get(ele, 'm') === node.key || _.get(ele, 'f') === node.key);
+    const filterChilds = _.filter(
+      arr,
+      (ele) => _.get(ele, "m") === node.key || _.get(ele, "f") === node.key
+    );
     return filterChilds;
   }
 
   getFather(arr, node) {
-    const father = _.find(arr, ele => ele.key === _.get(node,'f'));
+    const father = _.find(arr, (ele) => ele.key === _.get(node, "f"));
     return father;
   }
 
   getMother(arr, node) {
-    const mother = _.find(arr, ele => ele.key === _.get(node, 'm'));
+    const mother = _.find(arr, (ele) => ele.key === _.get(node, "m"));
     return mother;
   }
 
   isAlterNode(node) {
-    console.log("Is alternode: ", _.get(node, 'n') === 'Alternative');
-    return _.get(node, 'n') === 'Alternative';
+    console.log("Is alternode: ", _.get(node, "n") === "Alternative");
+    return _.get(node, "n") === "Alternative";
   }
 
   getIndex(arr, key) {
     return _.findIndex(arr, { key });
   }
 
-  removeNodeAndRelationshipOfSpouse (arr, node) { // If have 1 spouse
+  removeNodeAndRelationshipOfSpouse(arr, node) {
+    // If have 1 spouse
     const clone = [...arr];
     const getMarriage = this.getMarriageByArray(arr, node);
     if (getMarriage.length === 1) {
       const index = this.getIndex(arr, getMarriage[0].key);
-      const ux = _.get(arr[index], 'ux', []);
-      const vir = _.get(arr[index], 'vir', []);
+      const ux = _.get(arr[index], "ux", []);
+      const vir = _.get(arr[index], "vir", []);
       if (ux.length > 1 && ux.includes(node.key)) {
-        const arrMarriage = arr[index].ux.filter(ele => ele !== node.key);
+        const arrMarriage = arr[index].ux.filter((ele) => ele !== node.key);
         clone[index].ux = arrMarriage;
-      } else if(ux.length === 1 && ux.includes(node.key)) {
+      } else if (ux.length === 1 && ux.includes(node.key)) {
         delete clone[index].ux;
       }
 
       if (vir.length > 0 && vir.includes(node.key)) {
-        const arrMarriage = arr[index].vir.filter(ele => ele !== node.key);
+        const arrMarriage = arr[index].vir.filter((ele) => ele !== node.key);
         clone[index].vir = arrMarriage;
-      } else if(vir.length === 1 && vir.includes(node.key)) {
+      } else if (vir.length === 1 && vir.includes(node.key)) {
         delete clone[index].vir;
       }
     }
-    return clone.filter(ele => ele.key !== node.key);
+    return clone.filter((ele) => ele.key !== node.key);
   }
 
-  removeParentAndRelationship (arr, node) { // Case have 1 child, 1 mother || father
+  removeParentAndRelationship(arr, node) {
+    // Case have 1 child, 1 mother || father
     const clone = [...arr];
     const father = this.getNode(clone, node.f);
     const mother = this.getNode(clone, node.m);
     let res = [];
-    if (father.type === CONSTAINT.TYPE.UNDEFINED)
+    if (father.type === CONSTANTS.TYPE.UNDEFINED)
       res = this.removeNodeAndRelationshipOfSpouse(clone, node.father);
-    if (mother.type === CONSTAINT.TYPE.UNDEFINED)
+    if (mother.type === CONSTANTS.TYPE.UNDEFINED)
       res = this.removeNodeAndRelationshipOfSpouse(clone, node.mother);
-    return res.filter(ele => ele.key !== node.key);
+    return res.filter((ele) => ele.key !== node.key);
   }
 
-  formatData (model) {
+  formatData(model) {
     const obj = {
       s: model.gender === 'male' ? 'M' : 'F',
       n: `${_.get(model, 'lastName', '')} ${_.get(model, 'firstName', '')}` || "New",
@@ -219,21 +226,26 @@ class Adapter {
       lastName: _.get(model, 'lastName', ''),
       firstName: _.get(model, 'firstName', '')
     }
-    if (model.type === CONSTAINT.TYPE.UNDEFINED) {
-      _.set(obj, 'type', CONSTAINT.TYPE.UNDEFINED);
+    if (model.type === CONSTANTS.TYPE.UNDEFINED) {
+      _.set(obj, 'type', CONSTANTS.TYPE.UNDEFINED);
       return obj;
     }
     if (!model.dod) {
-      _.set(obj, 'type', CONSTAINT.TYPE.DEAD);
+      _.set(obj, 'type', CONSTANTS.TYPE.DEAD);
       return obj;
     }
 
-    _.set(obj, 'type', model.gender === 'male' ? 'M' : 'F');
+    _.set(obj, "type", model.gender === "male" ? "M" : "F");
     return obj;
   }
 
   createLinkForParentToChilds(diagram, arrayLink, arrayNode, parent, node) {
-    const linkParent = _.find(arrayLink, ele => ele.category === CONSTAINT.MARRIAGE && (ele.from === parent.key || ele.to === parent.key));
+    const linkParent = _.find(
+      arrayLink,
+      (ele) =>
+        ele.category === CONSTANTS.MARRIAGE &&
+        (ele.from === parent.key || ele.to === parent.key)
+    );
     const newLink = { from: linkParent.labelKeys[0], to: node.key };
     diagram.model.addLinkData(newLink);
   }
@@ -241,18 +253,23 @@ class Adapter {
   createLinkForMarriages(diagram, arrayLink, arrNode, self, spouse) {
     const linkLabel = { s: "LinkLabel", type: "LinkLabel" };
     diagram.model.addNodeData(linkLabel);
-    const linkMarriage = { from: self, to: spouse, labelKeys: [linkLabel.key], category: "Marriage"};
+    const linkMarriage = {
+      from: self,
+      to: spouse,
+      labelKeys: [linkLabel.key],
+      category: "Marriage",
+    };
     diagram.model.addLinkData(linkMarriage);
   }
 
   editNode(diagram, model, key) {
     const part = diagram.findPartForKey(key);
     const arrProperty = Object.keys(model);
-    arrProperty.forEach(ele => {
+    arrProperty.forEach((ele) => {
       console.log("model: ", ele, model[`${ele}`]);
-      
+
       diagram.model.setDataProperty(part.data, ele, model[`${ele}`]);
-    })
+    });
     return diagram.findPartForKey(key).data;
   }
 

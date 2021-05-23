@@ -1,5 +1,6 @@
 import React from "react";
-import { Link as RRDLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link as RRDLink, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
 // MUI components
@@ -9,18 +10,54 @@ import { Button, Grid, Input, Paper, Typography } from "@material-ui/core";
 import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
 
 import useSignupPageStyles from "./useSignupPageStyles";
+import api from "../../utils/api";
+import { authActions } from "../../store/authSlice";
 
 export default function SignUpPage() {
   const classes = useSignupPageStyles();
+  const usernameRef = React.useRef();
   const emailRef = React.useRef();
   const passwordRef = React.useRef();
   const confirmPasswordRef = React.useRef();
-  const handleLogin = () => {
-    console.log(
-      `Login button clicked\n
-      Email: ${emailRef.current.value}\n
-      Password: ${passwordRef.current.value}`
-    );
+  const dispatch = useDispatch();
+
+  //
+  const history = useHistory();
+
+  const handleSignUp = async () => {
+    dispatch(authActions.setIsLoading(true)); // enable loading
+
+    // validate
+
+    const userToRegister = {
+      username: usernameRef.current.value,
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+      getRefreshToken: true,
+    };
+
+    try {
+      console.log("register user = ", userToRegister);
+      const response = await api.signup(userToRegister);
+      console.log("response register: ", response);
+      const { user, accessToken, refreshToken } = response.data.data;
+      const { message, errors } = response.data;
+
+      console.log("user:", user);
+      console.log("accessToken:", accessToken);
+      console.log("refreshToken:", refreshToken);
+      console.log("message:", message);
+      console.log("error:", errors);
+
+      if (user) {
+        history.push("/");
+      } else {
+        // do something
+      }
+      dispatch(authActions.setIsLoading(false)); // disable loading
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -64,6 +101,15 @@ export default function SignUpPage() {
           alignItems="center"
           justify="center"
         >
+          {/* Username */}
+          <Input
+            inputRef={usernameRef}
+            placeholder="Username"
+            required
+            fullWidth
+            disableUnderline
+            className={classNames(classes.withSpace, classes.inputFields)}
+          />
           {/* Email */}
           <Input
             inputRef={emailRef}
@@ -127,10 +173,10 @@ export default function SignUpPage() {
             </div>
             <Button
               variant="contained"
-              onClick={handleLogin}
+              onClick={handleSignUp}
               className={classNames(classes.withSpace, classes.btnLogin)}
             >
-              Login
+              Sign Up
             </Button>
           </Grid>
         </Grid>

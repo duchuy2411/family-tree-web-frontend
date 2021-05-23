@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
 // MUI
@@ -11,11 +11,14 @@ import { ReactComponent as LogoutIcon } from "../../../../assets/svg/log-out.svg
 
 import useNavigationBarStyles from "./useNavigationBarStyles";
 import pageRoutes from "../../../../pages/routes";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../../../store/authSlice";
 
 const useStyles = useNavigationBarStyles;
 
 export default function NavigationBar({ className }) {
   const classes = useStyles();
+  const history = useHistory();
 
   const navBarClasses = classNames({
     [classes.navBar]: true,
@@ -41,6 +44,13 @@ export default function NavigationBar({ className }) {
     </>
   );
 
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    history.push("/");
+    dispatch(authActions.logout());
+  };
+
   return (
     <Paper className={navBarClasses} elevation={9}>
       <NavLink to="/" exact={true}>
@@ -52,8 +62,8 @@ export default function NavigationBar({ className }) {
 
       <div style={{ flexGrow: 1 }}></div>
       <IconButton
-        component={NavLink}
-        to="/logout"
+        // component={NavLink}
+        onClick={handleLogout}
         className={classes.iconBtn}
         aria-label="log out"
       >

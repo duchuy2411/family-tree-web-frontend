@@ -5,33 +5,33 @@ import _ from 'lodash';
 import { Avatar, TextField, FormControl, InputLabel, FilledInput, InputAdornment, MenuItem, Button, Grid, FormControlLabel, Checkbox, TextareaAutosize } from '@material-ui/core';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import PhotoUpload from './PhotoUpload';
-import CONSTAINT from '../../../../utils/const';
+import CONSTANTS from '../../../../utils/const';
 import './index.css';
 
 var FormData = require("form-data");
 var fs = require("fs")
 
-const { SPOUSE, MOTHER, FATHER, CHILDREN } = CONSTAINT;
+const { SPOUSE, MOTHER, FATHER, CHILDREN } = CONSTANTS;
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#905842',
+      main: "#905842",
     },
     secondary: {
-      main: '#F2E1DA',
+      main: "#F2E1DA",
     },
   },
 });
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexWrap: 'wrap',
+    display: "flex",
+    flexWrap: "wrap",
   },
   padding: {
     padding: theme.spacing(1),
-    textAlign: 'right'
+    textAlign: "right",
   },
   selectField: {
     width: '100%',
@@ -41,14 +41,14 @@ const useStyles = makeStyles((theme) => ({
   avatarImg: {
     width: "13rem",
     height: "13rem",
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#FFFFFF",
   },
   textAlignCenter: {
     textAlign: "center",
   },
   textArea: {
     padding: theme.spacing(1),
-    width: '100%',
+    width: "100%",
   },
   customButton: {
     textAlign: "center",
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ModalUpdate (props) {
+function ModalUpdate(props) {
   const {
     form,
     handleChangeAddForm,
@@ -126,36 +126,49 @@ function ModalUpdate (props) {
     <MuiThemeProvider theme={theme}>
       <div className="modal">
         <div className="grayout" onClick={handleCancel}></div>
-        { showModal.step === 1 &&
-          (
-            <div className="modal-form step1">
-              <Grid container justify="center" alignItems="center">
-                <Grid item xs={12}>
-                  <Button disabled={!showModal.rel.includes(CHILDREN)} onClick={() => handleSelectRelationship(CONSTAINT.CHILDREN)} className={classes.customButton}>
-                    Add children
-                  </Button>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button disabled={!showModal.rel.includes(SPOUSE)} onClick={() => handleSelectRelationship(CONSTAINT.SPOUSE)} className={classes.customButton}>
-                    Add spouse
-                  </Button>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button disabled={!showModal.rel.includes(MOTHER)} onClick={() => handleSelectRelationship(CONSTAINT.MOTHER)} className={classes.customButton}>
-                    Add mother
-                  </Button>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button disabled={!showModal.rel.includes(FATHER)} onClick={() => handleSelectRelationship(CONSTAINT.FATHER)} className={classes.customButton}>
-                    Add father
-                  </Button>
-                </Grid>
+        {showModal.step === 1 && (
+          <div className="modal-form step1">
+            <Grid container justify="center" alignItems="center">
+              <Grid item xs={12}>
+                <Button
+                  disabled={!showModal.rel.includes(CHILDREN)}
+                  onClick={() => handleSelectRelationship(CONSTANTS.CHILDREN)}
+                  className={classes.customButton}
+                >
+                  Add children
+                </Button>
               </Grid>
-            </div>
-          )
-        }
-        { showModal.step === 2 &&
-          (
+              <Grid item xs={12}>
+                <Button
+                  disabled={!showModal.rel.includes(SPOUSE)}
+                  onClick={() => handleSelectRelationship(CONSTANTS.SPOUSE)}
+                  className={classes.customButton}
+                >
+                  Add spouse
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  disabled={!showModal.rel.includes(MOTHER)}
+                  onClick={() => handleSelectRelationship(CONSTANTS.MOTHER)}
+                  className={classes.customButton}
+                >
+                  Add mother
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  disabled={!showModal.rel.includes(FATHER)}
+                  onClick={() => handleSelectRelationship(CONSTANTS.FATHER)}
+                  className={classes.customButton}
+                >
+                  Add father
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+        )}
+        {showModal.step === 2 && (
           <div className="modal-form step2">
             <form noValidate autoComplete="off">
               <Grid container justify="center">
@@ -220,14 +233,21 @@ function ModalUpdate (props) {
                   <Grid item xs={6}>
                       <FormControlLabel
                         variant="filled"
-                        style={{ width: "100%", marginLeft: "0.2rem", height: "3.5rem", textAlign: "center"}}
+                        style={{
+                          width: "100%",
+                          marginLeft: "0.2rem",
+                          height: "3.5rem",
+                          textAlign: "center",
+                        }}
                         control={
                           <Checkbox
                             label="Is dead"
                             value={form.isDeath}
-                            style={{ color: 'black' }}
-                            onChange={(e) => handleChangeAddForm(e, 'isDeath', !form.isDeath)}
-                            inputProps={{ 'aria-label': 'Checkbox A' }}
+                            style={{ color: "black" }}
+                            onChange={(e) =>
+                              handleChangeAddForm(e, "isDeath", !form.isDeath)
+                            }
+                            inputProps={{ "aria-label": "Checkbox A" }}
                           />
                         }
                         label="Is dead:"
@@ -292,7 +312,7 @@ function ModalUpdate (props) {
                 </Grid>
               </Grid>
               <Grid container spacing={1}>
-                { showModal.select !== SPOUSE && showModal.mode === CONSTAINT.MODE_FORM.ADD &&
+                { showModal.select !== SPOUSE && showModal.mode === CONSTANTS.MODE_FORM.ADD &&
                   (
                     <Grid item xs={6}>
                       <TextField
@@ -335,21 +355,41 @@ function ModalUpdate (props) {
                     </TextField>
                   </FormControl>
                 </Grid> */}
-              </Grid>            
+              </Grid>
               <div className="btn-alert">
-                <Button variant="contained" color="primary" onClick={handleCancel} >Cancel</Button>
-                { showModal.mode === CONSTAINT.MODE_FORM.ADD
-                  ? (<Button variant="contained" color="secondary" onClick={handleSave} style={{ marginLeft: '10px' }} >Save</Button>)
-                  : (<Button variant="contained" color="secondary" onClick={handleUpdate} style={{ marginLeft: '10px' }} >Save</Button>)
-                }
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
+                {showModal.mode === CONSTANTS.MODE_FORM.ADD ? (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleSave}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    Save
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleUpdate}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    Save
+                  </Button>
+                )}
               </div>
             </form>
           </div>
-          )
-        } 
+        )}
       </div>
     </MuiThemeProvider>
-  )
+  );
 }
 
 export default ModalUpdate;

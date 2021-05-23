@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch } from "react-router";
+import { Switch } from "react-router";
 
 // MUI
 import { Grid, Hidden } from "@material-ui/core";
@@ -9,15 +9,16 @@ import NavigationBar from "./components/NavigationBar/NavigationBar";
 
 import useMainLayoutStyles from "./useMainStyles";
 import pageRoutes from "../../pages/routes";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 const privateRoutes = (
   <Switch>
     {pageRoutes.map((route, key) => {
       console.log(`${route.path} `);
       return (
-        <Route path={route.path} exact={route.exact} key={key}>
+        <PrivateRoute path={route.path} exact={route.exact} key={key}>
           <route.component />
-        </Route>
+        </PrivateRoute>
       );
     })}
   </Switch>
@@ -36,7 +37,7 @@ export default function Main() {
           <div className={classes.red}>Horizontal navigation bar</div>
         </Hidden>
         <Hidden smDown>
-          <Grid item xs={9} container direction="column" justify="center">
+          <Grid item xs={9}>
             <NavigationBar />
           </Grid>
         </Hidden>
