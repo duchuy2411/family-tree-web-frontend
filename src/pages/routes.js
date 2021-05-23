@@ -42,7 +42,7 @@ const pageRoutes = [
     onNavBar: true,
   },
   {
-    path: "/custom-tree",
+    path: "/custom-tree/:id",
     exact: false,
     component: lazy(() => import("./CustomTree")),
     description: "go to custom tree",

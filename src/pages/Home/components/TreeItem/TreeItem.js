@@ -20,6 +20,7 @@ import { MoreVert, WatchLater as WatchLaterIcon } from "@material-ui/icons";
 import useTreeItemStyles from "./useTreeItemStyles";
 
 export default function TreeItem({
+  id,
   logo,
   name,
   updatedAt,
@@ -131,7 +132,7 @@ export default function TreeItem({
           className={classes.gridActions}
         >
           <Hidden mdDown>
-            <NavLink to="/custom-tree" className={classes.actionBtn}>
+            <NavLink to={`/custom-tree/${id}`} className={classes.actionBtn}>
               Edit tree
             </NavLink>
             <NavLink to="/trees/123/members" className={classes.actionBtn}>
