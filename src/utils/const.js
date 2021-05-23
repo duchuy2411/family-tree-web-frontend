@@ -37,6 +37,7 @@ const CONSTAINT = {
     DEAD: 'D',
     MALE: 'M',
     FEMALE: 'F',
+    UNDEFINED: 'U',
   },
   MODE_FORM: {
     ADD: 'add',

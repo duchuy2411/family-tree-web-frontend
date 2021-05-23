@@ -33,33 +33,18 @@ export default function CardMember(props) {
           </IconButton>
         </div>
         <div className={classes.infoRow}>
-          {/* <Typography variant="body2">{`(${birth} - ${
-            dead ? dead : "Alive"
-          })`}</Typography> */}
-          <Typography variant="body2">{model.dob}</Typography>  
-          <IconButton size="small">
-            <EditIcon />
-          </IconButton>
+          <Typography>{`Gender: ${model.gender}`}</Typography>
         </div>
         <div className={classes.infoRow}>
-          <Typography>{`Gender: ${model.gender}`}</Typography>
-          <IconButton size="small">
-            <EditIcon />
-          </IconButton>
+          <Typography>DOB: {model.dob}</Typography>  
         </div>
-        {/* <Tooltip
-          title="Relationship with the owner of this tree"
-          arrow={true}
-          interactive={true}
-          leaveDelay={200}
-        >
-          <div className={classes.infoRow}>
-            <Typography>{`Relationship: ${relationship}`}</Typography>
-            <IconButton size="small">
-              <EditIcon />
-            </IconButton>
-          </div>
-        </Tooltip> */}
+        {
+          model.dod && (
+            <div className={classes.infoRow}>
+              <Typography>DOD: {model.dod}</Typography>  
+            </div>
+          )
+        }
       </CardContent>
     </Card>
   );

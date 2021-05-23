@@ -6,6 +6,7 @@ class Adapter {
   parse(data) {
     const results = data.map((ele, index) => { 
       const member = {
+        id: ele.id,
         key: ele.id,
         n: ele.firstName + ele.lastName,
         s: ele.gender === 0 ? 'M' : 'F',
@@ -13,26 +14,80 @@ class Adapter {
         dod: ele.dateOfDead ? moment(ele.dateOfDead).format('L') : null,
         type: ele.dateOfDead ? 'D' : (ele.gender === 0 ? 'M' : 'F'),
         note: ele.note,
+        firstName: ele.firstName,
+        lastName: ele.lastName,
       };
       const parent1Id = _.get(ele, 'parent1Id');
-      if (parent1Id) _.set(member, 'f', parent1Id);
+      _.set(member, 'f', parent1Id);
       const parent2Id = _.get(ele, 'parent2Id');
-      if (parent2Id) _.set(member, 'm', parent2Id);
+      _.set(member, 'm', parent2Id);
       ele.spouses.forEach(element => {
-        if (ele.gender === 0) {
-          const arr = _.get(member, 'ux') || [];
-          _.set(member, 'ux', arr);
-          member.ux.push(element.id);
-        } else {
-          const arr = _.get(member, 'vir') || [];
-          _.set(member, 'vir', arr);
-          member.vir.push(element.id);
+        if (element) {
+          if (ele.gender === 0) {
+            const arr = _.get(member, 'ux', []);
+            _.set(member, 'ux', arr);
+            if (_.get(element, 'id')) member.ux.push(element.id);
+          } else {
+            const arr = _.get(member, 'vir', []);
+            _.set(member, 'vir', arr);
+            if (_.get(element, 'id')) member.vir.push(element.id);
+          }
         }
       });
-    return member;
-    }
+      return member;
+      }
     );
-    return results;
+    return this.processMemo(results);
+  }
+
+  countMemoForKey (array) {
+    let count = 0;
+    for (let i = 0; i < array.length; i += 1) {
+      if (array[i].type === CONSTAINT.TYPE.UNDEFINED) 
+        count++;
+    }
+    return -(count + 1);
+  }
+
+  nodeMemo (vir = null, ux = null, father = null, mother = null) {
+    const rs = {
+      type: CONSTAINT.TYPE.UNDEFINED,
+      n: CONSTAINT.UNDEFINED,
+    }
+    if (vir) rs.vir = [vir];
+    if (ux) rs.ux = [ux];
+    if (father) rs.f = father;
+    if (mother) rs.m = mother;
+    return rs;
+  }
+
+  processMemo (array) {
+    const clone = [...array];
+    for (let i = 0; i < array.length; i += 1) {
+      if (!clone[i].f && clone[i].m) {
+        console.log("Clone: ", clone[i].id);
+        const memo = this.nodeMemo(null, clone[i].m);
+        const key = this.countMemoForKey(clone);
+        memo.key = key;
+        console.log("Node memo: ", memo);
+        clone[i].f = key;
+        clone.push(memo);
+        const ind = _.findIndex(clone, ele => ele.key === clone[i].m);
+        clone[ind].vir = [key];
+      } else if (clone[i].f && !clone[i].m) {
+        console.log("Clone: ", clone[i].id);
+        const memo = this.nodeMemo(clone[i].f);
+        const key = this.countMemoForKey(clone);
+        memo.key = key;
+        clone[i].m = key;
+        clone.push(memo);
+        const ind = _.findIndex(clone, ele => ele.key === clone[i].f);
+        clone[ind].ux = [key];
+      }
+    }
+    console.log("Clone");
+    
+    return clone;
   }
 
   getWithoutLinkLabel(data) {
@@ -144,9 +199,9 @@ class Adapter {
     const father = this.getNode(clone, node.f);
     const mother = this.getNode(clone, node.m);
     let res = [];
-    if (father.n === CONSTAINT.UNDEFINED)
+    if (father.type === CONSTAINT.TYPE.UNDEFINED)
       res = this.removeNodeAndRelationshipOfSpouse(clone, node.father);
-    if (mother.n === CONSTAINT.UNDEFINED)
+    if (mother.type === CONSTAINT.TYPE.UNDEFINED)
       res = this.removeNodeAndRelationshipOfSpouse(clone, node.mother);
     return res.filter(ele => ele.key !== node.key);
   }
@@ -164,12 +219,12 @@ class Adapter {
       lastName: _.get(model, 'lastName', ''),
       firstName: _.get(model, 'firstName', '')
     }
-    if (model.n === CONSTAINT.UNDEFINED) {
-      _.set(obj, 'type', 'UND');
+    if (model.type === CONSTAINT.TYPE.UNDEFINED) {
+      _.set(obj, 'type', CONSTAINT.TYPE.UNDEFINED);
       return obj;
     }
-    if (model.n === CONSTAINT.TYPE.DEAD) {
-      _.set(obj, 'type', 'D');
+    if (!model.dod) {
+      _.set(obj, 'type', CONSTAINT.TYPE.DEAD);
       return obj;
     }
 
@@ -199,6 +254,36 @@ class Adapter {
       diagram.model.setDataProperty(part.data, ele, model[`${ele}`]);
     })
     return diagram.findPartForKey(key).data;
+  }
+
+  toFormAPI(model) {
+    const res = {
+      gender: model.s === 'F' ? 1 : 0,
+      firstName: model.firstName,
+      lastName: model.lastName,
+      dateOfBirth: moment(model.dob).format(),
+      dateOfDead: moment(model.dod).format(),
+      userId: null,
+      note: model.note,
+    };
+    return res;
+  }
+
+  toFormChildrenAPI(model, fatherId, motherId) {
+    const res = {
+      fatherId: fatherId,
+      motherId: motherId,
+      childInfo: {
+        gender: model.s === 'F' ? 1 : 0,
+        firstName: model.firstName,
+        lastName: model.lastName,
+        dateOfBirth: moment(model.dob).format(),
+        dateOfDead: moment(model.dod).format(),
+        userId: null,
+        note: model.note,
+      }
+    }
+    return res;
   }
 }
 

@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 import _ from 'lodash';
 import { Avatar, TextField, FormControl, InputLabel, FilledInput, InputAdornment, MenuItem, Button, Grid, FormControlLabel, Checkbox, TextareaAutosize } from '@material-ui/core';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import PhotoUpload from './PhotoUpload';
 import CONSTAINT from '../../../../utils/const';
+import './index.css';
+
+var FormData = require("form-data");
+var fs = require("fs")
 
 const { SPOUSE, MOTHER, FATHER, CHILDREN } = CONSTAINT;
 
@@ -30,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
   },
   selectField: {
     width: '100%',
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
+    backgroundColor: '#FFFFFF',
   },
   avatarImg: {
     width: "13rem",
@@ -44,26 +50,24 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     width: '100%',
   },
-  customField: {
-    backgroundColor: '#F2E1DA',
-    boxShadow: '0 0 10px 3px gray',
-    borderRadius: '5px',
-    transition: 'transform 1s',
-  },
   customButton: {
     textAlign: "center",
     margin: theme.spacing(2),
     padding: theme.spacing(2),
     width: '95%',
-    backgroundColor: '#F2E1DA',
     color: 'black',
     boxShadow: '0 0 10px 3px gray',
     transition: 'transform 1s',
+    backgroundColor: "#F2E1DA",
     "&:hover": {
       transform: 'scale(1.2)',
       backgroundColor: '#F2E1DA',
     }
-  }
+  },
+  textField50: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+  },
 }));
 
 function ModalUpdate (props) {
@@ -73,14 +77,51 @@ function ModalUpdate (props) {
     handleSave,
     handleUpdate,
     handleCancel,
+    handleChangeImageUrl,
     nodeRelationship,
-    relationship,
     gender,
-    stepForm,
+    nodeSelect,
     handleSelectRelationship,
     showModal,
   } = props;
+
+  const [file, setFile] = useState('');
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+
   const classes = useStyles();
+
+  const handleChangeImage = (e) => {
+    e.preventDefault();
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      setFile(file);
+      const formData = new FormData();
+      setImagePreviewUrl(reader.result);
+      console.log("reader.result", reader.result);
+      formData.append('file', reader.result);
+      console.log(formData);
+      
+      handleChangeImageUrl(formData);
+    }
+    
+    reader.readAsBinaryString(file);
+  }
+
+  const getLabel = () => {
+    switch (showModal.select) { 
+      case CHILDREN: {
+        return `Spouse of ${nodeSelect.n}`;
+      }
+      case MOTHER: {
+        return `Father`;
+      }
+      case FATHER: {
+        return `Mother`;
+      }
+    } 
+  }
   return (
     <MuiThemeProvider theme={theme}>
       <div className="modal">
@@ -117,77 +158,67 @@ function ModalUpdate (props) {
           (
           <div className="modal-form step2">
             <form noValidate autoComplete="off">
-              <Grid container justify="centers" alignItems="center">
+              <Grid container justify="center">
                 <Grid item xs={5} className={classes.textAlignCenter}>
-                  <FormControl>
-                    <Avatar alt="Remy Sharp" src="../../../../assets/img/face/marc.jpg" className={classes.avatarImg}/>
-                  </FormControl>
+                  <PhotoUpload
+                    file={file}
+                    imagePreviewUrl={imagePreviewUrl}
+                    handleChangeImage={handleChangeImage}
+                  />
                 </Grid>
-                <Grid item xs={7} container>
+                <Grid item xs={7} spacing={1} container>
                   <Grid item xs={6}>
-                    <FormControl className={classes.selectField} variant="filled">
-                      <InputLabel htmlFor="filled-adornment-amount" className={classes.padding}>Firtst name</InputLabel>
-                      <FilledInput
-                        className={classes.customField}
-                        id="filled-adornment-amount"
-                        value={form.firstName}
-                        onChange={(e) => handleChangeAddForm(e, 'firstName')}
-                        startAdornment={<InputAdornment position="start"></InputAdornment>}
-                      />
-                    </FormControl>
+                    <TextField
+                      label="First Name"
+                      type="text"
+                      variant="outlined"
+                      value={form.firstName}
+                      onChange={(e) => handleChangeAddForm(e, 'firstName')}
+                      className={classes.textField50}
+                    />
                   </Grid>
                   <Grid item xs={6}>
-                    <FormControl className={classes.selectField} variant="filled">
-                      <InputLabel htmlFor="filled-adornment-amount" className={classes.padding}>Last name</InputLabel>
-                      <FilledInput
-                        className={classes.customField}
-                        id="filled-adornment-amount"
-                        value={form.lastName}
-                        onChange={(e) => handleChangeAddForm(e, 'lastName')}
-                        startAdornment={<InputAdornment position="start"></InputAdornment>}
-                      />
-                    </FormControl>
+                    <TextField
+                      label="Last Name"
+                      type="text"
+                      variant="outlined"
+                      value={form.lastName}
+                      onChange={(e) => handleChangeAddForm(e, 'lastName')}
+                      className={classes.textField50}
+                    />
                   </Grid>
                   <Grid item xs={6}>
-                    <FormControl className={classes.selectField} variant="filled">
-                      <TextField
-                        id="filled-select-gender"
-                        select
-                        className={classes.customField}
-                        label="Gender"
-                        value={form.gender}
-                        onChange={(e) => handleChangeAddForm(e, 'gender')}
-                        variant="filled"
-                      >
-                        {gender.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))} 
-                      </TextField>
-                    </FormControl>
+                    <TextField
+                      label="Gender"
+                      type="text"
+                      select
+                      variant="outlined"
+                      value={form.gender}
+                      InputLabelProps={{ shrink: true }}
+                      onChange={(e) => handleChangeAddForm(e, 'gender')}
+                      className={classes.textField50}
+                    >
+                      {gender.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))} 
+                    </TextField>
                   </Grid>
                   <Grid item xs={6}>
-                    <FormControl className={classes.selectField} variant="filled">
-                      <TextField
-                        className={classes.customField}
-                        label="Birthday"
-                        type="date"
-                        defaultValue="2021-05-24"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        variant="filled"
-                        value={moment(form.dob).format("YYYY-MM-DD")}
-                        onChange={(e) => handleChangeAddForm(e, 'dob')}
-                      >
-                      </TextField>
-                    </FormControl>
+                    <TextField
+                      label="Day of birth"
+                      type="date"
+                      variant="outlined"
+                      InputLabelProps={{ shrink: true }}
+                      defaultValue="2021-01-01"
+                      value={moment(form.dob).format("YYYY-MM-DD")}
+                      onChange={(e) => handleChangeAddForm(e, 'dob')}
+                      className={classes.textField50}
+                    />
                   </Grid>
                   <Grid item xs={6}>
-                    <FormControl className={classes.selectField} variant="filled">
                       <FormControlLabel
-                        className={classes.customField}
                         variant="filled"
                         style={{ width: "100%", marginLeft: "0.2rem", height: "3.5rem", textAlign: "center"}}
                         control={
@@ -199,104 +230,91 @@ function ModalUpdate (props) {
                             inputProps={{ 'aria-label': 'Checkbox A' }}
                           />
                         }
-                        label="Is death:"
+                        label="Is dead:"
                       />
-                    </FormControl>
                   </Grid>
                   <Grid item xs={6}>
-                    <FormControl className={classes.selectField} variant="filled">
-                      <TextField
-                        id="filled-select-calendar"
-                        className={classes.customField}
-                        label="Death"
-                        type="date"
-                        defaultValue="2021-05-24"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        variant="filled"
-                        onChange={(e) => handleChangeAddForm(e, 'dod')}
-                        value={moment(form.dod).format("YYYY-MM-DD")}
-                        disabled={!form.isDeath}
-                      >
-                      </TextField>
-                    </FormControl>
+                    <TextField
+                      type="date"
+                      label="Day of dead"
+                      InputLabelProps={{ shrink: true }}
+                      variant="outlined"
+                      value={moment(form.dod).format("YYYY-MM-DD")}
+                      onChange={(e) => handleChangeAddForm(e, 'dod')}
+                      disabled={!form.isDeath}
+                      className={classes.textField50}
+                    />
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
-                  <FormControl className={classes.textArea}>
-                    <TextareaAutosize
-                      label="Note"
-                      aria-label="minimum height"
-                      className={classes.customField}
-                      rowsMin={4}
-                      placeholder="Notes"
-                      value={form.note}
-                      onChange={(e) => handleChangeAddForm(e, 'note')}
-                    />
-                  </FormControl>
+                  <TextareaAutosize
+                    label="Note"
+                    aria-label="minimum height"
+                    rowsMin={4}
+                    placeholder="Notes"
+                    value={form.note}
+                    onChange={(e) => handleChangeAddForm(e, 'note')}
+                    className={classes.textField50}
+                    style={{border: '1px solid #F2E1DA'}}
+                  />
                 </Grid>
               </Grid>
-              <Grid container>
+              <Grid spacing={1} container>
                 <Grid item xs={5}>
-                  <FormControl className={classes.selectField} variant="filled">
-                    <InputLabel htmlFor="filled-adornment-amount" className={classes.padding}>Phone</InputLabel>
-                    <FilledInput
-                      className={classes.customField}
-                      id="filled-adornment-amount"
-                      value={form.phone}
-                      onChange={(e) => handleChangeAddForm(e, 'phone')}
-                      startAdornment={<InputAdornment position="start"></InputAdornment>}
-                    />
-                  </FormControl>
+                  <TextField
+                    label="Phone"
+                    type="text"
+                    variant="outlined"
+                    value={form.phone}
+                    onChange={(e) => handleChangeAddForm(e, 'phone')}
+                    className={classes.textField50}
+                  />
                 </Grid>
                 <Grid item xs={7}>
-                  <FormControl className={classes.selectField} variant="filled">
-                    <InputLabel htmlFor="filled-adornment-amount" className={classes.padding}>Occupation</InputLabel>
-                    <FilledInput
-                      className={classes.customField}
-                      id="filled-adornment-amount"
-                      value={form.occupation}
-                      onChange={(e) => handleChangeAddForm(e, 'occupation')}
-                      startAdornment={<InputAdornment position="start"></InputAdornment>}
-                    />
-                  </FormControl>
+                  <TextField
+                    label="Occupation"
+                    type="text"
+                    variant="outlined"
+                    value={form.occupation}
+                    onChange={(e) => handleChangeAddForm(e, 'occupation')}
+                    className={classes.textField50}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormControl className={classes.selectField} variant="filled">
-                    <InputLabel htmlFor="filled-adornment-amount" className={classes.padding}>Home Address</InputLabel>
-                    <FilledInput
-                      className={classes.customField}
-                      id="filled-adornment-amount"
-                      value={form.address}
-                      onChange={(e) => handleChangeAddForm(e, 'address')}
-                      startAdornment={<InputAdornment position="start"></InputAdornment>}
-                    />
-                  </FormControl>
+                  <TextField
+                    label="Address"
+                    type="text"
+                    variant="outlined"
+                    value={form.Address}
+                    onChange={(e) => handleChangeAddForm(e, 'Address')}
+                    className={classes.textField50}
+                  />
                 </Grid>
               </Grid>
-              <Grid container>
-                <Grid item xs={6}>
-                  <FormControl className={classes.selectField} variant="filled">
-                    <TextField
-                      id="filled-select-noderelationship"
-                      select
-                      label="Select"
-                      value={form.nodeRelationship || _.get(nodeRelationship(), '0.value')}
-                      onChange={(e) => handleChangeAddForm(e, 'nodeRelationship')}
-                      helperText="Please select destination node"
-                      variant="filled"
-                      defaultValue={_.get(nodeRelationship(), '0.value')}
-                      disabled={nodeRelationship().length === 0}
-                    >
-                      {nodeRelationship().map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))} 
-                    </TextField>
-                  </FormControl>
-                </Grid>
+              <Grid container spacing={1}>
+                { showModal.select !== SPOUSE && showModal.mode === CONSTAINT.MODE_FORM.ADD &&
+                  (
+                    <Grid item xs={6}>
+                      <TextField
+                        type="text"
+                        label={getLabel}
+                        select
+                        variant="outlined"
+                        value={form.nodeRelationship || _.get(nodeRelationship(), '0.value')}
+                        defaultValue={_.get(nodeRelationship(), '0.value')}
+                        disabled={nodeRelationship().length === 0}
+                        onChange={(e) => handleChangeAddForm(e, 'nodeRelationship')}
+                        className={classes.textField50}
+                      >
+                        {nodeRelationship().map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))} 
+                      </TextField>
+                    </Grid>
+                  )
+                }
                 {/* <Grid item xs={6}>
                   <FormControl className={classes.selectField} variant="filled">
                     <TextField
