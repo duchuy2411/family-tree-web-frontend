@@ -1,4 +1,5 @@
 import axios from "axios";
+import _ from 'lodash';
 
 const version = 1;
 const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
@@ -9,6 +10,7 @@ axios.interceptors.request.use(
 
     if (accessToken) {
       config.headers["x-auth-token"] = accessToken;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
     return config;
@@ -68,10 +70,15 @@ const api = {
     // for test purpose
     return axios.get(`${baseUrl}/tree-management/tree`);
   },
+  //
+  createTree: (body) => {
+    return axios.post(`${baseUrl}/tree-management/tree`, body);
+  },
   // custom-tree
   fetchFamilyTreeById: (id) => {
     return axios.get(`${baseUrl}/tree-management/tree/${id}`);
   },
+
 };
 
 export default api;

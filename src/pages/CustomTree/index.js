@@ -5,6 +5,7 @@ import _ from "lodash";
 import moment from "moment";
 import GenogramLayout from "../../layouts/GenogramLayout/GenogramLayout";
 import { useDispatch } from "react-redux";
+import { useParams } from 'react-router-dom';
 import { fetchFamilyTreeById } from "./customTreeSlice";
 import "./style.css";
 // MUI
@@ -82,9 +83,9 @@ export default function CustomTreePage() {
     warningAlternativeNode: false,
     warningUpdateForMarriage: false,
   });
-
+  const { id } = useParams();
   useEffect(() => {
-    dispatch(fetchFamilyTreeById(3)).then((rs) => {
+    dispatch(fetchFamilyTreeById(id)).then((rs) => {
       const parseTree = Adapter.parse(_.get(rs.data, "data.people", []));
       setNodeDataArray([...parseTree]);
       setAlterLink([...parseTree]);

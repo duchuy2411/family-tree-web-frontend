@@ -51,6 +51,13 @@ const useHomePageStyles = makeStyles((theme) => ({
   treeList: {
     marginTop: theme.spacing(2),
   },
+
+  btnNewTree: {
+    textAlign: 'center',
+  },
+  customBtnDashed: {
+    border: 'dashed 1px black',
+  },
 }));
 
 export default useHomePageStyles;
