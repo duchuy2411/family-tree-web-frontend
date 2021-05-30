@@ -14,7 +14,6 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 const privateRoutes = (
   <Switch>
     {pageRoutes.map((route, key) => {
-      console.log(`${route.path} `);
       return (
         <PrivateRoute path={route.path} exact={route.exact} key={key}>
           <route.component />

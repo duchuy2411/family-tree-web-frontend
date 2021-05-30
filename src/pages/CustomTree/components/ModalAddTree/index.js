@@ -4,12 +4,14 @@ import moment from 'moment';
 import _ from 'lodash';
 import { Avatar, TextField, FormControl, InputLabel, FilledInput, InputAdornment, MenuItem, Button, Grid, FormControlLabel, Checkbox, TextareaAutosize } from '@material-ui/core';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+
 import PhotoUpload from './PhotoUpload';
 import CONSTANTS from '../../../../utils/const';
+import { uploadImage } from '../../customTreeSlice';
 import './index.css';
 
-var FormData = require("form-data");
-var fs = require("fs")
+const fs = require("fs")
 
 const { SPOUSE, MOTHER, FATHER, CHILDREN } = CONSTANTS;
 
@@ -39,8 +41,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#FFFFFF',
   },
   avatarImg: {
-    width: "13rem",
-    height: "13rem",
+    width: "16rem",
+    height: "16rem",
+    borderRadius: "15",
     backgroundColor: "#FFFFFF",
   },
   textAlignCenter: {
@@ -68,6 +71,26 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     backgroundColor: '#FFFFFF',
   },
+  textArea: {
+    margin: '7px 0px',
+    width: '100%',
+    borderRadius: 15,
+    backgroundColor: '#F2E1DA',
+    padding: "10px"
+  },
+  inputFields: {
+    backgroundColor: "#F2E1DA",
+    borderRadius: 15,
+    border: "none",
+    outline: "none",
+    width: "100%",
+    margin: '7px 0px',
+  },
+  textError: {
+    color: 'red',
+    fontSize: '12px',
+    marginLeft: '10px'
+  }
 }));
 
 function ModalUpdate(props) {
@@ -87,26 +110,12 @@ function ModalUpdate(props) {
 
   const [file, setFile] = useState('');
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
-
+  const [error, setError] = useState();
   const classes = useStyles();
 
-  const handleChangeImage = (e) => {
-    e.preventDefault();
-    let reader = new FileReader();
-    let file = e.target.files[0];
-
-    reader.onloadend = () => {
-      setFile(file);
-      const formData = new FormData();
-      setImagePreviewUrl(reader.result);
-      console.log("reader.result", reader.result);
-      formData.append('file', reader.result);
-      console.log(formData);
-      
-      handleChangeImageUrl(formData);
-    }
-    
-    reader.readAsBinaryString(file);
+  async function handleChange(e) {
+    setFile(e.target.files[0]);
+    setImagePreviewUrl(URL.createObjectURL(e.target.files[0]));
   }
 
   const getLabel = () => {
@@ -122,6 +131,34 @@ function ModalUpdate(props) {
       }
     } 
   }
+
+  const dispatch = useDispatch();
+
+  const handleClickSave = async () => {
+    const tempError = {};
+    if (!props.form.firstName.trim()) tempError.firstName = CONSTANTS.Error.required;
+    if (!props.form.lastName.trim()) tempError.lastName = CONSTANTS.Error.required;
+    if (moment(props.form.dob) > moment(props.form.dod)) tempError.dob = CONSTANTS.Error.dob;
+    if (Object.keys(tempError).length > 0) {
+      setError(tempError)
+      return false;
+    }
+
+    var form = document.querySelector('form');
+    var formData = new FormData(form);
+    let rs = null;
+    if (formData.entries().next().value[1].name) {
+      rs = await dispatch(uploadImage(formData));
+      rs = rs.data;
+    }
+    if (showModal.mode === CONSTANTS.MODE_FORM.ADD) {
+      handleSave(rs)
+    } else {
+      handleUpdate(rs)
+    }
+    setError(null);
+  }
+
   return (
     <MuiThemeProvider theme={theme}>
       <div className="modal">
@@ -170,46 +207,53 @@ function ModalUpdate(props) {
         )}
         {showModal.step === 2 && (
           <div className="modal-form step2">
-            <form noValidate autoComplete="off">
               <Grid container justify="center">
                 <Grid item xs={5} className={classes.textAlignCenter}>
                   <PhotoUpload
+                    form={form}
                     file={file}
                     imagePreviewUrl={imagePreviewUrl}
-                    handleChangeImage={handleChangeImage}
+                    handleChange={handleChange}
                   />
                 </Grid>
                 <Grid item xs={7} spacing={1} container>
                   <Grid item xs={6}>
                     <TextField
                       label="First Name"
-                      type="text"
                       variant="outlined"
+                      type="text"
                       value={form.firstName}
                       onChange={(e) => handleChangeAddForm(e, 'firstName')}
-                      className={classes.textField50}
+                      className={classes.inputFields}
                     />
+                    <div className={classes.textError}>
+                      {_.get(error, 'firstName', '')}
+                    </div>
                   </Grid>
                   <Grid item xs={6}>
                     <TextField
                       label="Last Name"
-                      type="text"
                       variant="outlined"
+                      type="text"
                       value={form.lastName}
                       onChange={(e) => handleChangeAddForm(e, 'lastName')}
-                      className={classes.textField50}
+                      className={classes.inputFields}
                     />
+                    <div className={classes.textError}>
+                      {_.get(error, 'lastName', '')}
+                    </div>
                   </Grid>
                   <Grid item xs={6}>
                     <TextField
                       label="Gender"
                       type="text"
-                      select
                       variant="outlined"
+                      select
                       value={form.gender}
                       InputLabelProps={{ shrink: true }}
                       onChange={(e) => handleChangeAddForm(e, 'gender')}
-                      className={classes.textField50}
+                      className={classes.inputFields}
+                      disabled={showModal.mode === CONSTANTS.MODE_FORM.UPDATE}
                     >
                       {gender.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -227,8 +271,11 @@ function ModalUpdate(props) {
                       defaultValue="2021-01-01"
                       value={moment(form.dob).format("YYYY-MM-DD")}
                       onChange={(e) => handleChangeAddForm(e, 'dob')}
-                      className={classes.textField50}
+                      className={classes.inputFields}
                     />
+                    <div className={classes.textError}>
+                      {_.get(error, 'dob', '')}
+                    </div>
                   </Grid>
                   <Grid item xs={6}>
                       <FormControlLabel
@@ -262,7 +309,7 @@ function ModalUpdate(props) {
                       value={moment(form.dod).format("YYYY-MM-DD")}
                       onChange={(e) => handleChangeAddForm(e, 'dod')}
                       disabled={!form.isDeath}
-                      className={classes.textField50}
+                      className={classes.inputFields}
                     />
                   </Grid>
                 </Grid>
@@ -274,7 +321,7 @@ function ModalUpdate(props) {
                     placeholder="Notes"
                     value={form.note}
                     onChange={(e) => handleChangeAddForm(e, 'note')}
-                    className={classes.textField50}
+                    className={classes.textArea}
                     style={{border: '1px solid #F2E1DA'}}
                   />
                 </Grid>
@@ -287,7 +334,7 @@ function ModalUpdate(props) {
                     variant="outlined"
                     value={form.phone}
                     onChange={(e) => handleChangeAddForm(e, 'phone')}
-                    className={classes.textField50}
+                    className={classes.inputFields}
                   />
                 </Grid>
                 <Grid item xs={7}>
@@ -297,7 +344,7 @@ function ModalUpdate(props) {
                     variant="outlined"
                     value={form.occupation}
                     onChange={(e) => handleChangeAddForm(e, 'occupation')}
-                    className={classes.textField50}
+                    className={classes.inputFields}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -307,7 +354,7 @@ function ModalUpdate(props) {
                     variant="outlined"
                     value={form.Address}
                     onChange={(e) => handleChangeAddForm(e, 'Address')}
-                    className={classes.textField50}
+                    className={classes.inputFields}
                   />
                 </Grid>
               </Grid>
@@ -324,7 +371,7 @@ function ModalUpdate(props) {
                         defaultValue={_.get(nodeRelationship(), '0.value')}
                         disabled={nodeRelationship().length === 0}
                         onChange={(e) => handleChangeAddForm(e, 'nodeRelationship')}
-                        className={classes.textField50}
+                        className={classes.inputFields}
                       >
                         {nodeRelationship().map((option) => (
                           <MenuItem key={option.value} value={option.value}>
@@ -368,7 +415,7 @@ function ModalUpdate(props) {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={handleSave}
+                    onClick={handleClickSave}
                     style={{ marginLeft: "10px" }}
                   >
                     Save
@@ -377,14 +424,13 @@ function ModalUpdate(props) {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={handleUpdate}
+                    onClick={handleClickSave}
                     style={{ marginLeft: "10px" }}
                   >
                     Save
                   </Button>
                 )}
               </div>
-            </form>
           </div>
         )}
       </div>

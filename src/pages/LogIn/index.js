@@ -25,7 +25,6 @@ import api from "../../utils/api";
 const LogInPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  console.log("location: ", location);
   //
   const classes = useLoginPageStyles();
   //
@@ -38,10 +37,8 @@ const LogInPage = () => {
   const smDownMatches = useMediaQuery(theme.breakpoints.down("sm"));
 
   if (redirectToReferrer === true) {
-    console.log("redirectToReferrer: ", redirectToReferrer);
 
     if (location.state) {
-      console.log("return Redirect to referrer");
       return <Redirect to={location.state.referrer} />;
     } else {
       return <Redirect to={"/"} />;
@@ -53,14 +50,13 @@ const LogInPage = () => {
     const loginData = {
       usernameOrEmail: usernameRef.current.value,
       password: passwordRef.current.value,
+      getRefreshToken: true,
     };
 
     const response = await api.login(loginData);
-    console.log("login response: ", response);
     const { user, accessToken, refreshToken } = response.data.data;
-    console.log("user:", user);
-    console.log("accessToken:", accessToken);
-    console.log("refreshToken:", refreshToken);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
 
     if (user) {
       dispatch(authActions.login(user));

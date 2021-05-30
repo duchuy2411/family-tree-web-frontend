@@ -18,7 +18,6 @@ function App() {
 
   useEffect(() => {
     const authData = JSON.parse(localStorage.getItem("auth"));
-    console.log("authData: ", authData);
 
     if (authData) {
       const { isAuthenticated, user } = authData;

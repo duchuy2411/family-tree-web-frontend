@@ -37,18 +37,9 @@ export default function SignUpPage() {
     };
 
     try {
-      console.log("register user = ", userToRegister);
       const response = await api.signup(userToRegister);
-      console.log("response register: ", response);
       const { user, accessToken, refreshToken } = response.data.data;
       const { message, errors } = response.data;
-
-      console.log("user:", user);
-      console.log("accessToken:", accessToken);
-      console.log("refreshToken:", refreshToken);
-      console.log("message:", message);
-      console.log("error:", errors);
-
       if (user) {
         history.push("/");
       } else {
@@ -56,7 +47,6 @@ export default function SignUpPage() {
       }
       dispatch(authActions.setIsLoading(false)); // disable loading
     } catch (e) {
-      console.log(e);
     }
   };
 

@@ -7,10 +7,16 @@
 }
 
 .imgPreview * {
-  width: 180px;
-  height: 180px;
-  max-height: 180px;
+  width: 100%px;
+  height: auto;
+  max-height: 200px;
   padding: 5px;
+  border-radius: 15px;
+}
+
+.imgPreview {
+  box-sizing: border-box;
+  margin-top: 5px;
 }
 
 .container-relative {
@@ -19,5 +25,9 @@
 }
 
 input[type="file"] {
-  background-color: #F2E1DA;
+  background-color: white;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border: none;
 }

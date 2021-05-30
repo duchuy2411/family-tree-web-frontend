@@ -34,17 +34,6 @@ export default function ListMember(props) {
           <Grid item xs={12}>
             <Typography className={classes.typoBold}>{member.n}</Typography>
           </Grid>
-          {/* <Grid item xs={2}>
-            <Typography variant="body2">{member.id}</Typography>
-          </Grid> */}
-          {/* <Grid item xs={5} container justify="space-between">
-            <Typography className={classes.typoBold}>
-              {member.s}
-            </Typography>
-            <ButtonBase>
-              <ArrowDropDown />
-            </ButtonBase>
-          </Grid> */}
         </Grid>
       </div>
     );
