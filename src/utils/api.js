@@ -28,21 +28,17 @@ axios.interceptors.response.use(
   function (error) {
     const originalRequest = error.config;
     let refreshToken = localStorage.getItem("refreshToken");
-
-    if (
-      refreshToken &&
-      error.response.status === 401 &&
-      !originalRequest._retry
-    ) {
+    if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      return axios
-        .post(`${baseUrl}/authentication/refresh_token`, {
-          refreshToken: refreshToken,
+      return axios.post(`${baseUrl}/authentication/refresh-access-token`, `"${refreshToken}"`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
         })
         .then((res) => {
           if (res.status === 200) {
-            localStorage.setItem("accessToken", res.data.accessToken);
-            console.log("Access token refreshed!");
+            localStorage.setItem("accessToken", res.data.data.accessToken);
             return axios(originalRequest);
           }
         });
@@ -53,6 +49,7 @@ axios.interceptors.response.use(
 
 //functions to make api calls
 const api = {
+  baseUrl: `https://family-tree.azurewebsites.net/api/v${version}`,
   signup: (body) => {
     return axios.post(`${baseUrl}/authentication/register`, body);
   },
@@ -68,7 +65,7 @@ const api = {
   // trees
   getAllTrees: () => {
     // for test purpose
-    return axios.get(`${baseUrl}/tree-management/tree`);
+    return axios.get(`${baseUrl}/tree-management/trees`);
   },
   //
   createTree: (body) => {
@@ -78,7 +75,42 @@ const api = {
   fetchFamilyTreeById: (id) => {
     return axios.get(`${baseUrl}/tree-management/tree/${id}`);
   },
-
+  getTreeList: () => {
+    return axios.get(`${baseUrl}/tree-management/trees/list`);
+  },
+  updateFamilyTree: (treeId, payload) => {
+    return axios.put(`${baseUrl}/tree-management/tree/${treeId}`, payload);
+  },
+  deleteFamilyTree: (treeId) => {
+    return axios.delete(`${baseUrl}/tree-managemnet/tree/${treeId}`);
+  },
+  createParent: (personId, payload) => {
+    return axios.post(`${baseUrl}/person-management/person/${personId}/parent`, payload);
+  },
+  createSpouse: (personId, payload) => {
+    return axios.post(`${baseUrl}/person-management/person/${personId}/spouse`, payload);
+  },
+  getPerson: (personId) => {
+    return axios.get(`${baseUrl}/person-management/person/${personId}`);
+  },
+  getChildOfPerson: (personId) => {
+    return axios.get(`${baseUrl}/person-management/person/${personId}/`);
+  },
+  updatePerson: (personId, payload) => {
+    return axios.put(`${baseUrl}/person-management/person/${personId}`, payload);
+  },
+  deletePerson: (personId) => {
+    return axios.delete(`${baseUrl}/person-management/person/${personId}`);
+  },
+  createChild: (payload) => {
+    return axios.post(`${baseUrl}/person-management/person/child`, payload);
+  },
+  uploadImage: (file, config) => {
+    return axios.post(`${baseUrl}/file-upload/image`, file, config);
+  },
+  getEditorTree: (treeId) => {
+    return axios.get(`${baseUrl}/tree-management/tree/${treeId}/editors`);
+  }
 };
 
 export default api;

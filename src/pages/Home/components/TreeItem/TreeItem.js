@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
+import moment from "moment";
 
 // MUI components
 import {
@@ -28,7 +29,6 @@ export default function TreeItem({
   contributors,
 }) {
   const classes = useTreeItemStyles();
-
   return (
     <Card className={classes.root}>
       <Grid container alignItems="center">
@@ -75,32 +75,29 @@ export default function TreeItem({
                 <Typography>Contributed by </Typography>
               </Hidden>
               <AvatarGroup max={4} className={classes.avatarGroup}>
-                {contributors && (
-                  <>
-                    {/* Owner - the first in contributors list*/}
-                    <Tooltip key={0} title={`${contributors[0].name} - Owner`}>
-                      <Avatar
-                        alt={contributors[0].name}
-                        src={contributors[0].avatarUrl}
-                        className={classNames(
-                          classes.avatarBorder,
-                          classes.avatarOwner
-                        )}
-                      />
-                    </Tooltip>
-                    {/* Other contributors */}
-                    {contributors.slice(1).map((contributor, index) => (
-                      <Tooltip key={index} title={contributor.name}>
-                        <Avatar
-                          alt={contributor.name}
-                          src={contributor.avatarUrl}
-                        />
-                      </Tooltip>
-                    ))}
-                  </>
-                )}
-              </AvatarGroup>
-            </Grid>
+                {author &&
+                  <Tooltip title={`${author.username} - Owner`}>
+                    <Avatar
+                      alt={author.username}
+                      src={author.avatarUrl}
+                      className={classNames(
+                        classes.avatarBorder,
+                        classes.avatarOwner
+                      )}
+                    />
+                  </Tooltip>
+                }
+                {/* Other contributors */}
+                {contributors.slice(1).map((contributor, index) => (
+                  <Tooltip key={index} title={contributor.name}>
+                    <Avatar
+                      alt={contributor.name}
+                      src={contributor.avatarUrl}
+                    />
+                  </Tooltip>
+                ))}
+            </AvatarGroup>
+          </Grid>
 
             {/* updatedAt */}
             <Grid
@@ -113,7 +110,7 @@ export default function TreeItem({
             >
               <WatchLaterIcon className={classes.iconTime} />
               <Typography className={classes.typoUpdatedAt}>
-                {updatedAt || "No update"}
+                {moment(updatedAt).format("YYYY-MM-DD") || "No update"}
               </Typography>
             </Grid>
           </Grid>

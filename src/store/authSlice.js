@@ -13,7 +13,6 @@ const authSlice = createSlice({
   reducers: {
     setIsLoading(state, action) {
       state.isLoading = action.payload;
-      console.log("authSlice - setIsLoading - action: ", action);
     },
     login(state, action) {
       const user = action.payload;
@@ -23,7 +22,6 @@ const authSlice = createSlice({
         isAuthenticated: true,
         user: user,
       };
-      console.log("authData: ", authData);
       localStorage.setItem("auth", JSON.stringify(authData));
     },
     logout(state) {
@@ -34,7 +32,6 @@ const authSlice = createSlice({
     },
     setUser(state, action) {
       const user = action.payload;
-      console.log("authSlice - setUser - user = ", user);
       state.user = user;
     },
     setIsAuthenticated(state, action) {

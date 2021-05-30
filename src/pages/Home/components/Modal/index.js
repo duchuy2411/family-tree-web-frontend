@@ -1,13 +1,10 @@
 import React from 'react';
 import { makeStyles } from "@material-ui/core/styles";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
+import classNames from "classnames";
 
 import {
-  TextField,
-  FormControl,
-  InputLabel,
-  FilledInput,
-  InputAdornment,
+  Input,
   Button,
   Grid,
 } from "@material-ui/core";
@@ -54,6 +51,28 @@ const useStyles = makeStyles((theme) => ({
       zIndex: '201',
       textAlign: 'center',
     },
+    link: {
+      textDecoration: "none",
+      fontWeight: "bold",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      color: "#905842",
+      marginBottom: theme.spacing(1),
+      "&:hover": {
+        color: "#fff",
+      },
+    },
+    withSpace: {
+      margin: theme.spacing(1, 0),
+    },
+    inputFields: {
+      backgroundColor: "#F2E1DA",
+      borderRadius: 24,
+      height: theme.spacing(5),
+      width: "100%",
+      padding: theme.spacing(0, 2, 0, 2),
+    },
   })
 )
 
@@ -72,36 +91,26 @@ export default function Modal(props) {
         <div className={classes.grayout} onClick={() => handleShow(false)}></div>
         <Grid className={classes.formContainer} container justify="center" alignItems="center">
           <Grid item xs={12}>
-            <FormControl className={classes.customField} variant="filled">
-              <InputLabel htmlFor="filled-adornment-amount">
-                Name
-              </InputLabel>
-              <FilledInput
-                id="filled-adornment-amount"
-                value={form.name}
-                onChange={(e) => handleChangeFormCreate(e, "name")}
-                startAdornment={
-                  <InputAdornment position="start"></InputAdornment>
-                }
-              />
-            </FormControl>
+            <Input
+              placeholder="Name"
+              required
+              fullWidth
+              disableUnderline
+              value={form.name}
+              className={classNames(classes.withSpace, classes.inputFields)}
+              onChange={(e) => handleChangeFormCreate(e, "name")}
+            />
           </Grid>
           <Grid item xs={12}>
-            <FormControl className={classes.customField} variant="filled">
-              <InputLabel
-                htmlFor="filled-adornment-amount"
-              >
-                Description
-              </InputLabel>
-              <FilledInput
-                id="filled-adornment-amount"
-                value={form.desctiption}
-                onChange={(e) => handleChangeFormCreate(e, "description")}
-                startAdornment={
-                  <InputAdornment position="start"></InputAdornment>
-                }
-              />
-            </FormControl>
+            <Input
+              placeholder="Description"
+              required
+              fullWidth
+              disableUnderline
+              value={form.desctiption}
+              className={classNames(classes.withSpace, classes.inputFields)}
+              onChange={(e) => handleChangeFormCreate(e, "description")}
+            />
           </Grid>
           <Grid item xs={8}>
           </Grid>

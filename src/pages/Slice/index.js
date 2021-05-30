@@ -35,6 +35,12 @@ export const createTree = (tree) => async (dispatch) => {
   return false;
 }
 
+export const getEditorTree = (treeId) => async (dispatch) => {
+  const response = await api.getEditorTree(treeId);
+  if (response.data) return response.data;
+  return false;
+}
+
 export const selectTree = (state) => state.tree;
 
 export default slice.reducer;

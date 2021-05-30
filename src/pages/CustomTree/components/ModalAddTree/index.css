@@ -1,0 +1,33 @@
+.fileInput {
+  top: 10px;
+  left: 5px;
+  height: auto;
+  background-color: #F2E1DA;
+  height: 10%;
+}
+
+.imgPreview * {
+  width: 100%px;
+  height: auto;
+  max-height: 200px;
+  padding: 5px;
+  border-radius: 15px;
+}
+
+.imgPreview {
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+.container-relative {
+  position: relative;
+  padding: 5px;
+}
+
+input[type="file"] {
+  background-color: white;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border: none;
+}

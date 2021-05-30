@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
-import { createTree } from '../Slice';
+import { createTree, getTreeList } from '../Slice';
 // MUI
 import {
   Avatar,
@@ -58,7 +58,6 @@ export default function HomePage() {
   // eslint-disable-next-line no-unused-vars
   const handleSortOrder = (event, newOrder) => {
     if (newOrder !== null) {
-      console.log("Change sort order");
       setSortOrder(newOrder);
     }
   };
@@ -68,16 +67,14 @@ export default function HomePage() {
 
   const getTrees = useCallback(async () => {
     try {
-      const response = await api.getAllTrees();
+      const response = await api.getTreeList();
       // eslint-disable-next-line no-unused-vars
       const { data, message, errors } = response.data;
       const trees = data;
-
       if (trees) {
         setTrees(trees);
       }
     } catch (e) {
-      console.log(e);
     }
   }, []);
 
@@ -91,7 +88,6 @@ export default function HomePage() {
   const anchorRef = React.useRef(null);
 
   const handleToggle = () => {
-    console.log("click user avatar");
     setUserAvatarOpen((prevOpen) => !prevOpen);
   };
 
@@ -137,11 +133,11 @@ export default function HomePage() {
               {/* Fade need a ref: solved by wrap element in a div */}
               <TreeItem
                 id={tree.id}
-                logo={familyLogoSample}
+                logo={tree.owner.avatarUrl}
                 name={tree.name}
-                updatedAt={tree.updatedAt}
-                author={tree.author}
-                contributors={tree.contributors}
+                updatedAt={tree.lastModified}
+                author={tree.owner}
+                contributors={tree.editors}
               />
             </div>
           </Fade>

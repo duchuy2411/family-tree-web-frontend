@@ -2,36 +2,90 @@ import _ from "lodash";
 import moment from "moment";
 import CONSTANTS from "./const";
 
+const sourceDefaultImg = 'https://static2.yan.vn/YanNews/2167221/202102/facebook-cap-nhat-avatar-doi-voi-tai-khoan-khong-su-dung-anh-dai-dien-e4abd14d.jpg';
 class Adapter {
   parse(data) {
     const results = data.map((ele, index) => {
       const member = {
+        id: ele.id,
         key: ele.id,
-        n: ele.firstName + ele.lastName,
+        n: `${_.get(ele, 'lastName', ' ') || 'Unknow'} ${_.get(ele, 'firstName', ' ') || ' '}`,
         s: ele.gender === 0 ? "M" : "F",
-        dob: moment(ele.dateOfBirth).format("L"),
-        dod: ele.dateOfDead ? moment(ele.dateOfDead).format("L") : null,
-        type: ele.dateOfDead ? "D" : ele.gender === 0 ? "M" : "F",
+        dob: ele.dateOfBirth ? moment(ele.dateOfBirth).format("L") : null,
+        dod: ele.dateOfDeath ? moment(ele.dateOfDeath).format("L") : null,
+        type: ele.dateOfDeath ? "D" : ele.gender === 0 ? "M" : "F",
         note: ele.note,
+        firstName: ele.firstName,
+        lastName: ele.lastName,
+        imageUrl: ele.imageUrl || sourceDefaultImg,
       };
-      const parent1Id = _.get(ele, "parent1Id");
-      if (parent1Id) _.set(member, "f", parent1Id);
-      const parent2Id = _.get(ele, "parent2Id");
-      if (parent2Id) _.set(member, "m", parent2Id);
-      ele.spouses.forEach((element) => {
-        if (ele.gender === 0) {
-          const arr = _.get(member, "ux") || [];
-          _.set(member, "ux", arr);
-          member.ux.push(element.id);
-        } else {
-          const arr = _.get(member, "vir") || [];
-          _.set(member, "vir", arr);
-          member.vir.push(element.id);
+      const parent1Id = _.get(ele, 'parent1Id');
+      _.set(member, 'f', parent1Id);
+      const parent2Id = _.get(ele, 'parent2Id');
+      _.set(member, 'm', parent2Id);
+      ele.spouses.forEach(element => {
+        if (element) {
+          if (ele.gender === 0) {
+            const arr = _.get(member, 'ux', []);
+            _.set(member, 'ux', arr);
+            if (_.get(element, 'id')) member.ux.push(element.id);
+          } else {
+            const arr = _.get(member, 'vir', []);
+            _.set(member, 'vir', arr);
+            if (_.get(element, 'id')) member.vir.push(element.id);
+          }
         }
       });
       return member;
-    });
-    return results;
+      }
+    );
+    return this.processMemo(results);
+  }
+
+  countMemoForKey (array) {
+    let count = 0;
+    for (let i = 0; i < array.length; i += 1) {
+      if (array[i].type === CONSTANTS.TYPE.UNDEFINED) 
+        count++;
+    }
+    return -(count + 1);
+  }
+
+  nodeMemo (vir = null, ux = null, father = null, mother = null) {
+    const rs = {
+      type: CONSTANTS.TYPE.UNDEFINED,
+      n: CONSTANTS.UNDEFINED,
+    }
+    if (vir) rs.vir = [vir];
+    if (ux) rs.ux = [ux];
+    if (father) rs.f = father;
+    if (mother) rs.m = mother;
+    return rs;
+  }
+
+  processMemo (array) {
+    const clone = [...array];
+    for (let i = 0; i < array.length; i += 1) {
+      if (!clone[i].f && clone[i].m) {
+        const memo = this.nodeMemo(null, clone[i].m);
+        const key = this.countMemoForKey(clone);
+        memo.key = key;
+        clone[i].f = key;
+        clone.push(memo);
+        const ind = _.findIndex(clone, ele => ele.key === clone[i].m);
+        clone[ind].vir = [key];
+      } else if (clone[i].f && !clone[i].m) {
+        const memo = this.nodeMemo(clone[i].f);
+        const key = this.countMemoForKey(clone);
+        memo.key = key;
+        clone[i].m = key;
+        clone.push(memo);
+        const ind = _.findIndex(clone, ele => ele.key === clone[i].f);
+        clone[ind].ux = [key];
+      }
+    }
+    
+    return clone;
   }
 
   getWithoutLinkLabel(data) {
@@ -111,7 +165,6 @@ class Adapter {
   }
 
   isAlterNode(node) {
-    console.log("Is alternode: ", _.get(node, "n") === "Alternative");
     return _.get(node, "n") === "Alternative";
   }
 
@@ -150,54 +203,56 @@ class Adapter {
     const father = this.getNode(clone, node.f);
     const mother = this.getNode(clone, node.m);
     let res = [];
-    if (father.n === CONSTANTS.UNDEFINED)
+    if (father.type === CONSTANTS.TYPE.UNDEFINED)
       res = this.removeNodeAndRelationshipOfSpouse(clone, node.father);
-    if (mother.n === CONSTANTS.UNDEFINED)
+    if (mother.type === CONSTANTS.TYPE.UNDEFINED)
       res = this.removeNodeAndRelationshipOfSpouse(clone, node.mother);
     return res.filter((ele) => ele.key !== node.key);
   }
 
-  formatData(model) {
+  formatData(model, imageUrl) {
     const obj = {
-      s: model.gender === "male" ? "M" : "F",
-      n:
-        `${_.get(model, "lastName", "")} ${_.get(model, "firstName", "")}` ||
-        "New",
-      dob: _.get(model, "dob", null),
-      dod: _.get(model, "dod", null),
-      note: _.get(model, "note", ""),
-      occupation: _.get(model, "occupation", null),
-      address: _.get(model, "address", ""),
-      phone: _.get(model, "phone", ""),
-      lastName: _.get(model, "lastName", ""),
-      firstName: _.get(model, "firstName", ""),
-    };
-    if (model.n === CONSTANTS.UNDEFINED) {
-      _.set(obj, "type", "UND");
+      s: model.gender === 'male' ? 'M' : 'F',
+      n: model.name || `${_.get(model, 'lastName', ' ') || ''} ${_.get(model, 'firstName', ' ') || ''}`,
+      dob: _.get(model, 'dob') === 'Invalid date' ? null : _.get(model, 'dob'),
+      dod: _.get(model, 'dod') === 'Invalid date' ? null : _.get(model, 'dod'),
+      note: _.get(model, 'note', ''),
+      occupation: _.get(model, 'occupation', null),
+      address: _.get(model, 'address', ''),
+      phone: _.get(model, 'phone', ''),
+      lastName: _.get(model, 'lastName', ''),
+      firstName: _.get(model, 'firstName', ''),
+      imageUrl: imageUrl || sourceDefaultImg,
+    }
+    if (model.type === CONSTANTS.TYPE.UNDEFINED) {
+      _.set(obj, 'type', CONSTANTS.TYPE.UNDEFINED);
       return obj;
     }
-    if (model.n === CONSTANTS.TYPE.DEAD) {
-      _.set(obj, "type", "D");
+    if (model.dod && model.dod !== 'Invalid date') {
+      _.set(obj, 'type', CONSTANTS.TYPE.DEAD);
       return obj;
     }
-
+    if (model.id) _.set(obj, 'id', model.id);
+    if (model.id) _.set(obj, 'key', model.id);
     _.set(obj, "type", model.gender === "male" ? "M" : "F");
     return obj;
   }
 
-  createLinkForParentToChilds(diagram, arrayLink, arrayNode, parent, node) {
+  createLinkForParentToChilds(diagram, arrayLink, arrayNode, parent1, parent2, node) {
     const linkParent = _.find(
       arrayLink,
       (ele) =>
         ele.category === CONSTANTS.MARRIAGE &&
-        (ele.from === parent.key || ele.to === parent.key)
+        ((ele.from === parent1.key && ele.to === parent2.key)
+        || (ele.to === parent1.key && ele.from === parent2.key))
     );
     const newLink = { from: linkParent.labelKeys[0], to: node.key };
     diagram.model.addLinkData(newLink);
   }
 
-  createLinkForMarriages(diagram, arrayLink, arrNode, self, spouse) {
+  createLinkForMarriages(diagram, arrayLink, arrNode, self, spouse, key = null) {
     const linkLabel = { s: "LinkLabel", type: "LinkLabel" };
+    if (key) _.set(linkLabel, 'key', key);
     diagram.model.addNodeData(linkLabel);
     const linkMarriage = {
       from: self,
@@ -212,11 +267,66 @@ class Adapter {
     const part = diagram.findPartForKey(key);
     const arrProperty = Object.keys(model);
     arrProperty.forEach((ele) => {
-      console.log("model: ", ele, model[`${ele}`]);
-
       diagram.model.setDataProperty(part.data, ele, model[`${ele}`]);
     });
     return diagram.findPartForKey(key).data;
+  }
+
+  toFormAPI(model) {
+    const res = {
+      gender: model.s === 'F' ? 1 : 0,
+      firstName: model.firstName,
+      lastName: model.lastName,
+      dateOfBirth: moment(model.dob).format() === 'Invalid date' ? null : moment(model.dob).format(),
+      dateOfDeath: moment(model.dod).format() === 'Invalid date' ? null : moment(model.dod).format(),
+      note: model.note,
+      imageUrl: model.imageUrl,
+    };
+    return res;
+  }
+
+  toFormChildrenAPI(model, fatherId, motherId) {
+    const res = {
+      fatherId: fatherId,
+      motherId: motherId,
+      childInfo: {
+        gender: model.s === 'F' ? 1 : 0,
+        firstName: model.firstName,
+        lastName: model.lastName,
+        dateOfBirth: moment(model.dob).format() === 'Invalid date' ? null : moment(model.dob).format(),
+        dateOfDeath: moment(model.dod).format() === 'Invalid date' ? null : moment(model.dod).format(),
+        userId: null,
+        note: model.note,
+        imageUrl: model.imageUrl || sourceDefaultImg,
+      }
+    }
+    return res;
+  }
+
+  getLinkMarrigage(diagram, key) {
+    const linkArr = diagram.model.linkDataArray;
+    const link = _.filter(linkArr, ele => ele.category === 'Marriage' && (ele.to === key || ele.from === key));
+    return link;
+  }
+
+  formatResponseApiToGojs(ele, father = null, mother = null, spouses = []) {
+    const member = {
+      id: ele.id,
+      key: ele.id,
+      n: `${_.get(ele, 'lastName', '') || ''} ${_.get(ele, 'firstName', '') || ' '}`,
+      s: ele.gender === 0 ? "M" : "F",
+      dob: ele.dateOfBirth ? moment(ele.dateOfBirth).format("L") : null,
+      dod: ele.dateOfDeath ? moment(ele.dateOfDeath).format("L") : null,
+      type: ele.dateOfDeath ? "D" : ele.gender === 0 ? "M" : "F",
+      note: ele.note,
+      firstName: ele.firstName,
+      lastName: ele.lastName,
+      imageUrl: ele.imageUrl || sourceDefaultImg,
+    };
+    if (father) _.set(member, 'f', father);
+    if (mother) _.set(member, 'm', mother);
+    if (spouses.length > 0) _.set(member, member.s === 'M' ? 'ux' : 'vir', spouses);
+    return member;
   }
 }
 

@@ -57,14 +57,8 @@ const StyledToggleButton = withStyles((theme) => ({
   selected: {},
 }))(ToggleButton);
 
-export default function CustomToggleButton() {
-  const [mode, setMode] = React.useState("preview");
-
-  const handleChangeMode = (event, newMode) => {
-    if (newMode !== null) {
-      setMode(newMode);
-    }
-  };
+export default function CustomToggleButton(props) {
+  const { mode, handleChangeMode, handleDownloadImage } = props;
 
   return (
     <div>
@@ -75,10 +69,18 @@ export default function CustomToggleButton() {
         onChange={handleChangeMode}
         aria-label="choose mode"
       >
+        { mode === 'preview' &&
+          (
+          <StyledToggleButton
+            className="absolute-btn-download" value="edit" aria-label="edit tree" onClick={handleDownloadImage}>
+            Download Tree Image
+            <i className="fas fa-download" />
+          </StyledToggleButton>
+          )
+        }
         <StyledToggleButton value="preview" aria-label="preview tree">
           Preview
         </StyledToggleButton>
-
         <StyledToggleButton value="edit" aria-label="edit tree">
           Edit
         </StyledToggleButton>
