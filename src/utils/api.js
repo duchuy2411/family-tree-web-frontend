@@ -30,7 +30,7 @@ axios.interceptors.response.use(
     let refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      return axios.post(`${baseUrl}/authentication/refresh-access-token`, `"${refreshToken}"`,
+      return axios.post(`${baseUrl}/authentication/refresh-access-token`, { refreshToken: `${refreshToken}`},
         {
           headers: {
             'Content-Type': 'application/json',
@@ -108,9 +108,39 @@ const api = {
   uploadImage: (file, config) => {
     return axios.post(`${baseUrl}/file-upload/image`, file, config);
   },
+  uploadArrImage: (file, config) => {
+    return axios.post(`${baseUrl}/file-upload/images`, file, config);
+  },
   getEditorTree: (treeId) => {
     return axios.get(`${baseUrl}/tree-management/tree/${treeId}/editors`);
-  }
+  },
+  getCalendar: (treeId) => {
+    return axios.get(`${baseUrl}/calendar-management/tree/${treeId}`);
+  },
+  createCalendar: (payload) => {
+    return axios.post(`${baseUrl}/calendar-management/event`, payload);
+  },
+  deleteCalendar: (eventId) => {
+    return axios.delete(`${baseUrl}/calendar-management/event/${eventId}`);
+  },
+  updateCalendar: (eventId, payload) => {
+    return axios.put(`${baseUrl}/calendar-management/event/${eventId}`, payload);
+  },
+  updateCalendarReschedule: (eventId, payload) => {
+    return axios.put(`${baseUrl}/calendar-management/event/${eventId}/reschedule`, payload);
+  },
+  updateCalendarCancel: (eventId, payload) => {
+    return axios.put(`${baseUrl}/calendar-management/event/${eventId}/cancel`, payload);
+  },
+  fetchMemory: (treeId) => {
+    return axios.get(`${baseUrl}/memory-management/memories/tree/${treeId}`);
+  },
+  createMemory: (payload) => {
+    return axios.post(`${baseUrl}/memory-management/memory`, payload);
+  },
+  deleteMemory: (memoryId) => {
+    return axios.delete(`${baseUrl}/memory-management/memory/${memoryId}`);
+  },
 };
 
 export default api;

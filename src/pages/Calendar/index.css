@@ -1,0 +1,432 @@
+.rbc-day-bg:hover {
+  cursor: pointer;
+  background-color: #ccb9b1;
+}
+
+.rbc-selected-cell {
+  background-color: #caaca0;
+}
+
+.rbc-background-event {
+  background-color: #905842;
+}
+
+.rbc-event-allday {
+  background-color: #905842;
+}
+
+.rbc-event {
+  background-color: #905842;
+}
+
+.rbc-event-content {
+  background-color: #905842;
+}
+
+.rbc-today {
+  background-color: rgb(240, 210, 197);
+}
+
+.form-calendar {
+  background-color: #F2E1DA;
+  color: #905842;
+  width: 230px;
+  height: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 3px rgb(204, 202, 202);
+  padding: 10px;
+
+  position: fixed;
+  left: 100px;
+  top: 100px;
+  z-index: 20;
+}
+
+.modal-form-node * {
+  width: 100%;
+}
+
+.btn:hover {
+  cursor: pointer;
+}
+
+.modal .grayout {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+
+  opacity: 0.9;
+  background-color: rgb(117, 117, 117);
+  z-index: 200;
+  top: 0;
+  left: 0;
+}
+
+.modal .modal-calendar {
+  position: fixed;
+  height: auto;
+
+  background-color: white;
+  left: 50%;
+  top: 50%;
+  z-index: 201;
+  padding: 10px;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+}
+
+.step1 {
+  width: 30%;
+}
+
+.step2 {
+  width: 50%;
+  background-color: white;
+}
+
+.tool-add {
+  position: fixed;
+  right: 20px;
+  top: 200px;
+  background-color: #F2E1DA;
+  color: black;
+  z-index: 120;
+  width: 40px;
+  height: 40px;
+  box-shadow: 0 0 5px 3px rgb(204, 196, 190);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.tool-add:hover {
+  cursor: pointer;
+  background-color: rgb(228, 212, 205);
+}
+
+.modal-form-delete {
+  position: fixed;
+  width: 40%;
+  height: auto;
+  left: 50%;
+  top: 200px;
+  z-index: 201;
+
+  text-align: center;
+  padding: 20px;
+  margin-left: -20%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 3px rgb(228, 212, 200);
+}
+
+.modal-form-delete .alert-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  margin: 1rem; 
+}
+
+.label-section {
+  font-size: 20px;
+  padding: 10px;
+  color: #905842;
+  font-weight: bolder;
+}
+
+.grayout-high {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+
+  opacity: 0.8;
+  background-color: rgb(179, 178, 178);
+  z-index: 202;
+  top: 0;
+  left: 0;
+}
+
+.btn-grp {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.container-card {
+  align-items: right;
+  width: 97%;
+  border-radius: 7px;
+  box-shadow: 0 0 10px 3px rgb(204, 202, 202);
+  padding: 10px;
+  margin: 12px 0px;
+}
+
+.avatar-card img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.input-card .text-area {
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 0 6px 3px rgb(204, 202, 202);
+  border: none;
+  background-color: rgb(238, 238, 238);
+  font-size: 1.3rem;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.text-area:focus {
+  background-color: #FFFFFF;
+}
+
+.text-area:hover {
+  background-color: rgb(226, 226, 226);
+}
+
+.input-card {
+  padding: 7px;
+}
+
+.hr {
+  text-align: center;
+  width: 100%;
+  height: 1px;
+  background-color: rgb(228, 228, 228);
+  margin: 10px 0;
+}
+
+.fa-save {
+  color: rgb(0, 74, 170);
+  font-size: 1.5rem;
+}
+
+.fa-image {
+  color: green;
+  font-size: 1.5rem;
+}
+
+.icon-week {
+  color: #F2E1DA;
+  font-size: 1.5rem;
+}
+
+.card-flex {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  justify-content: center;
+}
+
+.card-flex:hover {
+  background-color: rgb(233, 233, 233);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.img-item {
+  padding: 5px;
+  position: relative;
+}
+
+.img-item img {
+  width: 100%;
+  height: 200px;
+}
+
+.btn-trash {
+  position: absolute;
+  top: 20px;
+  z-index: 100;
+  background-color: rgb(138, 138, 173);
+  padding: 7px 10px;
+  border-radius: 50%;
+  color: white;
+  border: 1px solid gainsboro;
+  right: 20px;
+}
+
+.btn-trash:hover {
+  cursor: pointer;
+  background-color: rgb(198, 198, 216);
+}
+
+.list * {
+  box-sizing: border-box;
+}
+
+.group-1 * {
+  width: 100%;
+  height: 350px;
+  cursor: pointer;
+}
+
+.img-1 {
+  background-size: cover;
+}
+.group-2 {
+  padding: 1px;
+  border: 1px solid gainsboro;
+  background-color: rgb(44, 44, 44);
+}
+
+.group-2 * {
+  width: 100%;
+  height: 350px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.group31 * {
+  height: 250px;
+  width: 100%;
+  border: 1px solid gainsboro;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.group32 * {
+  height: 150px;
+  width: 100%;
+  border: 1px solid gainsboro;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.group32 {
+  position: relative;
+}
+
+.gray-img {
+  opacity: 0.5;
+  background-color: rgb(53, 53, 53);
+  position: absolute;
+  top: 0;
+}
+
+.gray-img * {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  z-index: 102;
+}
+
+.name-card {
+  font-weight: bolder;
+}
+
+.content-card {
+  margin: 15px 0;
+}
+
+.more-card {
+  text-align: right;
+}
+
+.fa-trash:hover {
+  background-color: rgb(209, 209, 209);
+}
+
+.fa-trash {
+  color: rgb(80, 80, 80);
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.scrollable {
+  margin: 20px 0 0 0;
+  height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-left: 10px;
+}
+
+.container-view-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+.grayout-view-img {
+  z-index: 210;
+  background-color: rgb(43, 43, 43);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+.container-view-img .child-container {
+  z-index: 211;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  position: relative;
+}
+
+.navi-view-img {
+  opacity: 1;
+  font-weight: bolder;
+  font-size: 4rem;
+  color: white;
+  cursor: pointer;
+  z-index: 215;
+}
+
+.btn-exit-view {
+  top: 50px;
+  right: 50px;
+  position: absolute;
+  z-index: 220;
+  font-size: 3rem;
+  color: white;
+  padding: 5px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.btn-exit-view:hover {
+  background-color: rgb(170, 170, 170);
+  cursor: pointer;
+}
+
+.container-spinner {
+  display: flex;
+  justify-content: center;
+}
+
+.fa-spinner {
+  display: block;
+  margin: 10px 15px;
+  font-size: 35px;
+  color: burlywood;
+}
+
+.more-img {
+  color: rgb(243, 243, 243);
+}
+
+.label-left {
+  margin-left: 10px;
+}
+
+.menu-event * {
+  color: rgb(0, 102, 255),
+}
+
+.menu-memory * {
+  color: rgb(255, 153, 0),
+}
