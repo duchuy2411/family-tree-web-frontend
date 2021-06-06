@@ -56,6 +56,7 @@ const LogInPage = () => {
     const response = await api.login(loginData);
     const { user, accessToken, refreshToken } = response.data.data;
     localStorage.setItem("accessToken", accessToken);
+    console.log("refresh token: ", refreshToken);
     localStorage.setItem("refreshToken", refreshToken);
 
     if (user) {
