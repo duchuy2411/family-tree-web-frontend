@@ -57,7 +57,23 @@ const CONSTANTS = {
     invalid: 'Data of this field is invalid!',
     dob: 'Day of Birth must be smaller than Day of Dead!'
   },
+  DAY_OF_WEEK: {
+    0: 'Monday',
+    1: 'Tuesday',
+    2: 'Wednesday',
+    3: 'Thursday',
+    4: 'Friday',
+    5: 'Saturday',
+    6: 'Sunday',
+  },
   sourceDefaultImg: 'https://static2.yan.vn/YanNews/2167221/202102/facebook-cap-nhat-avatar-doi-voi-tai-khoan-khong-su-dung-anh-dai-dien-e4abd14d.jpg',
+  LOOP_CALENDAR: {
+    0: 'None',
+    1: 'All day',
+    2: 'Weekly',
+    3: 'Monthly',
+    4: 'Annual',
+  }
 };
 
 export default CONSTANTS;
