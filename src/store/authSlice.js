@@ -1,10 +1,22 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import api from "../utils/api";
+
+export const updateUserAsync = createAsyncThunk("authentication/updateUser", async (params) => {
+  console.log("in createAsyncThunk ne, params: ", params);
+
+  const response = await api.updateUser(params);
+  console.log("updateUserAsync - response: ", response);
+
+  return response.data;
+});
 
 const initialAuthState = {
   isLoading: false,
+  error: "",
+  message: "",
   isAuthenticated: false,
   user: null,
-  accessToken: '',
+  accessToken: "",
 };
 
 const authSlice = createSlice({
@@ -38,12 +50,50 @@ const authSlice = createSlice({
       state.isAuthenticated = action.payload;
     },
   },
+  extraReducers: {
+    [updateUserAsync.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [updateUserAsync.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.error;
+      console.log("updateUserAsync.rejected");
+    },
+    [updateUserAsync.fulfilled]: (state, action) => {
+      const { data, message, error } = action.payload;
+
+      state.isLoading = false;
+      state.error = error;
+
+      const updatedUserInfo = data;
+      console.log("updatedUserInfo: ", updatedUserInfo);
+
+      if (updatedUserInfo) {
+        state.user = { ...state.user, ...updatedUserInfo };
+        console.log("set xong user");
+
+        const auth = JSON.parse(localStorage.getItem("auth"));
+
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({
+            isAuthenticated: true,
+            user: {
+              ...auth.user,
+              ...updatedUserInfo,
+            },
+          })
+        );
+      }
+    },
+  },
 });
 
 // selectors
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectUser = (state) => state.auth.user;
 export const selectIsLoading = (state) => state.auth.isLoading;
+export const selectError = (state) => state.auth.error;
 export const selectAccessToken = (state) => state.auth.accessToken;
 
 export const authActions = authSlice.actions;

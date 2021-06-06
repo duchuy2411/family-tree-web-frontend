@@ -36,7 +36,7 @@ const pageRoutes = [
   {
     path: "/user",
     exact: false,
-    component: lazy(() => import("./User")),
+    component: lazy(() => import("./UserProfile")),
     description: "go to user page",
     icon: <PersonIcon />,
     onNavBar: true,

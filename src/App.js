@@ -12,11 +12,33 @@ import HomePage from "./pages/Home";
 import Main from "./layouts/Main/Main";
 import { useDispatch } from "react-redux";
 import { authActions } from "./store/authSlice";
+import api from "./utils/api";
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // get latest data from API
+    // const getUserByToken = async () => {
+    //   try {
+    //     const response = await api.getUserByToken();
+    //     console.log("getUserByToken - response: ", response);
+
+    //     // user data
+    //     const user = response?.data.data;
+    //     if (user) {
+    //       dispatch(authActions.setIsAuthenticated(true));
+    //       dispatch(authActions.setUser(user));
+    //       console.log("App.js dispatch setUser: ", user);
+    //     }
+    //   } catch (error) {
+    //     console.log("Error in getUserByToken: ", error);
+    //   }
+    // };
+
+    // getUserByToken();
+
+    // //
     const authData = JSON.parse(localStorage.getItem("auth"));
 
     if (authData) {
