@@ -1,5 +1,5 @@
 import axios from "axios";
-import _ from 'lodash';
+import _ from "lodash";
 
 const version = 1;
 const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
@@ -7,6 +7,7 @@ const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
 axios.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");
+    console.log("accessToken in axios client: ", accessToken);
 
     if (accessToken) {
       config.headers["x-auth-token"] = accessToken;
@@ -30,11 +31,11 @@ axios.interceptors.response.use(
     let refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      return axios.post(`${baseUrl}/authentication/refresh-access-token`, `"${refreshToken}"`,
-        {
+      return axios
+        .post(`${baseUrl}/authentication/refresh-access-token`, `"${refreshToken}"`, {
           headers: {
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         })
         .then((res) => {
           if (res.status === 200) {
@@ -62,6 +63,15 @@ const api = {
   logout: (body) => {
     return axios.delete(`${baseUrl}/authentication/logout`, body);
   },
+
+  // user
+  updateUser: (body) => {
+    return axios.put(`${baseUrl}/user-management/user`, body);
+  },
+  getUserByToken: () => {
+    return axios.get(`${baseUrl}/user-management/user-by-token`);
+  },
+
   // trees
   getAllTrees: () => {
     // for test purpose
@@ -110,7 +120,7 @@ const api = {
   },
   getEditorTree: (treeId) => {
     return axios.get(`${baseUrl}/tree-management/tree/${treeId}/editors`);
-  }
+  },
 };
 
 export default api;
