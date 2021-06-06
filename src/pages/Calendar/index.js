@@ -23,7 +23,7 @@ export default function CalendarPage() {
   const [form, setForm] = useState({ notes: "", startDate: null, endDate: null, loop: 0})
   const [show, setShow] = useState({ isShow: false, mode: 'new' });
   const [select, setSelect] = useState("Calendar");
-  const [event, setEvent] = useState()
+  const [event, setEvent] = useState([])
   const arrayImages = useSelector(selectArrayViewImages);
 
   // useEffect(() => {
