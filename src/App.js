@@ -64,11 +64,6 @@ function App() {
           </Route>
 
           <Main />
-
-          {/* Test */}
-          <Route path="/test">
-            <HomePage />
-          </Route>
         </Switch>
       </React.Suspense>
     </Router>
