@@ -57,7 +57,6 @@ const authSlice = createSlice({
     [updateUserAsync.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.error;
-      console.log("updateUserAsync.rejected");
     },
     [updateUserAsync.fulfilled]: (state, action) => {
       const { data, message, error } = action.payload;
@@ -66,11 +65,9 @@ const authSlice = createSlice({
       state.error = error;
 
       const updatedUserInfo = data;
-      console.log("updatedUserInfo: ", updatedUserInfo);
 
       if (updatedUserInfo) {
         state.user = { ...state.user, ...updatedUserInfo };
-        console.log("set xong user");
 
         const auth = JSON.parse(localStorage.getItem("auth"));
 
