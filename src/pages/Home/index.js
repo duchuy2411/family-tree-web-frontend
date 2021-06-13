@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
+import classNames from "classnames";
+// MUI
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
@@ -18,6 +20,8 @@ import useHomePageStyles from "./useHomePageStyles";
 import { selectUser } from "../../store/authSlice";
 
 import api from "../../utils/api";
+
+import { SET_TREES_ARRAY } from './homeSlice';
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -53,6 +57,7 @@ export default function HomePage() {
       const trees = data;
       if (trees) {
         setTrees(trees);
+        dispatch(SET_TREES_ARRAY(trees));
       }
     } catch (e) {}
   }, []);

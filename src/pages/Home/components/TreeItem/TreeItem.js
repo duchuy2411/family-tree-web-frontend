@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 import moment from "moment";
+import swal from 'sweetalert';
+import { useHistory } from "react-router-dom";
+
+import { useDispatch, useSelector } from 'react-redux';
+
+import { deleteTree, selectTrees, SET_CURRENT_TREE } from '../../homeSlice';
 
 // MUI components
 import {
@@ -12,6 +18,11 @@ import {
   IconButton,
   Tooltip,
   Typography,
+  List,
+  ListItem,
+  Menu,
+  MenuItem,
+  ListItemText
 } from "@material-ui/core";
 import { AvatarGroup } from "@material-ui/lab";
 
@@ -29,6 +40,60 @@ export default function TreeItem({
   contributors,
 }) {
   const classes = useTreeItemStyles();
+  const dispatch = useDispatch();
+  const trees = useSelector(selectTrees);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const history = useHistory();
+  const options = [
+    "Calendar",
+    "Tree Management",
+    "Delete Tree"
+  ];
+  const handleClickListItem = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuItemClick = (event, index) => {
+    setSelectedIndex(index);
+    setAnchorEl(null);
+    switch (index) {
+      case 0: {
+        const current = _.find(trees, ele => ele.id === id);
+        dispatch(SET_CURRENT_TREE(current))
+        history.push(`/calendar/${id}`);
+        break;
+      }
+      case 1: {
+        const current = _.find(trees, ele => ele.id === id);
+        dispatch(SET_CURRENT_TREE(current))
+        history.push(`/tree-management/${id}`);
+        break;
+      }
+      case 2: {
+        swal({
+          title: "Are you sure?",
+          text: "Once deleted, you will not be able to recover this tree!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            dispatch(deleteTree(id));
+          }
+        });
+        break;
+      }
+    }
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClickMoreMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
   return (
     <Card className={classes.root}>
       <Grid container alignItems="center">
@@ -88,10 +153,10 @@ export default function TreeItem({
                   </Tooltip>
                 }
                 {/* Other contributors */}
-                {contributors.slice(1).map((contributor, index) => (
-                  <Tooltip key={index} title={contributor.name}>
+                {contributors.map((contributor, index) => (
+                  <Tooltip key={index} title={contributor.username}>
                     <Avatar
-                      alt={contributor.name}
+                      alt={contributor.username}
                       src={contributor.avatarUrl}
                     />
                   </Tooltip>
@@ -132,9 +197,45 @@ export default function TreeItem({
             <NavLink to={`/custom-tree/${id}`} className={classes.actionBtn}>
               Edit tree
             </NavLink>
-            <NavLink to="/trees/123/members" className={classes.actionBtn}>
-              View members
-            </NavLink>
+            <List
+              className={classes.actionBtn}
+              button
+              aria-haspopup="true"
+              aria-controls="lock-menu"
+              aria-label="when device is locked"
+              onClick={handleClickMoreMenu}
+              >
+                More Option
+            </List>
+            <Menu
+              id="lock-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              className={classes.menu}
+              elevation={0}
+              getContentAnchorEl={null}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              {options.map((option, index) => (
+                <MenuItem
+                  key={option}
+                  onClick={(event) => handleMenuItemClick(event, index)}
+                  className={classes.menuItem}
+                >
+                  {option}
+                </MenuItem>
+                )
+              )}
+            </Menu>
           </Hidden>
           <Hidden lgUp>
             <IconButton>
