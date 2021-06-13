@@ -328,6 +328,42 @@ class Adapter {
     if (spouses.length > 0) _.set(member, member.s === 'M' ? 'ux' : 'vir', spouses);
     return member;
   }
+
+  parseList(data) {
+    return data.map((ele, index) => {
+      const member = {
+        id: ele.id,
+        key: ele.id,
+        gender: ele.gender === 0 ? "Male" : "Female",
+        dob: ele.dateOfBirth ? moment(ele.dateOfBirth).format("L") : null,
+        dod: ele.dateOfDeath ? moment(ele.dateOfDeath).format("L") : null,
+        note: ele.note,
+        firstName: ele.firstName,
+        lastName: ele.lastName,
+        imageUrl: ele.imageUrl || sourceDefaultImg,
+      };
+      const parent1Id = _.get(ele, 'parent1Id');
+      const infoParent1 = _.find(data, father => father.id === parent1Id);
+      console.log("==infoParent1==: ", infoParent1);
+      _.set(member, 'father', infoParent1
+        ? { id: parent1Id, name: `${_.get(infoParent1, 'lastName', '')} ${_.get(infoParent1, 'firstName', '')}` } : null);
+      const parent2Id = _.get(ele, 'parent2Id');
+      const infoParent2 = _.find(data, mother => mother.id === parent2Id);
+      console.log("==infoParent2==: ", infoParent2)
+      _.set(member, 'mother', infoParent2
+        ? { id: parent2Id, name: `${_.get(infoParent2, 'lastName', '')} ${_.get(infoParent2, 'firstName', '')}` } : null);
+      member.spouses = [];
+      ele.spouses.forEach(element => {
+        if (element && _.get(element, 'id')) {
+          const infoSpouse = _.find(data, sp => sp.id === _.get(element, 'id'));
+          member.spouses.push({ id: element.id, name: infoSpouse
+            ? `${_.get(infoSpouse, 'lastName', '')} ${_.get(infoSpouse, 'firstName', '')}` : null});
+        }
+      });
+      return member;
+      }
+    );
+  }
 }
 
 export default new Adapter();

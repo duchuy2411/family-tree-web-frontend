@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
 import classNames from "classnames";
-
 import { createTree, getTreeList } from '../Slice';
 // MUI
 import {
@@ -40,6 +39,8 @@ import useHomePageStyles from "./useHomePageStyles";
 import { selectUser } from "../../store/authSlice";
 import api from "../../utils/api";
 
+import { SET_TREES_ARRAY } from './homeSlice';
+
 export default function HomePage() {
   const dispatch = useDispatch();
   const { firstName, midName, lastName } = useSelector(selectUser);
@@ -73,6 +74,7 @@ export default function HomePage() {
       const trees = data;
       if (trees) {
         setTrees(trees);
+        dispatch(SET_TREES_ARRAY(trees));
       }
     } catch (e) {
     }

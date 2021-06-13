@@ -1,6 +1,8 @@
 import axios from "axios";
 import _ from "lodash";
 
+import apiTreeManagement from './apiTreeManagement';
+
 const version = 1;
 const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
 
@@ -155,6 +157,7 @@ const api = {
   deleteMemory: (memoryId) => {
     return axios.delete(`${baseUrl}/memory-management/memory/${memoryId}`);
   },
+  apiTreeManagement: apiTreeManagement,
 };
 
 export default api;

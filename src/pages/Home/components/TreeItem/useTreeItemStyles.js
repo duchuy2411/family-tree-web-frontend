@@ -106,7 +106,7 @@ const useTreeItemStyles = makeStyles((theme) => ({
     border: "3px solid grey",
     borderRadius: "8px",
     padding: theme.spacing(1),
-
+    cursor: "pointer",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -124,6 +124,13 @@ const useTreeItemStyles = makeStyles((theme) => ({
       boxShadow: "0 0 0 0.2rem rgba(242,225,218,.5)",
     },
   },
+  menuItem: {
+    margin: '3px 0px',
+    backgroundColor: colors.pink,
+  },
+  menu: {
+    backgroundColor: 'none',
+  }
 }));
 
 export default useTreeItemStyles;

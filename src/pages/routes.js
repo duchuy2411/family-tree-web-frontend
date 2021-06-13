@@ -26,7 +26,7 @@ const pageRoutes = [
     onNavBar: true,
   },
   {
-    path: "/calendar",
+    path: "/calendar/:id",
     exact: false,
     component: lazy(() => import("./Calendar")),
     description: "go to calendar",
@@ -48,6 +48,12 @@ const pageRoutes = [
     description: "go to custom tree",
     onNavBar: false,
   },
+  {
+    path: "/tree-management/:id",
+    exact: false,
+    component: lazy(() => import("./TreeManagement")),
+    onNavBar: false,
+  }
 ];
 
 export default pageRoutes;
