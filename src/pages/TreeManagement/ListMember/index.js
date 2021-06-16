@@ -107,53 +107,53 @@ export default function ListMember(props) {
 
   const handleChangeAddForm = (e, label, isDeath = false) => {
     switch (label) {
-      case "firstName": {
-        setForm({ ...form, firstName: e.target.value });
-        break;
-      }
-      case "lastName": {
-        setForm({ ...form, lastName: e.target.value });
-        break;
-      }
-      case "gender": {
-        setForm({ ...form, gender: e.target.value });
-        break;
-      }
-      case "dob": {
-        setForm({ ...form, dob: moment(e.target.value).format("YYYY-MM-DD") });
-        break;
-      }
-      case "dod": {
-        setForm({ ...form, dod: moment(e.target.value).format("YYYY-MM-DD") });
-        break;
-      }
-      case "isDeath": {
-        setForm({
-          ...form,
-          isDeath: isDeath,
-          dod: !isDeath ? null : form.isDeath,
-        });
-        break;
-      }
-      case "note": {
-        setForm({ ...form, note: e.target.value });
-        break;
-      }
-      case "occupation": {
-        setForm({ ...form, occupation: e.target.value });
-        break;
-      }
-      case "phone": {
-        setForm({ ...form, phone: e.target.value });
-        break;
-      }
-      case "address": {
-        setForm({ ...form, address: e.target.value });
-        break;
-      }
-      default: {
-        break;
-      }
+    case "firstName": {
+      setForm({ ...form, firstName: e.target.value });
+      break;
+    }
+    case "lastName": {
+      setForm({ ...form, lastName: e.target.value });
+      break;
+    }
+    case "gender": {
+      setForm({ ...form, gender: e.target.value });
+      break;
+    }
+    case "dob": {
+      setForm({ ...form, dob: moment(e.target.value).format("YYYY-MM-DD") });
+      break;
+    }
+    case "dod": {
+      setForm({ ...form, dod: moment(e.target.value).format("YYYY-MM-DD") });
+      break;
+    }
+    case "isDeath": {
+      setForm({
+        ...form,
+        isDeath: isDeath,
+        dod: !isDeath ? null : form.isDeath,
+      });
+      break;
+    }
+    case "note": {
+      setForm({ ...form, note: e.target.value });
+      break;
+    }
+    case "occupation": {
+      setForm({ ...form, occupation: e.target.value });
+      break;
+    }
+    case "phone": {
+      setForm({ ...form, phone: e.target.value });
+      break;
+    }
+    case "address": {
+      setForm({ ...form, address: e.target.value });
+      break;
+    }
+    default: {
+      break;
+    }
     }
   };
 

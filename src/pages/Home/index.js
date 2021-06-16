@@ -92,14 +92,14 @@ export default function HomePage() {
 
   const handleChangeFormCreate = (e, label) => {
     switch (label) {
-      case "name": {
-        setForm({ ...form, name: e.target.value });
-        break;
-      }
-      case "description": {
-        setForm({ ...form, description: e.target.value });
-        break;
-      }
+    case "name": {
+      setForm({ ...form, name: e.target.value });
+      break;
+    }
+    case "description": {
+      setForm({ ...form, description: e.target.value });
+      break;
+    }
     }
   };
 

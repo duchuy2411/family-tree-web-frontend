@@ -61,18 +61,18 @@ const TreeManagement = () => {
 
   const handleChange = (e, label) => {
     switch (label) {
-      case "name": {
-        setFormTree({ ...formTree, name: e.target.value });
-        break;
-      }
-      case "description": {
-        setFormTree({ ...formTree, description: e.target.value });
-        break;
-      }
-      case "publicMode": {
-        setPublicMode({ ...formTree, publicMode: e.target.value });
-        break;
-      }
+    case "name": {
+      setFormTree({ ...formTree, name: e.target.value });
+      break;
+    }
+    case "description": {
+      setFormTree({ ...formTree, description: e.target.value });
+      break;
+    }
+    case "publicMode": {
+      setPublicMode({ ...formTree, publicMode: e.target.value });
+      break;
+    }
     }
   };
 
@@ -130,22 +130,22 @@ const TreeManagement = () => {
 
   const handleChangeFormSearch = (e, label) => {
     switch (label) {
-      case "firstName": {
-        setValSearch({ ...valSearch, firstName: e.target.value });
-        break;
-      }
-      case "lastName": {
-        setValSearch({ ...valSearch, lastName: e.target.value });
-        break;
-      }
-      case "age": {
-        setValSearch({ ...valSearch, age: e.target.value });
-        handleSubmitSearch(e.target.value);
-        break;
-      }
-      default: {
-        break;
-      }
+    case "firstName": {
+      setValSearch({ ...valSearch, firstName: e.target.value });
+      break;
+    }
+    case "lastName": {
+      setValSearch({ ...valSearch, lastName: e.target.value });
+      break;
+    }
+    case "age": {
+      setValSearch({ ...valSearch, age: e.target.value });
+      handleSubmitSearch(e.target.value);
+      break;
+    }
+    default: {
+      break;
+    }
     }
   };
 

@@ -59,32 +59,32 @@ export default function CalendarPage() {
     setShow({ ...show, isShow: false });
     const curEvent = [...event];
     switch (show.mode) {
-      case "new": {
-        curEvent.push({
-          id: curEvent.length + 1,
-          title: form.notes,
-          start: moment(form.startDate).format(),
-          end: moment(form.endDate).format(),
-        });
-        console.log("curEvent", curEvent);
+    case "new": {
+      curEvent.push({
+        id: curEvent.length + 1,
+        title: form.notes,
+        start: moment(form.startDate).format(),
+        end: moment(form.endDate).format(),
+      });
+      console.log("curEvent", curEvent);
 
-        break;
-      }
-      case "upd": {
-        const index = _.findIndex(curEvent, (ele) => ele.id === form.id);
+      break;
+    }
+    case "upd": {
+      const index = _.findIndex(curEvent, (ele) => ele.id === form.id);
 
-        curEvent[index] = {
-          ...curEvent[index],
-          title: form.notes,
-          start: moment(form.startDate).format(),
-          end: moment(form.endDate).format(),
-        };
+      curEvent[index] = {
+        ...curEvent[index],
+        title: form.notes,
+        start: moment(form.startDate).format(),
+        end: moment(form.endDate).format(),
+      };
 
-        break;
-      }
-      default: {
-        break;
-      }
+      break;
+    }
+    default: {
+      break;
+    }
     }
     setEvent(curEvent);
   };
@@ -99,25 +99,25 @@ export default function CalendarPage() {
 
   const handleChangeForm = (e, label) => {
     switch (label) {
-      case "notes": {
-        setForm({ ...form, notes: e.target.value });
-        break;
-      }
-      case "start": {
-        setForm({ ...form, startDate: e.target.value });
-        break;
-      }
-      case "end": {
-        setForm({ ...form, endDate: e.target.value });
-        break;
-      }
-      case "loop": {
-        setForm({ ...form, loop: e.target.value });
-        break;
-      }
-      default: {
-        break;
-      }
+    case "notes": {
+      setForm({ ...form, notes: e.target.value });
+      break;
+    }
+    case "start": {
+      setForm({ ...form, startDate: e.target.value });
+      break;
+    }
+    case "end": {
+      setForm({ ...form, endDate: e.target.value });
+      break;
+    }
+    case "loop": {
+      setForm({ ...form, loop: e.target.value });
+      break;
+    }
+    default: {
+      break;
+    }
     }
   };
 

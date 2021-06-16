@@ -131,26 +131,26 @@ export default function CustomTreePage() {
   function handleDiagramEvent(e) {
     const name = e.name;
     switch (name) {
-      case "ChangedSelection": {
-        const sel = e.subject.first();
-        if (sel) {
-          setModel({
-            ...model,
-            key: sel.data.key,
-            gender: sel.data.s === "F" ? "Female" : "Male",
-            name: sel.data.n,
-            dod: sel.data.dod,
-            dob: sel.data.dob,
-            note: sel.data.note,
-            imageUrl: sel.data.imageUrl,
-          });
-        } else {
-          // console.log("sel");
-        }
-        break;
+    case "ChangedSelection": {
+      const sel = e.subject.first();
+      if (sel) {
+        setModel({
+          ...model,
+          key: sel.data.key,
+          gender: sel.data.s === "F" ? "Female" : "Male",
+          name: sel.data.n,
+          dod: sel.data.dod,
+          dob: sel.data.dob,
+          note: sel.data.note,
+          imageUrl: sel.data.imageUrl,
+        });
+      } else {
+        // console.log("sel");
       }
-      default:
-        break;
+      break;
+    }
+    default:
+      break;
     }
   }
 
@@ -690,25 +690,25 @@ export default function CustomTreePage() {
   const handleSave = (imageUrl) => {
     const diagram = tempDiagram.current;
     switch (showModal.select) {
-      case CONSTANTS.SPOUSE: {
-        processAddSpouse(nodeSelect, diagram, imageUrl);
-        break;
-      }
-      case CONSTANTS.FATHER: {
-        processAddParent(nodeSelect, diagram, imageUrl);
-        break;
-      }
-      case CONSTANTS.MOTHER: {
-        processAddParent(nodeSelect, diagram, imageUrl);
-        break;
-      }
-      case CONSTANTS.CHILDREN: {
-        processAddChild(nodeSelect, diagram, imageUrl);
-        break;
-      }
-      default: {
-        break;
-      }
+    case CONSTANTS.SPOUSE: {
+      processAddSpouse(nodeSelect, diagram, imageUrl);
+      break;
+    }
+    case CONSTANTS.FATHER: {
+      processAddParent(nodeSelect, diagram, imageUrl);
+      break;
+    }
+    case CONSTANTS.MOTHER: {
+      processAddParent(nodeSelect, diagram, imageUrl);
+      break;
+    }
+    case CONSTANTS.CHILDREN: {
+      processAddChild(nodeSelect, diagram, imageUrl);
+      break;
+    }
+    default: {
+      break;
+    }
     }
     setShowModal({ ...showModal, show: false, rel: [] });
   };
@@ -779,8 +779,8 @@ export default function CustomTreePage() {
       _.get(nodeRelation, "data.type") === CONSTANTS.TYPE.UNDEFINED
         ? 0
         : _.get(nodeRelation, "data.id", null) === null
-        ? 1
-        : 2;
+          ? 1
+          : 2;
     // Prepare for Call API.
     const idFather = isFather ? node.id : paramParent;
     const idMother = isFather ? paramParent : node.id;
@@ -791,32 +791,32 @@ export default function CustomTreePage() {
       getForm.key = getForm.id;
       const nodeAttach = _.get(result.data, isFather ? "data.newMother" : "data.newFather", null);
       switch (getCaseAdd) {
-        case 0: // Undefined
-        case 1: {
-          // Not have spouse
-          const objectParent = _.get(
-            result.data,
-            isFather ? "data.newMother" : "data.newFather",
-            {}
-          );
+      case 0: // Undefined
+      case 1: {
+        // Not have spouse
+        const objectParent = _.get(
+          result.data,
+          isFather ? "data.newMother" : "data.newFather",
+          {}
+        );
 
-          objectParent.key = objectParent.id;
-          objectParent.gender = objectParent.gender === 0 ? "male" : "female";
-          const toObject = Adapter.formatData(objectParent);
-          diagram.model.addNodeData(toObject);
-          // alter link
-          Adapter.createLinkForMarriages(
-            diagram,
-            diagram.model.linkDataArray,
-            getNodeArr,
-            node.id,
-            toObject.id
-          );
-          break;
-        }
-        case 2: {
-          break;
-        }
+        objectParent.key = objectParent.id;
+        objectParent.gender = objectParent.gender === 0 ? "male" : "female";
+        const toObject = Adapter.formatData(objectParent);
+        diagram.model.addNodeData(toObject);
+        // alter link
+        Adapter.createLinkForMarriages(
+          diagram,
+          diagram.model.linkDataArray,
+          getNodeArr,
+          node.id,
+          toObject.id
+        );
+        break;
+      }
+      case 2: {
+        break;
+      }
       }
 
       const parent2Id = nodeAttach || _.get(nodeRelation, "data", null);
@@ -1157,57 +1157,57 @@ export default function CustomTreePage() {
 
   const handleChangeAddForm = (e, label, isDeath = false) => {
     switch (label) {
-      case "firstName": {
-        setForm({ ...form, firstName: e.target.value });
-        break;
-      }
-      case "lastName": {
-        setForm({ ...form, lastName: e.target.value });
-        break;
-      }
-      case "gender": {
-        setForm({ ...form, gender: e.target.value });
-        break;
-      }
-      case "dob": {
-        setForm({ ...form, dob: moment(e.target.value).format("YYYY-MM-DD") });
-        break;
-      }
-      case "dod": {
-        setForm({ ...form, dod: moment(e.target.value).format("YYYY-MM-DD") });
-        break;
-      }
-      case "isDeath": {
-        setForm({
-          ...form,
-          isDeath: isDeath,
-          dod: !isDeath ? null : form.isDeath,
-        });
-        break;
-      }
-      case "note": {
-        setForm({ ...form, note: e.target.value });
-        break;
-      }
-      case "occupation": {
-        setForm({ ...form, occupation: e.target.value });
-        break;
-      }
-      case "phone": {
-        setForm({ ...form, phone: e.target.value });
-        break;
-      }
-      case "address": {
-        setForm({ ...form, address: e.target.value });
-        break;
-      }
-      case "nodeRelationship": {
-        setForm({ ...form, nodeRelationship: e.target.value });
-        break;
-      }
-      default: {
-        break;
-      }
+    case "firstName": {
+      setForm({ ...form, firstName: e.target.value });
+      break;
+    }
+    case "lastName": {
+      setForm({ ...form, lastName: e.target.value });
+      break;
+    }
+    case "gender": {
+      setForm({ ...form, gender: e.target.value });
+      break;
+    }
+    case "dob": {
+      setForm({ ...form, dob: moment(e.target.value).format("YYYY-MM-DD") });
+      break;
+    }
+    case "dod": {
+      setForm({ ...form, dod: moment(e.target.value).format("YYYY-MM-DD") });
+      break;
+    }
+    case "isDeath": {
+      setForm({
+        ...form,
+        isDeath: isDeath,
+        dod: !isDeath ? null : form.isDeath,
+      });
+      break;
+    }
+    case "note": {
+      setForm({ ...form, note: e.target.value });
+      break;
+    }
+    case "occupation": {
+      setForm({ ...form, occupation: e.target.value });
+      break;
+    }
+    case "phone": {
+      setForm({ ...form, phone: e.target.value });
+      break;
+    }
+    case "address": {
+      setForm({ ...form, address: e.target.value });
+      break;
+    }
+    case "nodeRelationship": {
+      setForm({ ...form, nodeRelationship: e.target.value });
+      break;
+    }
+    default: {
+      break;
+    }
     }
   };
 
@@ -1225,88 +1225,88 @@ export default function CustomTreePage() {
   const handleSelectRelationship = (label) => {
     // const nodeSelect = nodeSelect;
     switch (label) {
-      case CONSTANTS.CHILDREN: {
-        setGender(GENDER);
-        setShowModal({ ...showModal, step: 2, select: CHILDREN });
-        break;
-      }
-      case CONSTANTS.SPOUSE: {
-        if (nodeSelect.s === "F") {
-          setForm({ ...form, gender: "male" });
-          setGender([GENDER[0]]);
-        } else {
-          setForm({ ...form, gender: "female" });
-          setGender([GENDER[1]]);
-        }
-        setShowModal({ ...showModal, step: 2, select: SPOUSE });
-        break;
-      }
-      case CONSTANTS.MOTHER: {
-        setGender([GENDER[1]]);
-        setForm({ ...form, gender: "female" });
-        setShowModal({ ...showModal, step: 2, select: MOTHER });
-        break;
-      }
-      case CONSTANTS.FATHER: {
-        setGender([GENDER[0]]);
+    case CONSTANTS.CHILDREN: {
+      setGender(GENDER);
+      setShowModal({ ...showModal, step: 2, select: CHILDREN });
+      break;
+    }
+    case CONSTANTS.SPOUSE: {
+      if (nodeSelect.s === "F") {
         setForm({ ...form, gender: "male" });
-        setShowModal({ ...showModal, step: 2, select: FATHER });
-        break;
+        setGender([GENDER[0]]);
+      } else {
+        setForm({ ...form, gender: "female" });
+        setGender([GENDER[1]]);
       }
-      default: {
-        break;
-      }
+      setShowModal({ ...showModal, step: 2, select: SPOUSE });
+      break;
+    }
+    case CONSTANTS.MOTHER: {
+      setGender([GENDER[1]]);
+      setForm({ ...form, gender: "female" });
+      setShowModal({ ...showModal, step: 2, select: MOTHER });
+      break;
+    }
+    case CONSTANTS.FATHER: {
+      setGender([GENDER[0]]);
+      setForm({ ...form, gender: "male" });
+      setShowModal({ ...showModal, step: 2, select: FATHER });
+      break;
+    }
+    default: {
+      break;
+    }
     }
   };
 
   const handleChangeRelationship = (e) => {
     setForm({ ...form, relationship: e.target.value });
     switch (e.target.value) {
-      case "f": {
-        const mother = Adapter.getMother(alterLinkDataArray, form.desNode);
-        const father = Adapter.getFather(alterLinkDataArray, form.desNode);
-        if (!mother && !father) {
-          setAlternativeNotConfirm({
-            show: true,
-            warningAlternativeNode: true,
-          });
-        }
-        setGender([{ label: "Male", value: "m" }]);
-        break;
+    case "f": {
+      const mother = Adapter.getMother(alterLinkDataArray, form.desNode);
+      const father = Adapter.getFather(alterLinkDataArray, form.desNode);
+      if (!mother && !father) {
+        setAlternativeNotConfirm({
+          show: true,
+          warningAlternativeNode: true,
+        });
       }
-      case "m": {
-        const mother = Adapter.getMother(alterLinkDataArray, form.desNode);
-        const father = Adapter.getFather(alterLinkDataArray, form.desNode);
-        if (!mother && !father) {
-          setAlternativeNotConfirm({
-            show: true,
-            warningAlternativeNode: true,
-          });
-        }
-        setGender([{ label: "Female", value: "f" }]);
-        break;
+      setGender([{ label: "Male", value: "m" }]);
+      break;
+    }
+    case "m": {
+      const mother = Adapter.getMother(alterLinkDataArray, form.desNode);
+      const father = Adapter.getFather(alterLinkDataArray, form.desNode);
+      if (!mother && !father) {
+        setAlternativeNotConfirm({
+          show: true,
+          warningAlternativeNode: true,
+        });
       }
-      case "marriage": {
-        const findDesNode = nodeDataArray.find((ele) => ele.key === form.desNode);
-        const getMarriages = Adapter.getMarriageByArray(alterLinkDataArray, form.desNode);
-        const getAlternative = getMarriages.filter((ele) => Adapter.isAlterNode(ele));
-        if (getAlternative.length > 0) {
-          setAlternativeNotConfirm({
-            show: true,
-            warningUpdateForMarriage: true,
-          });
-        }
-        setGender([
-          {
-            label: findDesNode.s === "m" ? "Male" : "Female",
-            value: findDesNode.s === "m" ? "m" : "f",
-          },
-        ]);
-        break;
+      setGender([{ label: "Female", value: "f" }]);
+      break;
+    }
+    case "marriage": {
+      const findDesNode = nodeDataArray.find((ele) => ele.key === form.desNode);
+      const getMarriages = Adapter.getMarriageByArray(alterLinkDataArray, form.desNode);
+      const getAlternative = getMarriages.filter((ele) => Adapter.isAlterNode(ele));
+      if (getAlternative.length > 0) {
+        setAlternativeNotConfirm({
+          show: true,
+          warningUpdateForMarriage: true,
+        });
       }
-      default: {
-        setGender(GENDER);
-      }
+      setGender([
+        {
+          label: findDesNode.s === "m" ? "Male" : "Female",
+          value: findDesNode.s === "m" ? "m" : "f",
+        },
+      ]);
+      break;
+    }
+    default: {
+      setGender(GENDER);
+    }
     }
   };
 

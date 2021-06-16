@@ -128,15 +128,15 @@ function ModalUpdate(props) {
 
   const getLabel = () => {
     switch (showModal.select) {
-      case CHILDREN: {
-        return `Spouse of ${nodeSelect.n}`;
-      }
-      case MOTHER: {
-        return "Father";
-      }
-      case FATHER: {
-        return "Mother";
-      }
+    case CHILDREN: {
+      return `Spouse of ${nodeSelect.n}`;
+    }
+    case MOTHER: {
+      return "Father";
+    }
+    case FATHER: {
+      return "Mother";
+    }
     }
   };
 

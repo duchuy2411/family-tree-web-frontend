@@ -17,7 +17,7 @@ const StyledBadge = withStyles(() => ({
       borderRadius: "50%",
       animation: "$ripple 1.2s infinite ease-in-out",
       border: "1px solid currentColor",
-      content: '""',
+      content: "\"\"",
     },
   },
   "@keyframes ripple": {

@@ -48,32 +48,32 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
     setSelectedIndex(index);
     setAnchorEl(null);
     switch (index) {
-      case 0: {
-        const current = _.find(trees, (ele) => ele.id === id);
-        dispatch(SET_CURRENT_TREE(current));
-        history.push(`/calendar/${id}`);
-        break;
-      }
-      case 1: {
-        const current = _.find(trees, (ele) => ele.id === id);
-        dispatch(SET_CURRENT_TREE(current));
-        history.push(`/tree-management/${id}`);
-        break;
-      }
-      case 2: {
-        swal({
-          title: "Are you sure?",
-          text: "Once deleted, you will not be able to recover this tree!",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        }).then((willDelete) => {
-          if (willDelete) {
-            dispatch(deleteTree(id));
-          }
-        });
-        break;
-      }
+    case 0: {
+      const current = _.find(trees, (ele) => ele.id === id);
+      dispatch(SET_CURRENT_TREE(current));
+      history.push(`/calendar/${id}`);
+      break;
+    }
+    case 1: {
+      const current = _.find(trees, (ele) => ele.id === id);
+      dispatch(SET_CURRENT_TREE(current));
+      history.push(`/tree-management/${id}`);
+      break;
+    }
+    case 2: {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this tree!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          dispatch(deleteTree(id));
+        }
+      });
+      break;
+    }
     }
   };
 

@@ -13,24 +13,24 @@ import {
 } from "../calendarSlice";
 
 const Memory = () =>
-  // props
-  {
-    // const {
-    // } = props;
+// props
+{
+  // const {
+  // } = props;
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const arrMemory = useSelector(selectArrMemory);
-    React.useEffect(async () => {
-      await dispatch(fetchMemory(21));
-    }, []);
+  const arrMemory = useSelector(selectArrMemory);
+  React.useEffect(async () => {
+    await dispatch(fetchMemory(21));
+  }, []);
 
-    return (
-      <Grid xs={10} className="scrollable">
-        <NewCard />
-        <CardList arrMemory={arrMemory} />
-      </Grid>
-    );
-  };
+  return (
+    <Grid xs={10} className="scrollable">
+      <NewCard />
+      <CardList arrMemory={arrMemory} />
+    </Grid>
+  );
+};
 
 export default Memory;
