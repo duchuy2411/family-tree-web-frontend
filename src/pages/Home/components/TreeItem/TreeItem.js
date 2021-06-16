@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 import moment from "moment";
@@ -20,10 +20,8 @@ import {
   Tooltip,
   Typography,
   List,
-  ListItem,
   Menu,
   MenuItem,
-  ListItemText,
 } from "@material-ui/core";
 import { AvatarGroup } from "@material-ui/lab";
 
@@ -37,12 +35,14 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
   const dispatch = useDispatch();
   const trees = useSelector(selectTrees);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const history = useHistory();
   const options = ["Calendar", "Tree Management", "Delete Tree"];
-  const handleClickListItem = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+
+  // const handleClickListItem = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index);

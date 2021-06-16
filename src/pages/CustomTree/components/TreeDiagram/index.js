@@ -24,10 +24,7 @@ function TreeDiagram(props) {
       if (!diagramRef.current) return;
       const diagram = diagramRef.current.getDiagram();
       if (diagram instanceof go.Diagram) {
-        diagram.removeDiagramListener(
-          "ChangedSelection",
-          props.handleDiagramEvent
-        );
+        diagram.removeDiagramListener("ChangedSelection", props.handleDiagramEvent);
       }
     };
   }, []);
