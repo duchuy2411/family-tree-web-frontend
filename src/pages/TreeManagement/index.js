@@ -13,7 +13,7 @@ import ListMember from "./ListMember";
 import {
   updateTree,
   selectTree,
-  // selectTrees,
+  selectTrees,
   fetchTreesAndSetCurrent,
   deleteTree,
 } from "../Home/homeSlice";
@@ -29,11 +29,10 @@ const TreeManagement = () => {
   const [valSearch, setValSearch] = useState({ firstName: "", lastName: "", age: "" });
   const [originList, setOriginList] = useState();
   const dispatch = useDispatch();
-  // const listTree = useSelector(selectTrees);
+  const listTree = useSelector(selectTrees);
   const currentTree = useSelector(selectTree);
   const { id } = useParams();
   const history = useHistory();
-  // eslint-disable-next-line no-unused-vars
   const [publicMode, setPublicMode] = useState(false);
 
   useEffect(async () => {
@@ -173,7 +172,7 @@ const TreeManagement = () => {
           id="panel1a-header"
           className={classes.tab}
         >
-          <Typography className={classes.heading}>{"Tree's information"}</Typography>
+          <Typography className={classes.heading}>Tree's information</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.details}>
           <TreeInformation

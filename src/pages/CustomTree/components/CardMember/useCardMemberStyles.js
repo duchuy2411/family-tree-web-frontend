@@ -21,7 +21,7 @@ const useCardMemberStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    margin: "5px 0px",
+    margin: "5px 0px"
   },
   name: {
     fontSize: 18,

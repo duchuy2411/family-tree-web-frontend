@@ -157,11 +157,7 @@ export default function ProfilePage() {
         },
       });
 
-      const {
-        data,
-        // errors,
-        // message
-      } = response.data;
+      const { data, errors, message } = response.data;
 
       if (data) {
         // data = url
@@ -175,7 +171,7 @@ export default function ProfilePage() {
     try {
       const actionResult = await dispatch(updateUserAsync(infoValues));
       const currentUser = unwrapResult(actionResult);
-      console.log("handleUpdate - currentUser: ", currentUser);
+      // console.log("handleUpdate - currentUser: ", currentUser);
     } catch (error) {
       console.log("Error in handleUpdate: ", error);
 

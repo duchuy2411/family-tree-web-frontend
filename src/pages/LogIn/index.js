@@ -37,6 +37,7 @@ const LogInPage = () => {
   const smDownMatches = useMediaQuery(theme.breakpoints.down("sm"));
 
   if (redirectToReferrer === true) {
+
     if (location.state) {
       return <Redirect to={location.state.referrer} />;
     } else {
@@ -97,7 +98,11 @@ const LogInPage = () => {
             </Hidden>
 
             <Hidden mdUp>
-              <Typography className={classes.appTitle} variant="h3" component="h2">
+              <Typography
+                className={classes.appTitle}
+                variant="h3"
+                component="h2"
+              >
                 Origin Keeper
               </Typography>
             </Hidden>

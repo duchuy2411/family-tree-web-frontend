@@ -2,15 +2,14 @@ import _ from "lodash";
 import moment from "moment";
 import CONSTANTS from "./const";
 
-const sourceDefaultImg =
-  "https://static2.yan.vn/YanNews/2167221/202102/facebook-cap-nhat-avatar-doi-voi-tai-khoan-khong-su-dung-anh-dai-dien-e4abd14d.jpg";
+const sourceDefaultImg = 'https://static2.yan.vn/YanNews/2167221/202102/facebook-cap-nhat-avatar-doi-voi-tai-khoan-khong-su-dung-anh-dai-dien-e4abd14d.jpg';
 class Adapter {
   parse(data) {
-    const results = data.map((ele) => {
+    const results = data.map((ele, index) => {
       const member = {
         id: ele.id,
         key: ele.id,
-        n: `${_.get(ele, "lastName", " ") || "Unknow"} ${_.get(ele, "firstName", " ") || " "}`,
+        n: `${_.get(ele, 'lastName', ' ') || 'Unknow'} ${_.get(ele, 'firstName', ' ') || ' '}`,
         s: ele.gender === 0 ? "M" : "F",
         dob: ele.dateOfBirth ? moment(ele.dateOfBirth).format("L") : null,
         dod: ele.dateOfDeath ? moment(ele.dateOfDeath).format("L") : null,
@@ -20,41 +19,43 @@ class Adapter {
         lastName: ele.lastName,
         imageUrl: ele.imageUrl || sourceDefaultImg,
       };
-      const parent1Id = _.get(ele, "parent1Id");
-      _.set(member, "f", parent1Id);
-      const parent2Id = _.get(ele, "parent2Id");
-      _.set(member, "m", parent2Id);
-      ele.spouses.forEach((element) => {
+      const parent1Id = _.get(ele, 'parent1Id');
+      _.set(member, 'f', parent1Id);
+      const parent2Id = _.get(ele, 'parent2Id');
+      _.set(member, 'm', parent2Id);
+      ele.spouses.forEach(element => {
         if (element) {
           if (ele.gender === 0) {
-            const arr = _.get(member, "ux", []);
-            _.set(member, "ux", arr);
-            if (_.get(element, "id")) member.ux.push(element.id);
+            const arr = _.get(member, 'ux', []);
+            _.set(member, 'ux', arr);
+            if (_.get(element, 'id')) member.ux.push(element.id);
           } else {
-            const arr = _.get(member, "vir", []);
-            _.set(member, "vir", arr);
-            if (_.get(element, "id")) member.vir.push(element.id);
+            const arr = _.get(member, 'vir', []);
+            _.set(member, 'vir', arr);
+            if (_.get(element, 'id')) member.vir.push(element.id);
           }
         }
       });
       return member;
-    });
+      }
+    );
     return this.processMemo(results);
   }
 
-  countMemoForKey(array) {
+  countMemoForKey (array) {
     let count = 0;
     for (let i = 0; i < array.length; i += 1) {
-      if (array[i].type === CONSTANTS.TYPE.UNDEFINED) count++;
+      if (array[i].type === CONSTANTS.TYPE.UNDEFINED) 
+        count++;
     }
     return -(count + 1);
   }
 
-  nodeMemo(vir = null, ux = null, father = null, mother = null) {
+  nodeMemo (vir = null, ux = null, father = null, mother = null) {
     const rs = {
       type: CONSTANTS.TYPE.UNDEFINED,
       n: CONSTANTS.UNDEFINED,
-    };
+    }
     if (vir) rs.vir = [vir];
     if (ux) rs.ux = [ux];
     if (father) rs.f = father;
@@ -62,7 +63,7 @@ class Adapter {
     return rs;
   }
 
-  processMemo(array) {
+  processMemo (array) {
     const clone = [...array];
     for (let i = 0; i < array.length; i += 1) {
       if (!clone[i].f && clone[i].m) {
@@ -71,7 +72,7 @@ class Adapter {
         memo.key = key;
         clone[i].f = key;
         clone.push(memo);
-        const ind = _.findIndex(clone, (ele) => ele.key === clone[i].m);
+        const ind = _.findIndex(clone, ele => ele.key === clone[i].m);
         clone[ind].vir = [key];
       } else if (clone[i].f && !clone[i].m) {
         const memo = this.nodeMemo(clone[i].f);
@@ -79,11 +80,11 @@ class Adapter {
         memo.key = key;
         clone[i].m = key;
         clone.push(memo);
-        const ind = _.findIndex(clone, (ele) => ele.key === clone[i].f);
+        const ind = _.findIndex(clone, ele => ele.key === clone[i].f);
         clone[ind].ux = [key];
       }
     }
-
+    
     return clone;
   }
 
@@ -128,10 +129,12 @@ class Adapter {
     const node = this.getNode(arr, key);
     const getUx = _.get(node, "ux");
     const ux = _.isArray(getUx) && getUx ? getUx : [getUx];
-    if (ux.length > 0 && ux[0] !== undefined) return ux.map((ele) => this.getNode(arr, ele));
+    if (ux.length > 0 && ux[0] !== undefined)
+      return ux.map((ele) => this.getNode(arr, ele));
     const getVir = _.get(node, "vir");
     const vir = _.isArray(getVir) && getVir ? getVir : [getVir];
-    if (vir.length > 0 && vir[0] !== undefined) return vir.map((ele) => this.getNode(arr, ele));
+    if (vir.length > 0 && vir[0] !== undefined)
+      return vir.map((ele) => this.getNode(arr, ele));
     const marriageFrom = arr.filter((ele) => {
       const uxs = _.get(ele, "ux");
       const virs = _.get(ele, "vir");
@@ -209,30 +212,28 @@ class Adapter {
 
   formatData(model, imageUrl) {
     const obj = {
-      s: model.gender === "male" ? "M" : "F",
-      n:
-        model.name ||
-        `${_.get(model, "lastName", " ") || ""} ${_.get(model, "firstName", " ") || ""}`,
-      dob: _.get(model, "dob") === "Invalid date" ? null : _.get(model, "dob"),
-      dod: _.get(model, "dod") === "Invalid date" ? null : _.get(model, "dod"),
-      note: _.get(model, "note", ""),
-      occupation: _.get(model, "occupation", null),
-      address: _.get(model, "address", ""),
-      phone: _.get(model, "phone", ""),
-      lastName: _.get(model, "lastName", ""),
-      firstName: _.get(model, "firstName", ""),
+      s: model.gender === 'male' ? 'M' : 'F',
+      n: model.name || `${_.get(model, 'lastName', ' ') || ''} ${_.get(model, 'firstName', ' ') || ''}`,
+      dob: _.get(model, 'dob') === 'Invalid date' ? null : _.get(model, 'dob'),
+      dod: _.get(model, 'dod') === 'Invalid date' ? null : _.get(model, 'dod'),
+      note: _.get(model, 'note', ''),
+      occupation: _.get(model, 'occupation', null),
+      address: _.get(model, 'address', ''),
+      phone: _.get(model, 'phone', ''),
+      lastName: _.get(model, 'lastName', ''),
+      firstName: _.get(model, 'firstName', ''),
       imageUrl: imageUrl || sourceDefaultImg,
-    };
+    }
     if (model.type === CONSTANTS.TYPE.UNDEFINED) {
-      _.set(obj, "type", CONSTANTS.TYPE.UNDEFINED);
+      _.set(obj, 'type', CONSTANTS.TYPE.UNDEFINED);
       return obj;
     }
-    if (model.dod && model.dod !== "Invalid date") {
-      _.set(obj, "type", CONSTANTS.TYPE.DEAD);
+    if (model.dod && model.dod !== 'Invalid date') {
+      _.set(obj, 'type', CONSTANTS.TYPE.DEAD);
       return obj;
     }
-    if (model.id) _.set(obj, "id", model.id);
-    if (model.id) _.set(obj, "key", model.id);
+    if (model.id) _.set(obj, 'id', model.id);
+    if (model.id) _.set(obj, 'key', model.id);
     _.set(obj, "type", model.gender === "male" ? "M" : "F");
     return obj;
   }
@@ -242,8 +243,8 @@ class Adapter {
       arrayLink,
       (ele) =>
         ele.category === CONSTANTS.MARRIAGE &&
-        ((ele.from === parent1.key && ele.to === parent2.key) ||
-          (ele.to === parent1.key && ele.from === parent2.key))
+        ((ele.from === parent1.key && ele.to === parent2.key)
+        || (ele.to === parent1.key && ele.from === parent2.key))
     );
     const newLink = { from: linkParent.labelKeys[0], to: node.key };
     diagram.model.addLinkData(newLink);
@@ -251,7 +252,7 @@ class Adapter {
 
   createLinkForMarriages(diagram, arrayLink, arrNode, self, spouse, key = null) {
     const linkLabel = { s: "LinkLabel", type: "LinkLabel" };
-    if (key) _.set(linkLabel, "key", key);
+    if (key) _.set(linkLabel, 'key', key);
     diagram.model.addNodeData(linkLabel);
     const linkMarriage = {
       from: self,
@@ -273,13 +274,11 @@ class Adapter {
 
   toFormAPI(model) {
     const res = {
-      gender: model.s === "F" ? 1 : 0,
+      gender: model.s === 'F' ? 1 : 0,
       firstName: model.firstName,
       lastName: model.lastName,
-      dateOfBirth:
-        moment(model.dob).format() === "Invalid date" ? null : moment(model.dob).format(),
-      dateOfDeath:
-        moment(model.dod).format() === "Invalid date" ? null : moment(model.dod).format(),
+      dateOfBirth: moment(model.dob).format() === 'Invalid date' ? null : moment(model.dob).format(),
+      dateOfDeath: moment(model.dod).format() === 'Invalid date' ? null : moment(model.dod).format(),
       note: model.note,
       imageUrl: model.imageUrl,
     };
@@ -291,27 +290,22 @@ class Adapter {
       fatherId: fatherId,
       motherId: motherId,
       childInfo: {
-        gender: model.s === "F" ? 1 : 0,
+        gender: model.s === 'F' ? 1 : 0,
         firstName: model.firstName,
         lastName: model.lastName,
-        dateOfBirth:
-          moment(model.dob).format() === "Invalid date" ? null : moment(model.dob).format(),
-        dateOfDeath:
-          moment(model.dod).format() === "Invalid date" ? null : moment(model.dod).format(),
+        dateOfBirth: moment(model.dob).format() === 'Invalid date' ? null : moment(model.dob).format(),
+        dateOfDeath: moment(model.dod).format() === 'Invalid date' ? null : moment(model.dod).format(),
         userId: null,
         note: model.note,
         imageUrl: model.imageUrl || sourceDefaultImg,
-      },
-    };
+      }
+    }
     return res;
   }
 
   getLinkMarrigage(diagram, key) {
     const linkArr = diagram.model.linkDataArray;
-    const link = _.filter(
-      linkArr,
-      (ele) => ele.category === "Marriage" && (ele.to === key || ele.from === key)
-    );
+    const link = _.filter(linkArr, ele => ele.category === 'Marriage' && (ele.to === key || ele.from === key));
     return link;
   }
 
@@ -319,7 +313,7 @@ class Adapter {
     const member = {
       id: ele.id,
       key: ele.id,
-      n: `${_.get(ele, "lastName", "") || ""} ${_.get(ele, "firstName", "") || " "}`,
+      n: `${_.get(ele, 'lastName', '') || ''} ${_.get(ele, 'firstName', '') || ' '}`,
       s: ele.gender === 0 ? "M" : "F",
       dob: ele.dateOfBirth ? moment(ele.dateOfBirth).format("L") : null,
       dod: ele.dateOfDeath ? moment(ele.dateOfDeath).format("L") : null,
@@ -329,14 +323,14 @@ class Adapter {
       lastName: ele.lastName,
       imageUrl: ele.imageUrl || sourceDefaultImg,
     };
-    if (father) _.set(member, "f", father);
-    if (mother) _.set(member, "m", mother);
-    if (spouses.length > 0) _.set(member, member.s === "M" ? "ux" : "vir", spouses);
+    if (father) _.set(member, 'f', father);
+    if (mother) _.set(member, 'm', mother);
+    if (spouses.length > 0) _.set(member, member.s === 'M' ? 'ux' : 'vir', spouses);
     return member;
   }
 
   parseList(data) {
-    return data.map((ele) => {
+    return data.map((ele, index) => {
       const member = {
         id: ele.id,
         key: ele.id,
@@ -348,46 +342,27 @@ class Adapter {
         lastName: ele.lastName,
         imageUrl: ele.imageUrl || sourceDefaultImg,
       };
-      const parent1Id = _.get(ele, "parent1Id");
-      const infoParent1 = _.find(data, (father) => father.id === parent1Id);
+      const parent1Id = _.get(ele, 'parent1Id');
+      const infoParent1 = _.find(data, father => father.id === parent1Id);
       console.log("==infoParent1==: ", infoParent1);
-      _.set(
-        member,
-        "father",
-        infoParent1
-          ? {
-            id: parent1Id,
-            name: `${_.get(infoParent1, "lastName", "")} ${_.get(infoParent1, "firstName", "")}`,
-          }
-          : null
-      );
-      const parent2Id = _.get(ele, "parent2Id");
-      const infoParent2 = _.find(data, (mother) => mother.id === parent2Id);
-      console.log("==infoParent2==: ", infoParent2);
-      _.set(
-        member,
-        "mother",
-        infoParent2
-          ? {
-            id: parent2Id,
-            name: `${_.get(infoParent2, "lastName", "")} ${_.get(infoParent2, "firstName", "")}`,
-          }
-          : null
-      );
+      _.set(member, 'father', infoParent1
+        ? { id: parent1Id, name: `${_.get(infoParent1, 'lastName', '')} ${_.get(infoParent1, 'firstName', '')}` } : null);
+      const parent2Id = _.get(ele, 'parent2Id');
+      const infoParent2 = _.find(data, mother => mother.id === parent2Id);
+      console.log("==infoParent2==: ", infoParent2)
+      _.set(member, 'mother', infoParent2
+        ? { id: parent2Id, name: `${_.get(infoParent2, 'lastName', '')} ${_.get(infoParent2, 'firstName', '')}` } : null);
       member.spouses = [];
-      ele.spouses.forEach((element) => {
-        if (element && _.get(element, "id")) {
-          const infoSpouse = _.find(data, (sp) => sp.id === _.get(element, "id"));
-          member.spouses.push({
-            id: element.id,
-            name: infoSpouse
-              ? `${_.get(infoSpouse, "lastName", "")} ${_.get(infoSpouse, "firstName", "")}`
-              : null,
-          });
+      ele.spouses.forEach(element => {
+        if (element && _.get(element, 'id')) {
+          const infoSpouse = _.find(data, sp => sp.id === _.get(element, 'id'));
+          member.spouses.push({ id: element.id, name: infoSpouse
+            ? `${_.get(infoSpouse, 'lastName', '')} ${_.get(infoSpouse, 'firstName', '')}` : null});
         }
       });
       return member;
-    });
+      }
+    );
   }
 }
 

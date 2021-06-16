@@ -53,10 +53,10 @@ const useHomePageStyles = makeStyles((theme) => ({
   },
 
   btnNewTree: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   customBtnDashed: {
-    border: "dashed 1px black",
+    border: 'dashed 1px black',
   },
 }));
 

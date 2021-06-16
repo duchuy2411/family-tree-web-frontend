@@ -3,7 +3,7 @@ import Badge from "@material-ui/core/Badge";
 import { withStyles } from "@material-ui/core/styles";
 import { Star } from "@material-ui/icons";
 
-const StyledBadge = withStyles(() => ({
+const StyledBadge = withStyles((theme) => ({
   badge: {
     // backgroundColor: "#44b700",
     color: "#44b700",

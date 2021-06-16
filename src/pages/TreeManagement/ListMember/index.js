@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import _ from "lodash";
 import { useSelector, useDispatch } from "react-redux";
-import { InputBase, TextField, Grid } from "@material-ui/core";
+import { InputBase, TextField, MenuItem, Grid } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -13,7 +13,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import SearchIcon from "@material-ui/icons/Search";
 
-import UtilManagement from "../utilManagement";
+import UtilManament from "../utilManagement";
 import useManagementTreeStyle from "../useTreeManagementStyles";
 import ShowDetail from "./ShowDetail";
 import {
@@ -76,7 +76,6 @@ export default function ListMember(props) {
   const [form, setForm] = React.useState();
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [showDetail, setShowDetail] = React.useState(false);
-  // eslint-disable-next-line no-unused-vars
   const [error, setError] = React.useState({});
   const isFetchingCurrentPerson = useSelector(selectFetchingCurrent);
   const currentPerson = useSelector(selectPerson);
@@ -229,7 +228,7 @@ export default function ListMember(props) {
                           onChange={(e) => handleChangeFormSearch(e, "age")}
                           className={classes.ageInput}
                         >
-                          {UtilManagement.rangeAge.map((option, index) => (
+                          {UtilManament.rangeAge.map((option, index) => (
                             <option key={index} value={option.value}>
                               {option.label}
                             </option>

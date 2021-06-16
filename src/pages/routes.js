@@ -53,7 +53,7 @@ const pageRoutes = [
     exact: false,
     component: lazy(() => import("./TreeManagement")),
     onNavBar: false,
-  },
+  }
 ];
 
 export default pageRoutes;
