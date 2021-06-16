@@ -10,17 +10,13 @@ class UtilDiagram {
       const ux = _.get(arr[index], "ux", []);
       const vir = _.get(arr[index], "vir", []);
       if (ux.length > 1 && ux.includes(node.key)) {
-        diagram.model.nodeDataArray[index].ux = arr[index].ux.filter(
-          (ele) => ele !== node.key
-        );
+        diagram.model.nodeDataArray[index].ux = arr[index].ux.filter((ele) => ele !== node.key);
       } else if (ux.length === 1 && ux.includes(node.key)) {
         delete diagram.model.nodeDataArray[index].ux;
       }
 
       if (vir.length > 0 && vir.includes(node.key)) {
-        diagram.model.nodeDataArray[index].vir = arr[index].vir.filter(
-          (ele) => ele !== node.key
-        );
+        diagram.model.nodeDataArray[index].vir = arr[index].vir.filter((ele) => ele !== node.key);
       } else if (vir.length === 1 && vir.includes(node.key)) {
         delete diagram.model.nodeDataArray[index].vir;
       }
