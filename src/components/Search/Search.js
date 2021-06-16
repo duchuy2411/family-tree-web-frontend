@@ -24,12 +24,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SearchBox(props) {
-  const {
-    ariaLabel,
-    className,
-    search,
-    handleChangeSearch,
-  } = props;
+  const { ariaLabel, className, search, handleChangeSearch } = props;
 
   const classes = useStyles();
   const searchBoxClasses = classNames({

@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 
-const useProfilePageStyle = makeStyles((theme) => ({
+const useProfilePageStyle = makeStyles(() => ({
   root: {
     backgroundColor: "whitesmoke",
     minHeight: "100vh",

@@ -1,9 +1,7 @@
 import _ from "lodash";
 import api from "../../utils/api";
 import { createSlice } from "@reduxjs/toolkit";
-import swal from 'sweetalert';
-
-const API = api.baseUrl;
+import swal from "sweetalert";
 
 export const slice = createSlice({
   name: "managementTree",
@@ -11,7 +9,7 @@ export const slice = createSlice({
     trees: [],
     tree: {},
     person: {},
-    isFetchingPerson: false
+    isFetchingPerson: false,
   },
   reducers: {
     SET_TREES_ARRAY: (state, action) => {
@@ -30,16 +28,21 @@ export const slice = createSlice({
       return { ...state, isFetchingPerson: false };
     },
     REFRESH_CURRENT_PERSON: (state) => {
-      return { ...state, person: {} }; 
-    }
+      return { ...state, person: {} };
+    },
   },
 });
 
 export const {
-  SET_TREES_ARRAY, SET_CURRENT_TREE, FETCH_CURRENT_PERSON, FETCH_CURRENT_PERSON_SUCCESS, FETCH_CURRENT_PERSON_FAIL, REFRESH_CURRENT_PERSON
-  } = slice.actions;
+  SET_TREES_ARRAY,
+  SET_CURRENT_TREE,
+  FETCH_CURRENT_PERSON,
+  FETCH_CURRENT_PERSON_SUCCESS,
+  FETCH_CURRENT_PERSON_FAIL,
+  REFRESH_CURRENT_PERSON,
+} = slice.actions;
 
-export const deleteTree =  (treeId) => async (dispatch) => {
+export const deleteTree = (treeId) => async () => {
   const rs = await api.apiTreeManagement.deleteTree(treeId);
   if (rs.status === 200) {
     swal("Delete success fully!!", {
@@ -49,9 +52,9 @@ export const deleteTree =  (treeId) => async (dispatch) => {
   }
   swal(_.get(rs, "title", "Something wrong!!"));
   return false;
-}
+};
 
-export const updateTree = (treeId, payload) => async dispatch => {
+export const updateTree = (treeId, payload) => async () => {
   const rs = await api.apiTreeManagement.updateTree(treeId, payload);
   if (rs.status === 200) {
     swal("Update success fully!!", {
@@ -61,9 +64,9 @@ export const updateTree = (treeId, payload) => async dispatch => {
   }
   swal(_.get(rs, "title", "Something wrong!!"));
   return false;
-}
+};
 
-export const addEditor = (treeId, payload) => async dispatch => {
+export const addEditor = (treeId, payload) => async () => {
   const rs = await api.apiTreeManagement.addEditor(treeId, payload);
   if (rs.status === 200) {
     swal("Update success fully!!", {
@@ -73,9 +76,9 @@ export const addEditor = (treeId, payload) => async dispatch => {
   }
   swal(_.get(rs, "title", "Something wrong!!"));
   return false;
-}
+};
 
-export const removeEditor = (treeId, payload) => async dispatch => {
+export const removeEditor = (treeId, payload) => async () => {
   const rs = await api.apiTreeManagement.removeEditor(treeId, payload);
   if (rs.status === 200) {
     swal("Update success fully!!", {
@@ -85,37 +88,37 @@ export const removeEditor = (treeId, payload) => async dispatch => {
   }
   swal(_.get(rs, "title", "Something wrong!!"));
   return false;
-}
+};
 
-export const getDetailPerson = (personId) => async dispatch => {
+export const getDetailPerson = (personId) => async (dispatch) => {
   dispatch(FETCH_CURRENT_PERSON());
   const rs = await api.apiTreeManagement.getDetailPerson(personId);
   if (rs.status === 200) {
-    const data = _.get(rs.data, 'data', {})
+    const data = _.get(rs.data, "data", {});
     dispatch(FETCH_CURRENT_PERSON_SUCCESS(data));
     return data;
   }
-  dispatch(FETCH_CURRENT_PERSON_FAIL())
+  dispatch(FETCH_CURRENT_PERSON_FAIL());
   swal(_.get(rs, "title", "Something wrong!!"));
   return false;
-}
+};
 
-export const fetchTreesAndSetCurrent = (treeId) => async dispatch => {
+export const fetchTreesAndSetCurrent = (treeId) => async (dispatch) => {
   const rs = await api.getTreeList();
   if (rs.status === 200) {
-    const data = _.get(rs.data, 'data', []);
+    const data = _.get(rs.data, "data", []);
     console.log(data, treeId);
     dispatch(SET_TREES_ARRAY(data));
-    const getCur = _.find(data, ele => `${ele.id}` === `${treeId}`);
+    const getCur = _.find(data, (ele) => `${ele.id}` === `${treeId}`);
     console.log(getCur);
     dispatch(SET_CURRENT_TREE(getCur));
   }
   return false;
-}
+};
 
-export const selectTrees = state => state.managementTree.trees;
-export const selectTree = state => state.managementTree.tree;
-export const selectPerson = state => state.managementTree.person;
-export const selectFetchingCurrent = state => state.managementTree.isFetchingPerson;
+export const selectTrees = (state) => state.managementTree.trees;
+export const selectTree = (state) => state.managementTree.tree;
+export const selectPerson = (state) => state.managementTree.person;
+export const selectFetchingCurrent = (state) => state.managementTree.isFetchingPerson;
 
 export default slice.reducer;

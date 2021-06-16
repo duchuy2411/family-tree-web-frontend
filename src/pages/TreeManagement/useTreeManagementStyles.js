@@ -4,211 +4,211 @@ import { fade, makeStyles } from "@material-ui/core";
 
 const useCustomTreePageStyles = makeStyles((theme) => ({
   rootAccording: {
-    width: '99%',
-    margin: '15px 0px',
+    width: "99%",
+    margin: "15px 0px",
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
   cardContribute: {
-    height: '300px',
-    display: 'flex',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
+    height: "300px",
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
     padding: theme.spacing(5),
-    '& > *': {
+    "& > *": {
       minWidth: theme.spacing(10),
-    }
+    },
   },
   padding: {
-    padding: '10px',
+    padding: "10px",
   },
   avatar: {
     width: theme.spacing(20),
     height: theme.spacing(20),
   },
   name: {
-    fontSize: '13px',
-    marginTop: '20px',
+    fontSize: "13px",
+    marginTop: "20px",
   },
   borderTrike: {
-    border: '1px dashed black',
+    border: "1px dashed black",
     width: theme.spacing(20),
     height: theme.spacing(20),
-    justifyContent: 'center',
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: '5%',
+    justifyContent: "center",
+    display: "flex",
+    alignItems: "center",
+    borderRadius: "5%",
     "&:hover": {
-      backgroundColor: 'gray',
-      cursor: 'pointer',
-    }
+      backgroundColor: "gray",
+      cursor: "pointer",
+    },
   },
   inputFields: {
-    width: '90%',
+    width: "90%",
     margin: theme.spacing(1),
   },
   label: {
-    width: '90%',
-    fontWeight: 'bolder',
+    width: "90%",
+    fontWeight: "bolder",
     margin: theme.spacing(1),
   },
   tab: {
     backgroundColor: colors.pink,
-    borderRadius: '10px',
+    borderRadius: "10px",
   },
   section: {
     marginTop: theme.spacing(2),
-    borderRadius: '10px',
+    borderRadius: "10px",
   },
   modal: {
-    position: 'absolute',
+    position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
+    border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    textAlign: 'right'
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    textAlign: "right",
   },
   inputText: {
-    width: '100%',
-    marginBottom: theme.spacing(2)
+    width: "100%",
+    marginBottom: theme.spacing(2),
   },
   btnSecond: {
-    backgroundColor: colors.pink
+    backgroundColor: colors.pink,
   },
   btnPrimary: {
     backgroundColor: colors.brown,
-    color: colors.white
+    color: colors.white,
   },
   blockMale: {
-    display: 'inline-block',
-    width: '20px',
-    height: '20px',
-    backgroundColor: 'blue'
+    display: "inline-block",
+    width: "20px",
+    height: "20px",
+    backgroundColor: "blue",
   },
   blockFemale: {
-    display: 'inline-block',
-    width: '20px',
-    height: '20px',
-    backgroundColor: colors.pink
+    display: "inline-block",
+    width: "20px",
+    height: "20px",
+    backgroundColor: colors.pink,
   },
   root: {
-    width: '100%',
+    width: "100%",
   },
   container: {
     maxHeight: 440,
   },
   header: {
-    backgroundColor: 'black',
-    color: 'white',
+    backgroundColor: "black",
+    color: "white",
   },
   search: {
-    position: 'relative',
+    position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
+    "&:hover": {
       backgroundColor: fade(theme.palette.common.white, 0.25),
     },
-    marginRight: '5px',
+    marginRight: "5px",
     marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: 'auto',
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      width: "auto",
     },
   },
   searchIcon: {
-    fontSize: '10px',
+    fontSize: "10px",
     padding: theme.spacing(0, 1),
-    height: '100%',
-    position: 'absolute',
-    zIndex: '101',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
+    height: "100%",
+    position: "absolute",
+    zIndex: "101",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
     "&:hover": {
-      cursor: 'pointer',
-    }
+      cursor: "pointer",
+    },
   },
   inputRoot: {
-    color: 'inherit',
+    color: "inherit",
   },
   inputInput: {
-    fontSize: '12px',
+    fontSize: "12px",
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '10ch',
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      width: "10ch",
     },
   },
   smallImg: {
-    width: '50px',
-    height: '50px',
-    borderRadius: '10px'
+    width: "50px",
+    height: "50px",
+    borderRadius: "10px",
   },
   details: {
-    borderRadius: '10px',
-    border: 'none'
+    borderRadius: "10px",
+    border: "none",
   },
   ageInput: {
     backgroundColor: fade(theme.palette.common.white, 0.15),
     "& .MuiFormLabel-root": {
-      color: 'white',
-      display: 'none'
+      color: "white",
+      display: "none",
     },
     "& .MuiInputBase-root": {
-      color: 'white'
+      color: "white",
     },
     "& .MuiInput-formControl": {
-      marginTop: '5px',
+      marginTop: "5px",
     },
     "& .MuiSelect-root": {
-      paddingLeft: '10px',
+      paddingLeft: "10px",
     },
     "& .MuiInput-underline": {
       "&::after": {
-        borderBottom: `2px solid ${colors.pink}`
-      }
-    }
-  },  
+        borderBottom: `2px solid ${colors.pink}`,
+      },
+    },
+  },
   modalDetail: {
-    position: 'absolute',
+    position: "absolute",
     width: 800,
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
+    // border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    border: 'none',
-    borderRadius: '10px'
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    border: "none",
+    borderRadius: "10px",
   },
   avatarDetail: {
-    width: '350px',
-    height: '350px',
-    backgroundPosition: 'center',
-    backgroundSize: 'cover'
+    width: "350px",
+    height: "350px",
+    backgroundPosition: "center",
+    backgroundSize: "cover",
   },
   faSpinner: {
-    display: 'block',
-    margin: '10px 15px',
-    fontSize: '35px',
-    color: 'burlywood',
+    display: "block",
+    margin: "10px 15px",
+    fontSize: "35px",
+    color: "burlywood",
   },
   dateDetail: {
-    textAlign: 'center'
-  }
+    textAlign: "center",
+  },
 }));
 
 export default useCustomTreePageStyles;
