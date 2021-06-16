@@ -1,66 +1,72 @@
-import React from 'react';
-import moment from 'moment';
-import { useSelector, useDispatch } from 'react-redux';
-import { InputBase, TextField, MenuItem, Grid } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import SearchIcon from '@material-ui/icons/Search';
+import React from "react";
+import moment from "moment";
+import _ from "lodash";
+import { useSelector, useDispatch } from "react-redux";
+import { InputBase, TextField, MenuItem, Grid } from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableRow from "@material-ui/core/TableRow";
+import SearchIcon from "@material-ui/icons/Search";
 
-import UtilManament from '../utilManagement';
-import useManagementTreeStyle from '../useTreeManagementStyles';
-import ShowDetail from './ShowDetail';
-import {selectFetchingCurrent, getDetailPerson, selectPerson , REFRESH_CURRENT_PERSON } from '../../Home/homeSlice';
+import UtilManament from "../utilManagement";
+import useManagementTreeStyle from "../useTreeManagementStyles";
+import ShowDetail from "./ShowDetail";
+import {
+  selectFetchingCurrent,
+  getDetailPerson,
+  selectPerson,
+  REFRESH_CURRENT_PERSON,
+} from "../../Home/homeSlice";
 
 const columns = [
-  { id: 'avatar', label: '', minWidth: 10 },
-  { id: 'firstName', label: 'First Name', minWidth: 60 },
-  { id: 'lastName', label: 'Last Name', minWidth: 60 },
-  { id: 'gender', label: 'Gender', minWidth: 20, align: 'center' },
+  { id: "avatar", label: "", minWidth: 10 },
+  { id: "firstName", label: "First Name", minWidth: 60 },
+  { id: "lastName", label: "Last Name", minWidth: 60 },
+  { id: "gender", label: "Gender", minWidth: 20, align: "center" },
   {
-    id: 'dob',
-    label: 'Day of birth',
+    id: "dob",
+    label: "Day of birth",
     minWidth: 80,
-    align: 'center',
+    align: "center",
   },
   {
-    id: 'dod',
-    label: 'Day of dead',
+    id: "dod",
+    label: "Day of dead",
     minWidth: 80,
-    align: 'center',
+    align: "center",
   },
   {
-    id: 'age',
-    label: 'Age',
+    id: "age",
+    label: "Age",
     minWidth: 160,
-    align: 'center',
+    align: "center",
   },
   {
-    id: 'father',
-    label: 'Father',
+    id: "father",
+    label: "Father",
     minWidth: 80,
-    align: 'left',
+    align: "left",
   },
   {
-    id: 'mother',
-    label: 'Mother',
+    id: "mother",
+    label: "Mother",
     minWidth: 80,
-    align: 'left',
+    align: "left",
   },
   {
-    id: 'spouses',
-    label: 'Spouses',
+    id: "spouses",
+    label: "Spouses",
     minWidth: 100,
-    align: 'left',
-  }
+    align: "left",
+  },
 ];
 
-const noneSearch = ['age', 'avatar', 'gender', 'dob', 'dod', 'father', 'mother', 'spouses'];
+const noneSearch = ["age", "avatar", "gender", "dob", "dod", "father", "mother", "spouses"];
 
 export default function ListMember(props) {
   const { list, valSearch, handleSubmitSearch, handleChangeFormSearch } = props;
@@ -84,16 +90,19 @@ export default function ListMember(props) {
   };
 
   const formatSpouse = (value) => {
-    if (value.length === 0) return '';
-    const rs =  _.join(_.transform(value, (result, ele) => result.push(ele.name), []), ' ');
+    if (value.length === 0) return "";
+    const rs = _.join(
+      _.transform(value, (result, ele) => result.push(ele.name), []),
+      " "
+    );
     return rs;
-  }
+  };
 
   const handleKeyPress = (e) => {
     if (e.charCode === 13) {
       handleSubmitSearch();
-    } 
-  }
+    }
+  };
 
   const handleChangeAddForm = (e, label, isDeath = false) => {
     switch (label) {
@@ -151,16 +160,16 @@ export default function ListMember(props) {
     setForm(record);
     setShowDetail(true);
     dispatch(getDetailPerson(record.id));
-  }
+  };
 
   const handleCancel = () => {
     setShowDetail(false);
-    dispatch(REFRESH_CURRENT_PERSON())
-  }
+    dispatch(REFRESH_CURRENT_PERSON());
+  };
 
   return (
     <Paper className={classes.root}>
-      {showDetail &&
+      {showDetail && (
         <ShowDetail
           showDetail={showDetail}
           currentPerson={currentPerson}
@@ -170,7 +179,7 @@ export default function ListMember(props) {
           handleCancel={handleCancel}
           handleChangeAddForm={handleChangeAddForm}
         />
-      }
+      )}
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -182,55 +191,52 @@ export default function ListMember(props) {
                   style={{ minWidth: column.minWidth }}
                   className={classes.header}
                 >
-                  { !noneSearch.includes(column.id) ?
-                    (
-                      <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                          <SearchIcon/>
-                        </div>
-                        <InputBase
-                          placeholder={column.label}
-                          classes={{
-                            root: classes.inputRoot,
-                            input: classes.inputInput,
-                          }}
-                          inputProps={{ 'aria-label': 'search' }}
-                          value={valSearch[column.id]}
-                          onChange={(e) => handleChangeFormSearch(e, column.id)}
-                          onKeyPress={handleKeyPress}
-                        />
+                  {!noneSearch.includes(column.id) ? (
+                    <div className={classes.search}>
+                      <div className={classes.searchIcon}>
+                        <SearchIcon />
                       </div>
-                    ) : (column.id !== 'age' && column.label) 
-                  }
-                  {
-                    column.id === 'age' &&
-                    (
-                      <Grid container alignItems="center">
-                        <Grid item xs={5}>Age</Grid>
-                        <Grid item xs={7}>
-                          <TextField
-                            type="text"
-                            label="Age"
-                            select
-                            SelectProps={{
-                              native: true,
-                            }}
-                            value={valSearch.age}
-                            onChange={(e) => handleChangeFormSearch(e, 'age')}
-                            className={classes.ageInput}
-                          >
-                            {
-                              UtilManament.rangeAge.map((option, index) => (
-                                <option key={index} value={option.value}>
-                                  {option.label}
-                                </option>
-                              ))
-                            }
-                          </TextField>
-                        </Grid>
+                      <InputBase
+                        placeholder={column.label}
+                        classes={{
+                          root: classes.inputRoot,
+                          input: classes.inputInput,
+                        }}
+                        inputProps={{ "aria-label": "search" }}
+                        value={valSearch[column.id]}
+                        onChange={(e) => handleChangeFormSearch(e, column.id)}
+                        onKeyPress={handleKeyPress}
+                      />
+                    </div>
+                  ) : (
+                    column.id !== "age" && column.label
+                  )}
+                  {column.id === "age" && (
+                    <Grid container alignItems="center">
+                      <Grid item xs={5}>
+                        Age
                       </Grid>
-                    )
-                  }
+                      <Grid item xs={7}>
+                        <TextField
+                          type="text"
+                          label="Age"
+                          select
+                          SelectProps={{
+                            native: true,
+                          }}
+                          value={valSearch.age}
+                          onChange={(e) => handleChangeFormSearch(e, "age")}
+                          className={classes.ageInput}
+                        >
+                          {UtilManament.rangeAge.map((option, index) => (
+                            <option key={index} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </TextField>
+                      </Grid>
+                    </Grid>
+                  )}
                 </TableCell>
               ))}
             </TableRow>
@@ -248,9 +254,8 @@ export default function ListMember(props) {
                   selected={row.id === currentPerson.id}
                 >
                   {columns.map((column) => {
-                    const value = column.id === 'spouses'
-                      ? formatSpouse(row[column.id])
-                      : row[column.id];
+                    const value =
+                      column.id === "spouses" ? formatSpouse(row[column.id]) : row[column.id];
                     return (
                       <TableCell key={column.id} align={column.align}>
                         {value}

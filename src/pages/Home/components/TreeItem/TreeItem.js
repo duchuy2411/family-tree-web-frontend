@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 import moment from "moment";
-import swal from 'sweetalert';
+import swal from "sweetalert";
+import _ from "lodash";
 import { useHistory } from "react-router-dom";
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
-import { deleteTree, selectTrees, SET_CURRENT_TREE } from '../../homeSlice';
+import { deleteTree, selectTrees, SET_CURRENT_TREE } from "../../homeSlice";
 
 // MUI components
 import {
@@ -22,7 +23,7 @@ import {
   ListItem,
   Menu,
   MenuItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 import { AvatarGroup } from "@material-ui/lab";
 
@@ -31,25 +32,14 @@ import { MoreVert, WatchLater as WatchLaterIcon } from "@material-ui/icons";
 
 import useTreeItemStyles from "./useTreeItemStyles";
 
-export default function TreeItem({
-  id,
-  logo,
-  name,
-  updatedAt,
-  author,
-  contributors,
-}) {
+export default function TreeItem({ id, logo, name, updatedAt, author, contributors }) {
   const classes = useTreeItemStyles();
   const dispatch = useDispatch();
   const trees = useSelector(selectTrees);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const history = useHistory();
-  const options = [
-    "Calendar",
-    "Tree Management",
-    "Delete Tree"
-  ];
+  const options = ["Calendar", "Tree Management", "Delete Tree"];
   const handleClickListItem = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -59,14 +49,14 @@ export default function TreeItem({
     setAnchorEl(null);
     switch (index) {
       case 0: {
-        const current = _.find(trees, ele => ele.id === id);
-        dispatch(SET_CURRENT_TREE(current))
+        const current = _.find(trees, (ele) => ele.id === id);
+        dispatch(SET_CURRENT_TREE(current));
         history.push(`/calendar/${id}`);
         break;
       }
       case 1: {
-        const current = _.find(trees, ele => ele.id === id);
-        dispatch(SET_CURRENT_TREE(current))
+        const current = _.find(trees, (ele) => ele.id === id);
+        dispatch(SET_CURRENT_TREE(current));
         history.push(`/tree-management/${id}`);
         break;
       }
@@ -77,8 +67,7 @@ export default function TreeItem({
           icon: "warning",
           buttons: true,
           dangerMode: true,
-        })
-        .then((willDelete) => {
+        }).then((willDelete) => {
           if (willDelete) {
             dispatch(deleteTree(id));
           }
@@ -93,19 +82,12 @@ export default function TreeItem({
   };
   const handleClickMoreMenu = (event) => {
     setAnchorEl(event.currentTarget);
-  }
+  };
   return (
     <Card className={classes.root}>
       <Grid container alignItems="center">
         {/* ava + info */}
-        <Grid
-          item
-          lg={10}
-          xs={11}
-          container
-          alignItems="center"
-          className={classes.gridTree}
-        >
+        <Grid item lg={10} xs={11} container alignItems="center" className={classes.gridTree}>
           <img src={logo} alt="family avatar" className={classes.imgFamily} />
 
           {/* name - contributors - updatedAt */}
@@ -140,39 +122,26 @@ export default function TreeItem({
                 <Typography>Contributed by </Typography>
               </Hidden>
               <AvatarGroup max={4} className={classes.avatarGroup}>
-                {author &&
+                {author && (
                   <Tooltip title={`${author.username} - Owner`}>
                     <Avatar
                       alt={author.username}
                       src={author.avatarUrl}
-                      className={classNames(
-                        classes.avatarBorder,
-                        classes.avatarOwner
-                      )}
+                      className={classNames(classes.avatarBorder, classes.avatarOwner)}
                     />
                   </Tooltip>
-                }
+                )}
                 {/* Other contributors */}
                 {contributors.map((contributor, index) => (
                   <Tooltip key={index} title={contributor.username}>
-                    <Avatar
-                      alt={contributor.username}
-                      src={contributor.avatarUrl}
-                    />
+                    <Avatar alt={contributor.username} src={contributor.avatarUrl} />
                   </Tooltip>
                 ))}
-            </AvatarGroup>
-          </Grid>
+              </AvatarGroup>
+            </Grid>
 
             {/* updatedAt */}
-            <Grid
-              item
-              xl={2}
-              lg={3}
-              md
-              sm={6}
-              className={classes.gridUpdatedAt}
-            >
+            <Grid item xl={2} lg={3} md sm={6} className={classes.gridUpdatedAt}>
               <WatchLaterIcon className={classes.iconTime} />
               <Typography className={classes.typoUpdatedAt}>
                 {moment(updatedAt).format("YYYY-MM-DD") || "No update"}
@@ -204,8 +173,8 @@ export default function TreeItem({
               aria-controls="lock-menu"
               aria-label="when device is locked"
               onClick={handleClickMoreMenu}
-              >
-                More Option
+            >
+              More Option
             </List>
             <Menu
               id="lock-menu"
@@ -217,12 +186,12 @@ export default function TreeItem({
               elevation={0}
               getContentAnchorEl={null}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
+                vertical: "bottom",
+                horizontal: "center",
               }}
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
+                vertical: "top",
+                horizontal: "center",
               }}
             >
               {options.map((option, index) => (
@@ -233,8 +202,7 @@ export default function TreeItem({
                 >
                   {option}
                 </MenuItem>
-                )
-              )}
+              ))}
             </Menu>
           </Hidden>
           <Hidden lgUp>
