@@ -44,35 +44,35 @@ class UtilCalendar {
       const getRepeat = _.get(ele, "repeat", -1);
       const cur = _.get(ele, "startDate");
       switch (getRepeat) {
-        case 1: {
-          const getDayOfWeek = _.get(DAY_OF_WEEK, `${moment(cur).weekday()}`);
-          const weekday = moment(thisTime).startOf("month").day(`${getDayOfWeek}`);
-          if (weekday.date() > 7) weekday.add(7, "day");
-          let month = weekday.month();
-          while (month === weekday.month()) {
-            newArr.push(weekday);
-            weekday.add(7, "d");
-          }
-          break;
+      case 1: {
+        const getDayOfWeek = _.get(DAY_OF_WEEK, `${moment(cur).weekday()}`);
+        const weekday = moment(thisTime).startOf("month").day(`${getDayOfWeek}`);
+        if (weekday.date() > 7) weekday.add(7, "day");
+        let month = weekday.month();
+        while (month === weekday.month()) {
+          newArr.push(weekday);
+          weekday.add(7, "d");
         }
-        case 2: {
-          const newDate = new Date(
-            moment(thisTime).year(),
-            moment(thisTime).month(),
-            moment(cur).date()
-          );
-          newArr.push(newDate);
-          break;
-        }
-        case 3: {
-          const newDate = new Date(
-            moment(thisTime).year(),
-            moment(cur).month(),
-            moment(cur).date()
-          );
-          newArr.push(newDate);
-          break;
-        }
+        break;
+      }
+      case 2: {
+        const newDate = new Date(
+          moment(thisTime).year(),
+          moment(thisTime).month(),
+          moment(cur).date()
+        );
+        newArr.push(newDate);
+        break;
+      }
+      case 3: {
+        const newDate = new Date(
+          moment(thisTime).year(),
+          moment(cur).month(),
+          moment(cur).date()
+        );
+        newArr.push(newDate);
+        break;
+      }
       }
     });
     return newArr;
