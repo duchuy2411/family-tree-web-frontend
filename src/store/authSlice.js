@@ -63,6 +63,7 @@ const authSlice = createSlice({
 
       state.isLoading = false;
       state.error = error;
+      state.message = message;
 
       const updatedUserInfo = data;
 

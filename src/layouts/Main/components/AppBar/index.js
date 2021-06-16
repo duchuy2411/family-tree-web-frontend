@@ -36,7 +36,11 @@ import NotificationsList from "../NotificationsList";
 
 import classNames from "classnames";
 
-import { getAllNotifications, markAnNotificationAsRead, selectNotifications } from "./slice";
+import {
+  // getAllNotifications,
+  markAnNotificationAsRead,
+  selectNotifications,
+} from "./slice";
 
 import useAppBarStyles from "./styles";
 

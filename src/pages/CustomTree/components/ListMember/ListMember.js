@@ -3,7 +3,7 @@ import { Paper, makeStyles, Grid, Typography } from "@material-ui/core";
 
 import classNames from "classnames";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {},
   typoBold: {
     fontWeight: 900,

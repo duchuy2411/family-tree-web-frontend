@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import classNames from "classnames";
 // MUI
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -7,7 +6,7 @@ import { useHistory } from "react-router-dom";
 import { createTree } from "../Slice";
 
 // MUI
-import { Fade, Grid, Paper, Typography, Hidden, Button } from "@material-ui/core";
+import { Grid, Paper, Typography, Hidden, Button } from "@material-ui/core";
 
 // components
 import SearchBox from "../../components/Search/Search";
@@ -21,7 +20,7 @@ import { selectUser } from "../../store/authSlice";
 
 import api from "../../utils/api";
 
-import { SET_TREES_ARRAY } from './homeSlice';
+import { SET_TREES_ARRAY } from "./homeSlice";
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -59,7 +58,9 @@ export default function HomePage() {
         setTrees(trees);
         dispatch(SET_TREES_ARRAY(trees));
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log("Error in getTrees: ", e);
+    }
   }, []);
 
   useEffect(() => {
@@ -69,28 +70,17 @@ export default function HomePage() {
 
   const familyTreeList = (
     <div>
-      {trees.map((tree, index) => {
+      {trees.map((tree) => {
         return (
-          // <Fade
-          //   key={tree.id}
-          //   in={true}
-          //   style={{
-          //     transitionDelay: true ? `${300 + index * 200}ms` : "0ms",
-          //   }}
-          //   {...(true ? { timeout: 500 } : {})}
-          // >
-          <div>
-            {/* Fade need a ref: solved by wrap element in a div */}
-            <TreeItem
-              id={tree.id}
-              logo={tree.owner.avatarUrl}
-              name={tree.name}
-              updatedAt={tree.lastModified}
-              author={tree.owner}
-              contributors={tree.editors}
-            />
-          </div>
-          // </Fade>
+          <TreeItem
+            key={tree.id}
+            id={tree.id}
+            logo={tree.owner.avatarUrl}
+            name={tree.name}
+            updatedAt={tree.lastModified}
+            author={tree.owner}
+            contributors={tree.editors}
+          />
         );
       })}
     </div>
