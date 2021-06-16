@@ -1,3 +1,4 @@
+import { fade } from "@material-ui/core";
 import colors from "../../assets/colorPalette";
 
 import { makeStyles } from "@material-ui/core";
@@ -18,29 +19,29 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   calendar: {
     padding: theme.spacing(2),
     backgroundColor: colors.pink,
-    border: "none",
+    border: 'none',
   },
   fullWidth: {
-    width: "100%",
+    width: '100%',
   },
   typeEvent: {
-    padding: "5px",
+    padding: '5px',
     borderRadius: 7,
-    margin: "7px 0px",
-    fontSize: "1rem",
-    cursor: "pointer",
-    "&:hover": {
+    margin: '7px 0px',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    "&:hover" : {
       backgroundColor: "white",
-    },
+    }
   },
   schedule: {
-    alignItems: "center",
+    alignItems: 'center'
   },
   textField: {
-    width: "100%",
+    width: '100%',
   },
   textError: {
-    color: "red",
-  },
+    color: 'red',
+  }
 }));
 export default useCustomTreePageStyles;

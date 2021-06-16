@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Card, Typography, Avatar, Modal, TextField, Button } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import swal from "sweetalert";
 import { useParams } from "react-router-dom";
 import _ from "lodash";
 
 import useTreeManagementStyle from "../useTreeManagementStyles";
-import {
-  addEditor,
-  // removeEditor
-} from "../../Home/homeSlice";
+import { addEditor, removeEditor } from "../../Home/homeSlice";
 
 const Contribute = (props) => {
   const { owner, editors } = props;
@@ -22,22 +20,21 @@ const Contribute = (props) => {
     setValue(e.target.value);
   };
 
-  // const handleRemoveEditor = (name) => {
-  //   swal({
-  //     title: "Are you sure?",
-  //     text: "Once deleted, you will not be able to recover this tree!",
-  //     icon: "warning",
-  //     buttons: true,
-  //     dangerMode: true,
-  //   }).then((willDelete) => {
-  //     if (willDelete) {
-  //       dispatch(removeEditor(name));
-  //     }
-  //   });
-  // };
-
+  const handleRemoveEditor = (name) => {
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this tree!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        dispatch(removeEditor(name));
+      }
+    });
+  };
   const handleSubmit = async () => {
-    await dispatch(addEditor(id, { usernames: [value] }));
+    const rs = await dispatch(addEditor(id, { usernames: [value] }));
     setOpen(false);
     setValue("");
   };
@@ -64,7 +61,7 @@ const Contribute = (props) => {
       </Grid>
       {_.get(editors, "length") > 0 &&
         editors.map((ele) => (
-          <Grid key={ele.id} item xs={2} className={classes.padding}>
+          <Grid item xs={2} className={classes.padding}>
             <Card className={classes.cardContribute}>
               <Avatar
                 variant="rounded"

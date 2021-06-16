@@ -1,6 +1,6 @@
 import React from "react";
 
-// import useCalendarStyles from "../useCalendarStyles";
+import useCalendarStyles from "../useCalendarStyles";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -9,7 +9,7 @@ import { Grid } from "@material-ui/core";
 const localizer = momentLocalizer(moment);
 
 export default function Schedule(props) {
-  // const classes = useCalendarStyles();
+  const classes = useCalendarStyles();
   const { event, handleSelectSlot, handleSelectEvent } = props;
 
   const toolTip = (e) => {

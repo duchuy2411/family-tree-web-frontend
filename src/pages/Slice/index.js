@@ -1,3 +1,4 @@
+import _ from "lodash";
 import api from "../../utils/api";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -11,34 +12,34 @@ export const slice = createSlice({
     fetchTree: (state, action) => {
       return { ...state, tree: action.payload };
     },
-    createTree: (state) => {
+    createTree: (state, action) => {
       return { ...state, creatingTree: true };
     },
-    createTreeSuccess: (state, action) => {
+    createTreeSuccess : (state, action) => {
       return { ...state, creatingTree: false, tree: action.payload };
     },
-    createTreeFail: (state) => {
+    createTreeFail: (state, action) => {
       return { ...state, creatingTree: false };
-    },
+    }
   },
 });
 
-// export const { } =
-//   slice.actions;
+export const { } =
+  slice.actions;
 
-export const createTree = (tree) => async () => {
+export const createTree = (tree) => async (dispatch) => {
   const response = await api.createTree(tree);
   if (response.data) {
     return response.data;
   }
   return false;
-};
+}
 
-export const getEditorTree = (treeId) => async () => {
+export const getEditorTree = (treeId) => async (dispatch) => {
   const response = await api.getEditorTree(treeId);
   if (response.data) return response.data;
   return false;
-};
+}
 
 export const selectTree = (state) => state.tree;
 

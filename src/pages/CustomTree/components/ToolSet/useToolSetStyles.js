@@ -2,7 +2,7 @@ import colors from "../../../../assets/colorPalette";
 
 import { makeStyles } from "@material-ui/core";
 
-const useToolSetStyles = makeStyles(() => ({
+const useToolSetStyles = makeStyles((theme) => ({
   toolSet: {
     width: 110,
   },

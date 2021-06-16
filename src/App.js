@@ -8,9 +8,11 @@ import CustomBackDrop from "./components/BackDrop/CustomBackDrop";
 // pages
 import LogInPage from "./pages/LogIn";
 import SignUpPage from "./pages/SignUp";
+import HomePage from "./pages/Home";
 import Main from "./layouts/Main/Main";
 import { useDispatch } from "react-redux";
 import { authActions } from "./store/authSlice";
+import api from "./utils/api";
 
 function App() {
   const dispatch = useDispatch();

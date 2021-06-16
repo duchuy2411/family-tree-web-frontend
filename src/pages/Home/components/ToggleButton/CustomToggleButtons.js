@@ -71,7 +71,11 @@ export default function CustomToggleButton() {
         onChange={handleChangeMode}
         aria-label="choose mode"
       >
-        <StyledToggleButton disableRipple value="preview" aria-label="preview tree">
+        <StyledToggleButton
+          disableRipple
+          value="preview"
+          aria-label="preview tree"
+        >
           All
         </StyledToggleButton>
 

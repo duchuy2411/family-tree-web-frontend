@@ -69,17 +69,15 @@ export default function CustomToggleButton(props) {
         onChange={handleChangeMode}
         aria-label="choose mode"
       >
-        {mode === "preview" && (
+        { mode === 'preview' &&
+          (
           <StyledToggleButton
-            className="absolute-btn-download"
-            value="edit"
-            aria-label="edit tree"
-            onClick={handleDownloadImage}
-          >
+            className="absolute-btn-download" value="edit" aria-label="edit tree" onClick={handleDownloadImage}>
             Download Tree Image
             <i className="fas fa-download" />
           </StyledToggleButton>
-        )}
+          )
+        }
         <StyledToggleButton value="preview" aria-label="preview tree">
           Preview
         </StyledToggleButton>

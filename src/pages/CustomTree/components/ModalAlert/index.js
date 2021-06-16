@@ -29,10 +29,14 @@ const AlertModal = (props) => {
               color="primary"
             />
             <div className="alert-content">
-              {"You can't delete this node. Please delete node's all child."}
+              You can't delete this node. Please delete node's all child.
             </div>
             <div className="btn-alert">
-              <Button variant="contained" color="primary" onClick={handleHideAlert}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleHideAlert}
+              >
                 Exit
               </Button>
             </div>
@@ -46,7 +50,11 @@ const AlertModal = (props) => {
             />
             <div className="alert-content">Are you sure delete this node?</div>
             <div className="btn-alert">
-              <Button variant="contained" color="primary" onClick={handleHideAlert}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleHideAlert}
+              >
                 Cancel
               </Button>
               <Button

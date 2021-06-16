@@ -1,4 +1,5 @@
 import axios from "axios";
+import _ from "lodash";
 
 const version = 1;
 const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
@@ -15,14 +16,11 @@ const apiTreeManagement = {
     return axios.post(`${baseUrl}/tree-management/tree/${treeId}/add-users-to-editor`, payload);
   },
   removeEditor: (treeId, payload) => {
-    return axios.post(
-      `${baseUrl}/tree-management/tree/${treeId}/remove-users-from-editor`,
-      payload
-    );
+    return axios.post(`${baseUrl}/tree-management/tree/${treeId}/remove-users-from-editor`, payload);
   },
   getDetailPerson: (personId) => {
     return axios.get(`${baseUrl}/person-management/person/${personId}`);
-  },
-};
+  }
+}
 
 export default apiTreeManagement;

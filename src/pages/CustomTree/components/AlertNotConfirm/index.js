@@ -15,12 +15,19 @@ const theme = createMuiTheme({
 });
 
 const AlertNotConfirm = (props) => {
-  const { warningAlternativeNode, warningUpdateForMarriage, handleHideAlertAlternative } = props;
+  const {
+    warningAlternativeNode,
+    warningUpdateForMarriage,
+    handleHideAlertAlternative,
+  } = props;
 
   return (
     <MuiThemeProvider theme={theme}>
       <div className="modal">
-        <div className="grayout-high" onClick={handleHideAlertAlternative}></div>
+        <div
+          className="grayout-high"
+          onClick={handleHideAlertAlternative}
+        ></div>
         {warningAlternativeNode && (
           <div className="modal-form-delete high-modal">
             <Icon
@@ -29,15 +36,18 @@ const AlertNotConfirm = (props) => {
               color="primary"
             />
             <div className="alert-content">
-              {"Node's father or mother is not exists."}
+              Node's father or mother is not exists.
               <br />
-              {
-                'Adding a member as father or mother, system auto add a node called as "Alternative".'
-              }
+              Adding a member as father or mother, system auto add a node called
+              as "Alternative".
             </div>
             <div className="btn-alert">
-              <Button variant="contained" color="secondary" onClick={handleHideAlertAlternative}>
-                {"OK"}
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleHideAlertAlternative}
+              >
+                OK
               </Button>
             </div>
           </div>
@@ -50,13 +60,17 @@ const AlertNotConfirm = (props) => {
               color="primary"
             />
             <div className="alert-content">
-              {'Node\'s spouses is exists as "Alternative".'}
+              Node's spouses is exists as "Alternative".
               <br />
-              {"Add a spouses in this case will update member"}
+              Add a spouses in this case will update member
             </div>
             <div className="btn-alert">
-              <Button variant="contained" color="secondary" onClick={handleHideAlertAlternative}>
-                {"OK"}
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleHideAlertAlternative}
+              >
+                OK
               </Button>
             </div>
           </div>

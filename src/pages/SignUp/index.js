@@ -38,9 +38,7 @@ export default function SignUpPage() {
 
     try {
       const response = await api.signup(userToRegister);
-      // eslint-disable-next-line no-unused-vars
       const { user, accessToken, refreshToken } = response.data.data;
-      // eslint-disable-next-line no-unused-vars
       const { message, errors } = response.data;
       if (user) {
         history.push("/");
@@ -49,7 +47,6 @@ export default function SignUpPage() {
       }
       dispatch(authActions.setIsLoading(false)); // disable loading
     } catch (e) {
-      console.log("Error in handleSignUp: ", e);
     }
   };
 
@@ -74,7 +71,11 @@ export default function SignUpPage() {
         >
           <Paper elevation={10} className={classes.paperLeftSide}>
             <img src={logo} alt="logo" className={classes.logo} />
-            <Typography className={classes.appTitle} variant="h3" component="h2">
+            <Typography
+              className={classes.appTitle}
+              variant="h3"
+              component="h2"
+            >
               Family tree
             </Typography>
           </Paper>
@@ -109,7 +110,14 @@ export default function SignUpPage() {
             className={classNames(classes.withSpace, classes.inputFields)}
           />
           {/* Password & confirm */}
-          <Grid item xs={12} container direction="row" alignItems="center" justify="space-between">
+          <Grid
+            item
+            xs={12}
+            container
+            direction="row"
+            alignItems="center"
+            justify="space-between"
+          >
             {/* Password */}
             <Input
               inputRef={passwordRef}
@@ -118,7 +126,11 @@ export default function SignUpPage() {
               required
               fullWidth
               disableUnderline
-              className={classNames(classes.withSpace, classes.inputFields, classes.passwordFields)}
+              className={classNames(
+                classes.withSpace,
+                classes.inputFields,
+                classes.passwordFields
+              )}
             />
             {/* Confirm password */}
             <Input
@@ -128,7 +140,11 @@ export default function SignUpPage() {
               required
               fullWidth
               disableUnderline
-              className={classNames(classes.withSpace, classes.inputFields, classes.passwordFields)}
+              className={classNames(
+                classes.withSpace,
+                classes.inputFields,
+                classes.passwordFields
+              )}
             />
           </Grid>
           <Grid

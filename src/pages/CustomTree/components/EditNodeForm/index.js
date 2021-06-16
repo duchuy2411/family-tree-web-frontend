@@ -67,14 +67,19 @@ function EditNodeForm(props) {
             <Grid container>
               <Grid item xs={6} container>
                 <FormControl className={classes.selectField} variant="filled">
-                  <InputLabel htmlFor="filled-adornment-amount" className={classes.padding}>
+                  <InputLabel
+                    htmlFor="filled-adornment-amount"
+                    className={classes.padding}
+                  >
                     Name
                   </InputLabel>
                   <FilledInput
                     id="filled-adornment-amount"
                     value={formUpd.name}
                     onChange={(e) => handleChangeFormUpdate(e, "name")}
-                    startAdornment={<InputAdornment position="start"></InputAdornment>}
+                    startAdornment={
+                      <InputAdornment position="start"></InputAdornment>
+                    }
                   />
                 </FormControl>
               </Grid>
@@ -102,7 +107,9 @@ function EditNodeForm(props) {
                     <Checkbox
                       label="Is death: "
                       value={formUpd.isDeath}
-                      onChange={(e) => handleChangeFormUpdate(e, "isDeath", !formUpd.isDeath)}
+                      onChange={(e) =>
+                        handleChangeFormUpdate(e, "isDeath", !formUpd.isDeath)
+                      }
                       inputProps={{ "aria-label": "Checkbox A" }}
                     />
                   }
@@ -140,7 +147,11 @@ function EditNodeForm(props) {
               </FormControl>
             </Grid>
             <div className="btn-alert">
-              <Button variant="contained" color="primary" onClick={handleCancelEditForm}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCancelEditForm}
+              >
                 Cancel
               </Button>
               <Button
