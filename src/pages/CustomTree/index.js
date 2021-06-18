@@ -6,7 +6,7 @@ import moment from "moment";
 import GenogramLayout from "../../layouts/GenogramLayout/GenogramLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
-import { fetchTree, updateFamilyTree, createChild, createParent, createSpouse, deletePerson, updatePerson, uploadImage, selectNodeDataArrayRedux } from "./customTreeSlice";
+import { fetchTree, exportJSON, createChild, createParent, createSpouse, deletePerson, updatePerson, uploadImage, selectNodeDataArrayRedux } from "./customTreeSlice";
 import "./style.css";
 // MUI
 import { Container, Grid, Paper, Typography } from "@material-ui/core";
@@ -977,140 +977,6 @@ export default function CustomTreePage() {
     );
   };
 
-  const deleteForCondition1 = (list, node) => {
-    let arr = [...list];
-    //Remove this
-    const getSpouseRemove = Adapter.getMarriageByArray(arr, node);
-    if (
-      getSpouseRemove.length !== 0 &&
-      getSpouseRemove[0].n === CONSTANTS.UNDEFINED
-    ) {
-      arr = _.filter(arr, (ele) => ele.key !== getSpouseRemove[0].key);
-    }
-    const getFather = Adapter.getFather(arr, node);
-    const getMother = Adapter.getMother(arr, node);
-    const getChildsFather = Adapter.getChilds(arr, getFather);
-
-    const getChildsMother = Adapter.getChilds(arr, getMother);
-
-    if (
-      getChildsMother
-        .map((ele) => Object.values(_.pick(ele, ["key"])))[0]
-        .includes(node.key) &&
-      getFather.n === CONSTANTS.UNDEFINED
-    ) {
-      // Remove father node
-      arr = Adapter.removeNodeAndRelationshipOfSpouse(arr, getFather);
-    }
-    if (
-      getChildsMother
-        .map((ele) => Object.values(_.pick(ele, ["key"])))[0]
-        .includes(node.key) &&
-      getMother.n === CONSTANTS.UNDEFINED
-    ) {
-      // Remove mother node
-      arr = Adapter.removeNodeAndRelationshipOfSpouse(arr, getMother);
-    }
-    return _.filter(arr, (ele) => ele.key !== node.key);
-  };
-
-  const deleteForCondition2 = (list, node) => {
-    const arr = [...list];
-    const getChilds = Adapter.getChilds(arr, node);
-    getChilds.forEach((ele) => {
-      const getIndex = Adapter.getIndex(list, node);
-      delete arr[getIndex].m;
-      delete arr[getIndex].f;
-    });
-    const getSpouseRemove = Adapter.getMarriageByArray(arr, node);
-    if (
-      getSpouseRemove.length !== 0 &&
-      getSpouseRemove[0].n === CONSTANTS.UNDEFINED
-    ) {
-      _.remove(arr, { key: getSpouseRemove[0].key });
-    }
-    const rmv = _.remove(arr, { key: node.key });
-  };
-
-  const deleteForCondition3 = (list, node) => {
-    const arr = [...list];
-    const getChilds = Adapter.getChilds(arr, node);
-    if (getChilds.length === 0) {
-      const getMarriage = Adapter.getMarriageByArray(arr, node.key);
-      const indexMarriage = Adapter.getIndex(arr, getMarriage[0].key);
-      delete arr[indexMarriage].ux;
-      delete arr[indexMarriage].vir;
-      const temp = _.filter(arr, (ele) => ele.key !== node.key);
-      return temp;
-    } else {
-      const getIndex = Adapter.getIndex(arr, node.key);
-      arr[getIndex].n = CONSTANTS.UNDEFINED;
-      arr[getIndex].type = CONSTANTS.TYPE.DEAD;
-    }
-    return arr;
-  };
-
-  const handleDelete = (temp, myDiagram) => {
-    const clone = [...temp];
-    setupDiagram(myDiagram, clone, 1);
-    setAlterLink(temp);
-  };
-
-  const handleChangeAddForm = (e, label, isDeath = false) => {
-    switch (label) {
-      case "firstName": {
-        setForm({ ...form, firstName: e.target.value });
-        break;
-      }
-      case "lastName": {
-        setForm({ ...form, lastName: e.target.value });
-        break;
-      }
-      case "gender": {
-        setForm({ ...form, gender: e.target.value });
-        break;
-      }
-      case "dob": {
-        setForm({ ...form, dob: moment(e.target.value).format("YYYY-MM-DD") });
-        break;
-      }
-      case "dod": {
-        setForm({ ...form, dod: moment(e.target.value).format("YYYY-MM-DD") });
-        break;
-      }
-      case "isDeath": {
-        setForm({
-          ...form,
-          isDeath: isDeath,
-          dod: !isDeath ? null : form.isDeath,
-        });
-        break;
-      }
-      case "note": {
-        setForm({ ...form, note: e.target.value });
-        break;
-      }
-      case "occupation": {
-        setForm({ ...form, occupation: e.target.value });
-        break;
-      }
-      case "phone": {
-        setForm({ ...form, phone: e.target.value });
-        break;
-      }
-      case "address": {
-        setForm({ ...form, address: e.target.value });
-        break;
-      }
-      case "nodeRelationship": {
-        setForm({ ...form, nodeRelationship: e.target.value });
-      }
-      default: {
-        break;
-      }
-    }
-  };
-
   const nodeRelationship = () => {
     const diagram = tempDiagram.current;
     const arrNode = diagram.model.nodeDataArray;
@@ -1305,25 +1171,42 @@ export default function CustomTreePage() {
 
   const handleDownloadImage = () => {
     var url = makeImage;
-      var filename = `${nodeDataArrayRedux.name}_tree.png`;
+    var filename = `${nodeDataArrayRedux.name}_tree.png`;
 
-      var a = document.createElement("a");
-      a.style = "display: none";
-      a.href = url;
-      a.download = filename;
+    var a = document.createElement("a");
+    a.style = "display: none";
+    a.href = url;
+    a.download = filename;
 
-      // IE 11
-      if (window.navigator.msSaveBlob !== undefined) {
-        window.navigator.msSaveBlob(makeImage, filename);
-        return;
-      }
+    // IE 11
+    if (window.navigator.msSaveBlob !== undefined) {
+      window.navigator.msSaveBlob(makeImage, filename);
+      return;
+    }
 
-      document.body.appendChild(a);
-      requestAnimationFrame(function() {
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      });
+    document.body.appendChild(a);
+    requestAnimationFrame(function() {
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    });
+  }
+
+  const handleExport = async () => {
+    const rs = await dispatch(exportJSON(id));
+    const downloadFile = async (myData) => {
+      const fileName = `tree_${id}`;
+      const json = JSON.stringify(myData);
+      const blob = new Blob([json],{type:'application/json'});
+      const href = await URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = fileName + ".json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    downloadFile(rs);
   }
 
   return (
@@ -1400,6 +1283,7 @@ export default function CustomTreePage() {
             >
               <CustomToggleButton
                 mode={mode}
+                handleExport={handleExport}
                 handleDownloadImage={handleDownloadImage}
                 handleChangeMode={handleChangeMode}
               />

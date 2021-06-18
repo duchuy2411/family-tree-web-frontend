@@ -309,7 +309,8 @@ ul {
 .absolute-btn-download {
   position: absolute;
   right: 20px;
-  width: 220px;
+  width: auto;
+  margin-bottom: 20px;
 }
 
 .fa-download {

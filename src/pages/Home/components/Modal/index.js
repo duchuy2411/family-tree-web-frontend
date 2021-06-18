@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     formContainer: {
       backgroundColor: 'white',
       color: '#905842',
-      width: '40%',
+      width: '50%',
       height: 'auto',
       display: 'flex',
       flexWrap: 'wrap',

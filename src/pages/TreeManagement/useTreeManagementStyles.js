@@ -4,8 +4,9 @@ import { fade, makeStyles } from "@material-ui/core";
 
 const useCustomTreePageStyles = makeStyles((theme) => ({
   rootAccording: {
-    width: '99%',
-    margin: '15px 0px',
+    margin: '20px auto',
+    width: '80%',
+    maxWidth: '1444px',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -105,7 +106,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     maxHeight: 440,
   },
   header: {
-    backgroundColor: 'black',
+    backgroundColor: '#905842',
     color: 'white',
   },
   search: {
@@ -208,6 +209,9 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   },
   dateDetail: {
     textAlign: 'center'
+  },
+  tableHead: {
+    color: '#905842'
   }
 }));
 

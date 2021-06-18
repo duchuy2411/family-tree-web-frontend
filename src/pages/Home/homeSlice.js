@@ -113,6 +113,20 @@ export const fetchTreesAndSetCurrent = (treeId) => async dispatch => {
   return false;
 }
 
+export const importTree = (file) => async dispatch => {
+  const rs = await api.importTree(file, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }
+  });
+  if (rs.status === 200) {
+    console.log("rs.data", rs.data);
+    return true;
+  }
+  swal(_.get(rs, "title", "Something wrong!!"));
+  return false;
+}
+
 export const selectTrees = state => state.managementTree.trees;
 export const selectTree = state => state.managementTree.tree;
 export const selectPerson = state => state.managementTree.person;

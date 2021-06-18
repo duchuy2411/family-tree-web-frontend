@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import { createTree } from "../Slice";
 
 // MUI
-import { Fade, Grid, Paper, Typography, Hidden, Button } from "@material-ui/core";
+import { Fade, Grid, Paper, Typography, Hidden, Button, Tooltip, IconButton } from "@material-ui/core";
 
 // components
 import SearchBox from "../../components/Search/Search";
@@ -21,7 +21,7 @@ import { selectUser } from "../../store/authSlice";
 
 import api from "../../utils/api";
 
-import { SET_TREES_ARRAY } from './homeSlice';
+import { SET_TREES_ARRAY, importTree } from './homeSlice';
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -121,6 +121,13 @@ export default function HomePage() {
     }
   };
 
+  const handleImport = (e) => {
+    const file = e.target.files[0];
+    let formData = new FormData();
+    formData.append("ImportedFile", file);
+    dispatch(importTree(formData));
+  }
+
   return (
     <>
       {show && (
@@ -155,11 +162,26 @@ export default function HomePage() {
                     {"Let's create a new tree"}
                   </Typography>
                 </div>
-                <Grid item md={5}></Grid>
-                <Grid item md={1} className={classes.btnNewTree}>
+                <Grid item md={2}></Grid>
+                <Grid item md={2} className={classes.btnNewTree}>
+                  <Tooltip title="Import file JSON">
+                    <label for="importss" className={classes.customBtnDashed}>
+                      <span className="fas fa-file-import"></span>
+                      <form>
+                        <input
+                          id="importss"
+                          style={{ display: 'none' }}
+                          type="file"
+                          name="ImportedFile"
+                          onChange={handleImport}
+                        />
+                      </form>
+                    </label>
+                  </Tooltip>
+                </Grid>
+                <Grid item md={2} className={classes.btnNewTree}>
                   <Button className={classes.customBtnDashed} onClick={() => handleShow(true)}>
-                    {" "}
-                    +{" "}
+                    <span className="fas fa-plus"></span>
                   </Button>
                 </Grid>
               </Paper>

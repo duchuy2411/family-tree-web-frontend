@@ -173,7 +173,7 @@ export default function ListMember(props) {
       }
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
-          <TableHead>
+          <TableHead className={classes.tableHeader}>
             <TableRow>
               {columns.map((column) => (
                 <TableCell

@@ -123,6 +123,15 @@ export const uploadImage = (file) => async (dispatch) => {
   return false;
 }
 
+export const exportJSON = (treeId) => async dispatch => {
+  const rs = await api.exportJSON(treeId);
+  if (rs.status === 200) {
+    const json = _.get(rs, 'data');    
+    return json;
+  }
+  swal(_.get(rs, "title", "Something wrong!!"));
+  return false;
+}
 export const selectNodeDataArrayRedux = state => state.custom_tree.nodeDataArrayRedux;
 export const selectLinkDataArrayRedux = state => state.custom_tree.linkDataArrayRedux;
 export const selectIt = state => {

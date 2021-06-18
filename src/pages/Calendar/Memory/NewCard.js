@@ -65,7 +65,7 @@ const NewCard = (props) => {
     }
   }
   return (
-    <Grid xs={7} container className="container-card">
+    <Grid xs={12} container className="container-card">
       <Grid item xs={2} className="avatar-card">
         <img src="https://ict-imgs.vgcloud.vn/2020/09/01/19/huong-dan-tao-facebook-avatar.jpg" />
       </Grid>

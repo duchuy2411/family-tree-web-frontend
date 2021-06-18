@@ -52,7 +52,7 @@ const CardList = (props) => {
         </Grid>
       )}
       {_.reverse([...arrMemory]).map(ele => (
-        <Grid container xs={7} className="container-card list">
+        <Grid container xs={12} className="container-card list">
           <Grid item xs={2} className="avatar-card">
             <img src="https://ict-imgs.vgcloud.vn/2020/09/01/19/huong-dan-tao-facebook-avatar.jpg" />
           </Grid>

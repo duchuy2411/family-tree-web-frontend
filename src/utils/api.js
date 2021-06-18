@@ -157,6 +157,12 @@ const api = {
   deleteMemory: (memoryId) => {
     return axios.delete(`${baseUrl}/memory-management/memory/${memoryId}`);
   },
+  importTree: (file, config) => {
+    return axios.post(`${baseUrl}/tree-management/tree/import`, file, config);
+  },
+  exportJSON: (treeId) => {
+    return axios.post(`${baseUrl}/tree-management/tree/${treeId}/backup`);
+  },
   apiTreeManagement: apiTreeManagement,
 };
 

@@ -3,9 +3,9 @@ import colors from "../../assets/colorPalette";
 
 const useHomePageStyles = makeStyles((theme) => ({
   wrapper: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(4),
+    margin: '20px auto',
+    width: '80%',
+    maxWidth: '1444px'
   },
 
   // top site
