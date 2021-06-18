@@ -21,6 +21,7 @@ import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
 import useLoginPageStyles from "./useLoginPageStyles";
 import { authActions } from "./../../store/authSlice";
 import api from "../../utils/api";
+import LOCAL_STORAGE_KEYS from "../../configs/localStorageKeys";
 
 const LogInPage = () => {
   const dispatch = useDispatch();
@@ -54,9 +55,9 @@ const LogInPage = () => {
 
     const response = await api.login(loginData);
     const { user, accessToken, refreshToken } = response.data.data;
-    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
     console.log("refresh token: ", refreshToken);
-    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
 
     if (user) {
       dispatch(authActions.login(user));

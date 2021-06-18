@@ -1,4 +1,5 @@
 import axios from "axios";
+import LOCAL_STORAGE_KEYS from "../configs/localStorageKeys";
 
 import apiTreeManagement from "./apiTreeManagement";
 
@@ -7,7 +8,7 @@ const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
 
 axios.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
     console.log("accessToken in axios client: ", accessToken);
 
     if (accessToken) {
@@ -29,7 +30,7 @@ axios.interceptors.response.use(
   },
   function (error) {
     const originalRequest = error.config;
-    let refreshToken = localStorage.getItem("refreshToken");
+    let refreshToken = localStorage.getItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
     if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       return axios
@@ -44,7 +45,7 @@ axios.interceptors.response.use(
         )
         .then((res) => {
           if (res.status === 200) {
-            localStorage.setItem("accessToken", res.data.data.accessToken);
+            localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, res.data.data.accessToken);
             return axios(originalRequest);
           }
         });

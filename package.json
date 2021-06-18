@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "node-sass": "^5.0.0",
+    "query-string": "^7.0.0",
     "react": "^17.0.1",
     "react-big-calendar": "^0.33.5",
     "react-calendar": "^3.4.0",
