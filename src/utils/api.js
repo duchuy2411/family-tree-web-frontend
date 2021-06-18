@@ -1,5 +1,5 @@
 import axios from "axios";
-import LOCAL_STORAGE_KEYS from "../configs/localStorageKeys";
+import LOCAL_STORAGE_KEYS from "configs/localStorageKeys";
 
 import apiTreeManagement from "./apiTreeManagement";
 
