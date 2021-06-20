@@ -1,16 +1,18 @@
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { authActions } from "store/authSlice";
 // react-router-dom
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 // material-ui (MUI)
 import { CssBaseline } from "@material-ui/core";
 // components
-import CustomBackDrop from "./components/BackDrop/CustomBackDrop";
+import CustomBackDrop from "components/BackDrop/CustomBackDrop";
 // pages
-import LogInPage from "./pages/LogIn";
-import SignUpPage from "./pages/SignUp";
-import Main from "./layouts/Main/Main";
-import { useDispatch } from "react-redux";
-import { authActions } from "./store/authSlice";
+import Main from "layouts/Main/Main";
+import LogInPage from "pages/LogIn";
+import SignUpPage from "pages/SignUp";
+import ForgotPasswordPage from "pages/ForgotPassword";
+import ResetPasswordPage from "pages/ResetPassword";
 
 function App() {
   const dispatch = useDispatch();
@@ -59,6 +61,13 @@ function App() {
           </Route>
           <Route path="/signup">
             <SignUpPage />
+          </Route>
+          <Route path="/forgot-password">
+            <ForgotPasswordPage />
+          </Route>
+
+          <Route path="/reset-password">
+            <ResetPasswordPage />
           </Route>
 
           <Main />
