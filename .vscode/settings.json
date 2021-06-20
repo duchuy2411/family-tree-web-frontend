@@ -4,7 +4,7 @@
     "titleBar.activeBackground": "#074C08",
     "titleBar.activeForeground": "#F2FEF3"
   },
-  "cSpell.words": ["Genogram", "gojs", "reduxjs", "scrollable", "swal", "sweetalert"],
+  "cSpell.words": ["Genogram", "gojs", "noti", "reduxjs", "scrollable", "swal", "sweetalert"],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.alwaysShowStatus": true,

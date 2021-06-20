@@ -1,19 +1,20 @@
 import _, { result } from "lodash";
 import moment from "moment";
-import { DAY_OF_WEEK } from "../../utils/const";
 
 const mapRepeat = [
-  { value: 7, unit: 'day' },
-  { value: 1, unit: 'month' },
-  { value: 1, unit: 'year' },
-]
+  { value: 7, unit: "day" },
+  { value: 1, unit: "month" },
+  { value: 1, unit: "year" },
+];
 class UtilCalendar {
   formatApi(data) {
     const event = [];
     _.forEach(data, (ele) => {
       if (Object.prototype.hasOwnProperty.call(ele, "followingEvents")) {
+        //
       }
       if (Object.prototype.hasOwnProperty.call(ele, "eventExceptions")) {
+        //
       }
     });
     return event;
@@ -23,7 +24,7 @@ class UtilCalendar {
     const results = [];
     let curStartDate = _.get(object, "startDate");
     let curEndDate = _.get(object, "endDate");
-    while (moment(curEndDate).isBefore(endDate, 'day')) {
+    while (moment(curEndDate).isBefore(endDate, "day")) {
       const format = object;
       delete format.followingEvents;
       delete format.eventExceptions;
@@ -39,11 +40,11 @@ class UtilCalendar {
 
   getException = (object) => {
     const results = [];
-    const exceptions = _.get(object, 'eventExceptions', []);
+    const exceptions = _.get(object, "eventExceptions", []);
     if (exceptions.length === 0) return null;
     for (let i = 0; i < exceptions; i += 1) {
-      const isCancelled = _.get(exceptions[i], 'isCancelled');
-      const isRescheduled = _.get(exceptions[i], 'isRescheduled')
+      const isCancelled = _.get(exceptions[i], "isCancelled");
+      const isRescheduled = _.get(exceptions[i], "isRescheduled");
       if (isCancelled && !isRescheduled) {
         exceptions[i].typeReplace = 0;
         result.push(exceptions[i]);
@@ -63,8 +64,11 @@ class UtilCalendar {
     var secondMoment = moment(secondDay);
 
     var startOfWeek = function (_moment, _offset) {
-        return _moment.add("days", _moment.weekday() * -1 + (_moment.weekday() >= 7 + _offset ? 7 + _offset : _offset));
-    }
+      return _moment.add(
+        "days",
+        _moment.weekday() * -1 + (_moment.weekday() >= 7 + _offset ? 7 + _offset : _offset)
+      );
+    };
 
     return startOfWeek(firstMoment, offset).isSame(startOfWeek(secondMoment, offset), "day");
   }
@@ -98,12 +102,11 @@ class UtilCalendar {
       } else {
         return true;
       }
-    } 
+    }
   }
 
   checkEventFollowing = (object, repeat, startDate, endDate) => {
     const results = [];
-    const repeat = _.get(object, "repeat", 0);
     const followingEvent = _.get(object, "followingEvents", []);
     if (followingEvent.length === 0) return null;
     for (let i = 0; i < followingEvent.length; i += 1) {
@@ -128,7 +131,6 @@ class UtilCalendar {
     }
     return results;
   };
-
 }
 
 export default new UtilCalendar();

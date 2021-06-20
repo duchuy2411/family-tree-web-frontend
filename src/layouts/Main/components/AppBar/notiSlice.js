@@ -1,43 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import api from "../../../../utils/api";
-
-const sampleNotifications = [
-  {
-    id: 1,
-    message: "Message with id 1",
-    dateCreated: new Date(Date.now()).toLocaleString(),
-    isRead: false,
-  },
-  {
-    id: 2,
-    message: "Message with id 2",
-    dateCreated: new Date(Date.now()).toLocaleString(),
-    isRead: false,
-  },
-  {
-    id: 3,
-    message: "Message with id 3",
-    dateCreated: new Date(Date.now()).toLocaleString(),
-    isRead: true,
-  },
-  {
-    id: 4,
-    message: "Message with id 4",
-    dateCreated: new Date(Date.now()).toLocaleString(),
-    isRead: false,
-  },
-  {
-    id: 5,
-    message: "Message with id 5",
-    dateCreated: new Date(Date.now()).toLocaleString(),
-    isRead: true,
-  },
-];
+import notificationAPI from "api/notification";
 
 export const getAllNotifications = createAsyncThunk(
   "notifications/getAllNotifications",
   async () => {
-    const response = await api.getAllNotifications();
+    const response = await notificationAPI.getAllNotifications();
     const { message, errors, data } = response.data;
 
     console.log("getAllNotifications - response.data.data: ", data);
@@ -49,7 +16,7 @@ export const getAllNotifications = createAsyncThunk(
 export const markAnNotificationAsRead = createAsyncThunk(
   "notifications/markAnNotificationAsRead",
   async (idNotification) => {
-    const response = await api.markAnNotificationsAsRead(idNotification);
+    const response = await notificationAPI.markAnNotificationsAsRead(idNotification);
     const { message, errors, data } = response.data;
 
     console.log("markAnNotificationAsRead - response.data.data: ", data);
@@ -58,15 +25,31 @@ export const markAnNotificationAsRead = createAsyncThunk(
   }
 );
 
+export const deleteNotification = createAsyncThunk(
+  "notifications/deleteNotification",
+  async (idNotification) => {
+    const response = await notificationAPI.deleteNotification(idNotification);
+    const { message, errors, data } = response.data;
+
+    console.log("deleteNotification - response.data.data: ", data);
+
+    return { message, errors, data, idNotificationWasRemoved: idNotification };
+  }
+);
+
 const notificationsSlice = createSlice({
   name: "notifications",
   initialState: {
     isLoading: false,
-    notifications: sampleNotifications, // TODO: delete when attach api for calendar
+    notifications: [], // TODO: delete when attach notificationAPI for calendar
     message: "",
     errors: null,
   },
-  reducers: {},
+  reducers: {
+    setNotificationsList: (state, action) => {
+      state.notifications = action.payload;
+    },
+  },
   extraReducers: {
     [getAllNotifications.pending]: (state) => {
       state.isLoading = true;
@@ -110,12 +93,34 @@ const notificationsSlice = createSlice({
       state.errors = action.error;
       state.isLoading = false;
     },
+
+    [deleteNotification.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [deleteNotification.fulfilled]: (state, action) => {
+      const { message, errors, idNotificationWasRemoved } = action.payload;
+
+      const filteredNotificationsList = state.notifications.filter(
+        (notification) => notification.id !== idNotificationWasRemoved
+      );
+
+      state.notifications = filteredNotificationsList;
+      state.message = message;
+      state.errors = errors;
+      state.isLoading = false;
+    },
+    [deleteNotification.rejected]: (state, action) => {
+      state.errors = action.error;
+      state.isLoading = false;
+    },
   },
 });
 
 // selectors
 export const selectIsLoading = (state) => state.notifications.isLoading;
 export const selectNotifications = (state) => state.notifications.notifications;
+export const selectMessage = (state) => state.notifications.message;
+export const selectError = (state) => state.notifications.error;
 
 export const notificationsActions = notificationsSlice.actions;
 

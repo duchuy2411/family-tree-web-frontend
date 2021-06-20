@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // MUI
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -7,7 +7,15 @@ import { createTree } from "../Slice";
 
 // MUI
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
-import { Fade, Grid, Paper, Typography, Hidden, Button, Tooltip, LinearProgress } from "@material-ui/core";
+import {
+  Grid,
+  Paper,
+  Typography,
+  Hidden,
+  Button,
+  Tooltip,
+  LinearProgress,
+} from "@material-ui/core";
 // components
 import SearchBox from "../../components/Search/Search";
 import CustomToggleButton from "./components/ToggleButton/CustomToggleButtons";
@@ -18,9 +26,14 @@ import useHomePageStyles from "./useHomePageStyles";
 
 import { selectUser } from "../../store/authSlice";
 
-import api from "../../utils/api";
-
-import { selectFetching, selectTrees, importTree, getListByKeyword, getTreeList, getTreesPublic } from "./homeSlice";
+import {
+  selectFetching,
+  selectTrees,
+  importTree,
+  getListByKeyword,
+  getTreeList,
+  getTreesPublic,
+} from "./homeSlice";
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -97,6 +110,9 @@ export default function HomePage() {
       setForm({ ...form, description: e.target.value });
       break;
     }
+    default: {
+      break;
+    }
     }
   };
 
@@ -116,7 +132,7 @@ export default function HomePage() {
     console.log("===rs===:", rs);
     if (rs.id) {
       history.push(`/custom-tree/${rs.id}`);
-    };
+    }
   };
 
   const handleChangeSearch = (e) => {
@@ -192,7 +208,7 @@ export default function HomePage() {
                       <label htmlFor="importss" className={classes.customBtnImport}>
                         <span className="fas fa-file-import"></span>
                       </label>
-                      <form > 
+                      <form>
                         <input
                           id="importss"
                           style={{ display: "none" }}
@@ -213,24 +229,18 @@ export default function HomePage() {
             </Grid>
           </Hidden>
         </Grid>
-        {fetching ?
-          (
-            <div className={classes.groupProgress}>
-              <LinearProgress className={classes.progress}/>
-              <LinearProgress className={classes.progress}/>
-              <LinearProgress className={classes.progress}/>
-            </div>
-          ) :
-          (
-            <div className={classes.treeList}>
-              <CustomToggleButton
-                mode={mode}
-                handleChangeMode={handleChangeMode}
-              />
-              {familyTreeList}
-            </div>
-          )
-        }
+        {fetching ? (
+          <div className={classes.groupProgress}>
+            <LinearProgress className={classes.progress} />
+            <LinearProgress className={classes.progress} />
+            <LinearProgress className={classes.progress} />
+          </div>
+        ) : (
+          <div className={classes.treeList}>
+            <CustomToggleButton mode={mode} handleChangeMode={handleChangeMode} />
+            {familyTreeList}
+          </div>
+        )}
       </div>
     </MuiThemeProvider>
   );

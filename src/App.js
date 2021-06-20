@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { CssBaseline } from "@material-ui/core";
 // components
 import CustomBackDrop from "components/BackDrop/CustomBackDrop";
+// lib
+import { SnackbarProvider } from "notistack";
 // pages
 import Main from "layouts/Main/Main";
 import LogInPage from "pages/LogIn";
@@ -54,24 +56,26 @@ function App() {
       <React.Suspense fallback={<CustomBackDrop />}>
         <CssBaseline />
 
-        {/* Public routes */}
-        <Switch>
-          <Route path="/login">
-            <LogInPage />
-          </Route>
-          <Route path="/signup">
-            <SignUpPage />
-          </Route>
-          <Route path="/forgot-password">
-            <ForgotPasswordPage />
-          </Route>
+        <SnackbarProvider maxSnack={3}>
+          {/* Public routes */}
+          <Switch>
+            <Route path="/login">
+              <LogInPage />
+            </Route>
+            <Route path="/signup">
+              <SignUpPage />
+            </Route>
+            <Route path="/forgot-password">
+              <ForgotPasswordPage />
+            </Route>
 
-          <Route path="/reset-password">
-            <ResetPasswordPage />
-          </Route>
+            <Route path="/reset-password">
+              <ResetPasswordPage />
+            </Route>
 
-          <Main />
-        </Switch>
+            <Main />
+          </Switch>
+        </SnackbarProvider>
       </React.Suspense>
     </Router>
   );
