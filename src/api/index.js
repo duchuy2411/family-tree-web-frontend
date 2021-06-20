@@ -28,7 +28,7 @@ axiosClient.interceptors.request.use(
   }
 );
 //response interceptor to refresh token on receiving token expired error
-axios.interceptors.response.use(
+axiosClient.interceptors.response.use(
   (response) => {
     return response;
   },
