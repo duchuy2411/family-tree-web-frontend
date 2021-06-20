@@ -13,7 +13,7 @@ const SEVERITY_TYPES = {
   INFO: "info",
   ERROR: "error",
 };
-const timeToWait = 5000; // second
+const timeToWait = 5; // second
 
 export default function ResetPasswordPage() {
   const classes = useResetPasswordPageStyles();
