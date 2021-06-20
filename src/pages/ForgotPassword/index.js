@@ -1,12 +1,13 @@
-import { Button, Grid } from "@material-ui/core";
-
-import { TextField } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-import userAPI from "api/user";
-import LoadingInside from "components/LoadingInside";
 import React, { useState } from "react";
+import { Button, Grid, TextField, Paper, Typography } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
+import LoadingInside from "components/LoadingInside";
+import userAPI from "api/user";
+import useForgotPasswordPageStyles from "./styles";
 
 export default function ForgotPasswordPage() {
+  const classes = useForgotPasswordPageStyles();
+
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -23,7 +24,7 @@ export default function ForgotPasswordPage() {
         const response = await userAPI.requestResetPasswordWithEmail(email);
 
         if (response.status === 200) {
-          setMessage(`An email has been sent to ${email}`);
+          setMessage(`An email with reset password url has been sent to ${email}`);
           setError("");
           setIsLoading(false);
         }
@@ -38,51 +39,56 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div>
-      <Grid container justify="center">
-        <Grid item xs={12} container justify="center" style={{ marginBottom: "10vh" }}>
-          <div>Reset password page</div>
-          {error && (
-            <Alert variant="filled" severity="error">
-              {error}
-            </Alert>
-          )}
+    <Grid container justify="center" alignItems="center" className={classes.root}>
+      <Grid item xs={6}>
+        <Paper className={classes.paper}>
+          <Grid item xs={12} container justify="center">
+            <Typography variant="h4" className={classes.title}>
+              {"FORGOT PASSWORD"}
+            </Typography>
 
-          {message && (
-            <Alert variant="filled" severity="success">
-              {message}
-            </Alert>
-          )}
-        </Grid>
+            {error && (
+              <Alert variant="filled" severity="error" className={classes.alert}>
+                {error}
+              </Alert>
+            )}
 
-        <Grid item xs={6} container justify="center">
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              value={email}
-              onChange={handleChangeEmail}
-              label={"Email"}
-              placeholder={"Enter your email"}
-              fullWidth
-            />
+            {message && (
+              <Alert variant="filled" severity="success" className={classes.alert}>
+                {message}
+              </Alert>
+            )}
           </Grid>
 
-          <Grid item xs={12}>
-            <LoadingInside isLoading={isLoading}>
+          <Grid item xs={12} container justify="center">
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                value={email}
+                onChange={handleChangeEmail}
+                label={"Email"}
+                placeholder={"Enter your email"}
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12}>
               <Button
                 onClick={handleSubmitEmail}
                 disabled={email === "" || isLoading}
                 variant="contained"
                 color="primary"
                 fullWidth
-                style={{ marginTop: 12 }}
+                className={classes.button}
               >
-                SUBMIT
+                <LoadingInside isLoading={isLoading}>
+                  <Typography variant="button">SUBMIT</Typography>
+                </LoadingInside>
               </Button>
-            </LoadingInside>
+            </Grid>
           </Grid>
-        </Grid>
+        </Paper>
       </Grid>
-    </div>
+    </Grid>
   );
 }
