@@ -6,12 +6,14 @@ import { makeStyles } from "@material-ui/core";
 const useCustomTreePageStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
-    height: "100vh",
+    height: "80vh",
   },
   paperPanel: {
     backgroundColor: colors.pink,
     padding: theme.spacing(2),
     borderRadius: 10,
+    maxHeight: "40vh",
+    overflowY: "auto",
   },
   boldTitle: {
     fontWeight: "bold",

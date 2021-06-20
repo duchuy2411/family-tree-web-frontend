@@ -9,6 +9,7 @@ import { ExpandMore } from "@material-ui/icons";
 import TreeInformation from "./TreeInformation";
 import Contribute from "./Contribute";
 import ListMember from "./ListMember";
+import utilManagement from "./utilManagement";
 
 import {
   updateTree,
@@ -41,6 +42,7 @@ const TreeManagement = () => {
     if (rs.data) {
       setFormTree({ ...formTree, publicMode: _.get(rs.data, "data.publicMode", false) });
       const listTree = Adapter.parseList(_.get(rs.data, "data.people", []));
+      console.log("==listTree==:", listTree);
       const parse = _.map(listTree, (ele) => createData(ele, classes));
       setList(parse);
       setOriginList(parse);
@@ -99,8 +101,8 @@ const TreeManagement = () => {
       age: getAge(_.get(obj, "dob", ""), _.get(obj, "dod", "")),
       dod: _.get(obj, "dod", ""),
       dob: _.get(obj, "dob", ""),
-      father: _.get(obj, "father.name", ""),
-      mother: _.get(obj, "mother.name", ""),
+      father: utilManagement.formatName(obj, "father"),
+      mother: utilManagement.formatName(obj, "mother"),
       spouses: _.get(obj, "spouses", []),
     };
   }

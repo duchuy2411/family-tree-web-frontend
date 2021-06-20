@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { Grid } from "@material-ui/core";
 
 import NewCard from "./NewCard";
@@ -12,17 +13,12 @@ import {
   // createMemory, deleteMemory
 } from "../calendarSlice";
 
-const Memory = () =>
-// props
-{
-  // const {
-  // } = props;
-
+const Memory = () => {
   const dispatch = useDispatch();
-
+  const { id } = useParams();
   const arrMemory = useSelector(selectArrMemory);
   React.useEffect(async () => {
-    await dispatch(fetchMemory(21));
+    await dispatch(fetchMemory(id));
   }, []);
 
   return (

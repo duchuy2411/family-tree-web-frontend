@@ -39,6 +39,7 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const history = useHistory();
   const options = ["Calendar", "Tree Management", "Delete Tree"];
+  const optionsMore = ["Edit Tree", "Calendar", "Tree Management", "Delete Tree", ];
 
   // const handleClickListItem = (event) => {
   //   setAnchorEl(event.currentTarget);
@@ -77,6 +78,43 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
     }
   };
 
+  const handleMenuItemClickMore = (event, index) => {
+    setSelectedIndex(index);
+    setAnchorEl(null);
+    switch (index) {
+    case 0: {
+      history.push(`/custom-tree/${id}`);
+      break;
+    }
+    case 1: {
+      const current = _.find(trees, (ele) => ele.id === id);
+      dispatch(SET_CURRENT_TREE(current));
+      history.push(`/calendar/${id}`);
+      break;
+    }
+    case 2: {
+      const current = _.find(trees, (ele) => ele.id === id);
+      dispatch(SET_CURRENT_TREE(current));
+      history.push(`/tree-management/${id}`);
+      break;
+    }
+    case 3: {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this tree!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          dispatch(deleteTree(id));
+        }
+      });
+      break;
+    }
+    }
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -88,7 +126,7 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
       <Grid container alignItems="center">
         {/* ava + info */}
         <Grid item lg={10} xs={11} container alignItems="center" className={classes.gridTree}>
-          <img src={logo} alt="family avatar" className={classes.imgFamily} />
+          {/* <img src={logo} alt="family avatar" className={classes.imgFamily} /> */}
 
           {/* name - contributors - updatedAt */}
           <Grid
@@ -123,10 +161,10 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
               </Hidden>
               <AvatarGroup max={4} className={classes.avatarGroup}>
                 {author && (
-                  <Tooltip title={`${author.username} - Owner`}>
+                  <Tooltip title={`${_.get(author, "username")} - Owner`}>
                     <Avatar
-                      alt={author.username}
-                      src={author.avatarUrl}
+                      alt={_.get(author, "username")}
+                      src={_.get(author, "avatarUrl")}
                       className={classNames(classes.avatarBorder, classes.avatarOwner)}
                     />
                   </Tooltip>
@@ -134,7 +172,7 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
                 {/* Other contributors */}
                 {contributors.map((contributor, index) => (
                   <Tooltip key={index} title={contributor.username}>
-                    <Avatar alt={contributor.username} src={contributor.avatarUrl} />
+                    <Avatar alt={contributor.username} src={_.get(contributor, "avatarUrl")} />
                   </Tooltip>
                 ))}
               </AvatarGroup>
@@ -182,7 +220,6 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
               keepMounted
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              className={classes.menu}
               elevation={0}
               getContentAnchorEl={null}
               anchorOrigin={{
@@ -206,9 +243,41 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
             </Menu>
           </Hidden>
           <Hidden lgUp>
-            <IconButton>
+            <IconButton
+              aria-haspopup="true"
+              aria-controls="lock-menu-2"
+              aria-label="when device is locked"
+              onClick={handleClickMoreMenu}
+            >
               <MoreVert />
             </IconButton>
+            <Menu
+              id="lock-menu-2"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              elevation={0}
+              getContentAnchorEl={null}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+            >
+              {optionsMore.map((option, index) => (
+                <MenuItem
+                  key={option}
+                  onClick={(event) => handleMenuItemClickMore(event, index)}
+                  className={classes.menuItem}
+                >
+                  {option}
+                </MenuItem>
+              ))}
+            </Menu>
           </Hidden>
         </Grid>
       </Grid>

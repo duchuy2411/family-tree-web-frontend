@@ -1,7 +1,16 @@
 import React from "react";
-import { Grid, TextField, Typography, Button, Modal } from "@material-ui/core";
+import {
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  Modal,
+  FormControlLabel,
+  Checkbox,
+} from "@material-ui/core";
 import moment from "moment";
 
+import CONSTANT from "../../../utils/const";
 import useTreeManagementStyle from "../useTreeManagementStyles";
 
 const TreeInformation = (props) => {
@@ -42,7 +51,7 @@ const TreeInformation = (props) => {
         </Grid>
         <Grid item container xs={12}>
           <Grid item xs={8}>
-            <Typography>Public mode: {currentTree.publicMode}</Typography>
+            <Typography>Public mode: {currentTree.publicMode ? "Public" : "Private"}</Typography>
           </Grid>
           <Grid item xs={4}>
             <Button className={classes.btnSecond} onClick={handleShow}>
@@ -63,6 +72,7 @@ const TreeInformation = (props) => {
         onClose={handleClose}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
+        className={classes.modalCustom}
       >
         <Grid container className={classes.modal}>
           <Grid item xs={12}>
@@ -86,13 +96,16 @@ const TreeInformation = (props) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              label="Public mode"
-              variant="outlined"
-              type="select"
-              value={formTree.publicMode}
-              onChange={(e) => handleChange(e, "publicMode")}
+            <FormControlLabel
               className={classes.inputFields}
+              control={
+                <Checkbox
+                  checked={currentTree.publicMode}
+                  onChange={(e) => handleChange(e, "publicMode")}
+                  name="public"
+                />
+              }
+              label="Public mode"
             />
           </Grid>
           <Grid item xs={6}></Grid>

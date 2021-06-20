@@ -53,14 +53,8 @@ const StyledToggleButton = withStyles((theme) => ({
   selected: {},
 }))(ToggleButton);
 
-export default function CustomToggleButton() {
-  const [mode, setMode] = React.useState("preview");
-
-  const handleChangeMode = (event, newMode) => {
-    if (newMode !== null) {
-      setMode(newMode);
-    }
-  };
+export default function CustomToggleButton(props) {
+  const {mode, handleChangeMode } = props;
 
   return (
     <div>
@@ -71,12 +65,12 @@ export default function CustomToggleButton() {
         onChange={handleChangeMode}
         aria-label="choose mode"
       >
-        <StyledToggleButton disableRipple value="preview" aria-label="preview tree">
-          All
+        <StyledToggleButton disableRipple value="myfamily" aria-label="preview tree">
+          My Family
         </StyledToggleButton>
 
-        <StyledToggleButton disableRipple value="edit" aria-label="edit tree">
-          Latest
+        <StyledToggleButton disableRipple value="public" aria-label="edit tree">
+          Tree Public
         </StyledToggleButton>
       </StyledToggleButtonGroup>
     </div>

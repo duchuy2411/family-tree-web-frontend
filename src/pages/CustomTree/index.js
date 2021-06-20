@@ -17,6 +17,7 @@ import {
   updatePerson,
   uploadImage,
   selectNodeDataArrayRedux,
+  exportJSON,
 } from "./customTreeSlice";
 import "./style.css";
 // MUI
@@ -911,6 +912,13 @@ export default function CustomTreePage() {
         const model = {};
         _.set(model, getForm.s === "M" ? "vir" : "ux", [formatSpouse.key]);
         Adapter.editNode(diagram, model, getForm.key);
+        const addIdParent =
+          getForm.s === "M"
+            ? { f: getForm.key, m: formatSpouse.key }
+            : { f: formatSpouse.key, m: getForm.key };
+        console.log("node: ", node);
+        console.log("parent: ", addIdParent);
+        Adapter.editNode(diagram, addIdParent, node.key);
         const nodeArr = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray);
         Adapter.createLinkForMarriages(
           diagram,
@@ -958,10 +966,13 @@ export default function CustomTreePage() {
     const node = button.part.adornedPart.data;
     const arrayNode = Adapter.getWithoutLinkLabel([...diagram.model.nodeDataArray]);
     if (conditionDelete1(arrayNode, node)) {
+      console.log("Condiditon 1");
       deleteForNodeNoSpouseNoChilds(node, arrayNode, diagram);
     } else if (conditionDelete2(arrayNode, node)) {
+      console.log("Condiditon 2");
       deleteForNodeNoSpouseNoParentsHaveAChild(node, arrayNode, diagram);
     } else if (conditionDelete3(arrayNode, node)) {
+      console.log("Condiditon 3");
       deleteForNodeHaveSpouse(node, arrayNode, diagram);
     } else {
       alert("Can not delete this node!!");
@@ -1010,6 +1021,7 @@ export default function CustomTreePage() {
     const id = node.id;
     diagram.model.startTransaction("deleteForNodeHaveSpouse");
     const getChilds = Adapter.getChilds(arr, node);
+    console.log("Get Childs:", getChilds);
     if (getChilds.length === 0) {
       const getMarriage = Adapter.getMarriageByArray(arr, node.key);
       const indexMarriage = Adapter.getIndex(arr, getMarriage[0].key);
@@ -1062,7 +1074,7 @@ export default function CustomTreePage() {
   const conditionDelete1 = (arr, node) => {
     // no spouse, no childs
     const getMarriage = Adapter.getMarriageByArray(arr, node.key);
-    const isAlone = getMarriage.length === 0 || getMarriage.n === CONSTANTS.UNDEFINED;
+    const isAlone = getMarriage.length === 0 || getMarriage.type === CONSTANTS.TYPE.UNDEFINED;
     const getChilds = Adapter.getChilds(arr, node);
 
     return isAlone && getChilds.length === 0;
@@ -1071,11 +1083,13 @@ export default function CustomTreePage() {
   const conditionDelete2 = (arr, node) => {
     // no spouse, no parent, have atleast 1
     const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+    console.log("get Marriage: ", getMarriage);
     const isAlone =
       getMarriage.length === 0 ||
-      (getMarriage.length === 1 && _.get(getMarriage[0], "type") === CONSTANTS.UNDEFINED);
+      (getMarriage.length === 1 && _.get(getMarriage[0], "type") === CONSTANTS.TYPE.UNDEFINED);
     const noParents = !Adapter.getFather(arr, node) && !Adapter.getMother(arr, node);
     const getChilds = Adapter.getChilds(arr, node);
+    console.log("noParents getChilds isAlone", noParents, getChilds, isAlone);
     return isAlone && noParents && getChilds.length <= 1;
   };
 
@@ -1083,76 +1097,9 @@ export default function CustomTreePage() {
     // have 1 spouse, no parent
     const getMarriage = Adapter.getMarriageByArray(arr, node.key);
     const noParents = !Adapter.getFather(arr, node) && !Adapter.getMother(arr, node);
-    return getMarriage.length === 1 && getMarriage[0].n !== CONSTANTS.UNDEFINED && noParents;
-  };
-
-  const deleteForCondition1 = (list, node) => {
-    let arr = [...list];
-    //Remove this
-    const getSpouseRemove = Adapter.getMarriageByArray(arr, node);
-    if (getSpouseRemove.length !== 0 && getSpouseRemove[0].n === CONSTANTS.UNDEFINED) {
-      arr = _.filter(arr, (ele) => ele.key !== getSpouseRemove[0].key);
-    }
-    const getFather = Adapter.getFather(arr, node);
-    const getMother = Adapter.getMother(arr, node);
-    const getChildsFather = Adapter.getChilds(arr, getFather);
-
-    const getChildsMother = Adapter.getChilds(arr, getMother);
-
-    if (
-      getChildsMother.map((ele) => Object.values(_.pick(ele, ["key"])))[0].includes(node.key) &&
-      getFather.n === CONSTANTS.UNDEFINED
-    ) {
-      // Remove father node
-      arr = Adapter.removeNodeAndRelationshipOfSpouse(arr, getFather);
-    }
-    if (
-      getChildsMother.map((ele) => Object.values(_.pick(ele, ["key"])))[0].includes(node.key) &&
-      getMother.n === CONSTANTS.UNDEFINED
-    ) {
-      // Remove mother node
-      arr = Adapter.removeNodeAndRelationshipOfSpouse(arr, getMother);
-    }
-    return _.filter(arr, (ele) => ele.key !== node.key);
-  };
-
-  const deleteForCondition2 = (list, node) => {
-    const arr = [...list];
-    const getChilds = Adapter.getChilds(arr, node);
-    getChilds.forEach((ele) => {
-      const getIndex = Adapter.getIndex(list, node);
-      delete arr[getIndex].m;
-      delete arr[getIndex].f;
-    });
-    const getSpouseRemove = Adapter.getMarriageByArray(arr, node);
-    if (getSpouseRemove.length !== 0 && getSpouseRemove[0].n === CONSTANTS.UNDEFINED) {
-      _.remove(arr, { key: getSpouseRemove[0].key });
-    }
-    const rmv = _.remove(arr, { key: node.key });
-  };
-
-  const deleteForCondition3 = (list, node) => {
-    const arr = [...list];
-    const getChilds = Adapter.getChilds(arr, node);
-    if (getChilds.length === 0) {
-      const getMarriage = Adapter.getMarriageByArray(arr, node.key);
-      const indexMarriage = Adapter.getIndex(arr, getMarriage[0].key);
-      delete arr[indexMarriage].ux;
-      delete arr[indexMarriage].vir;
-      const temp = _.filter(arr, (ele) => ele.key !== node.key);
-      return temp;
-    } else {
-      const getIndex = Adapter.getIndex(arr, node.key);
-      arr[getIndex].n = CONSTANTS.UNDEFINED;
-      arr[getIndex].type = CONSTANTS.TYPE.DEAD;
-    }
-    return arr;
-  };
-
-  const handleDelete = (temp, myDiagram) => {
-    const clone = [...temp];
-    setupDiagram(myDiagram, clone, 1);
-    setAlterLink(temp);
+    return (
+      getMarriage.length === 1 && getMarriage[0].type !== CONSTANTS.TYPE.UNDEFINED && noParents
+    );
   };
 
   const handleChangeAddForm = (e, label, isDeath = false) => {
@@ -1411,6 +1358,23 @@ export default function CustomTreePage() {
     });
   };
 
+  const handleExport = async () => {
+    const rs = await dispatch(exportJSON(id));
+    const downloadFile = async (myData) => {
+      const fileName = `tree_${id}`;
+      const json = JSON.stringify(myData);
+      const blob = new Blob([json], { type: "application/json" });
+      const href = await URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = href;
+      link.download = fileName + ".json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    downloadFile(rs);
+  };
+
   return (
     <Container maxWidth="xl" disableGutters className={classes.container}>
       <Grid container direction="row">
@@ -1469,6 +1433,7 @@ export default function CustomTreePage() {
             <Grid item xs={12} container justify="center" className={classes.toggleButtons}>
               <CustomToggleButton
                 mode={mode}
+                handleExport={handleExport}
                 handleDownloadImage={handleDownloadImage}
                 handleChangeMode={handleChangeMode}
               />
@@ -1478,7 +1443,7 @@ export default function CustomTreePage() {
               <Paper
                 elevation={10}
                 style={{
-                  height: "87vh",
+                  height: "79vh",
                   margin: "0px 16px",
                   borderRadius: "24px",
                 }}

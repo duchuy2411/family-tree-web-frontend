@@ -75,6 +75,10 @@ const CONSTANTS = {
     3: "Monthly",
     4: "Annual",
   },
+  PUBLIC_MODE: [
+    { label: "Public", value: true },
+    { label: "Private", value: false },
+  ]
 };
 
 export default CONSTANTS;

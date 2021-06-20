@@ -58,8 +58,8 @@ const StyledToggleButton = withStyles((theme) => ({
 }))(ToggleButton);
 
 export default function CustomToggleButton(props) {
-  const { mode, handleChangeMode, handleDownloadImage } = props;
-
+  const { mode, handleExport, handleChangeMode, handleDownloadImage } = props;
+  console.log("==mode==:", mode);
   return (
     <div>
       <StyledToggleButtonGroup
@@ -69,17 +69,25 @@ export default function CustomToggleButton(props) {
         onChange={handleChangeMode}
         aria-label="choose mode"
       >
-        {mode === "preview" && (
-          <StyledToggleButton
-            className="absolute-btn-download"
-            value="edit"
-            aria-label="edit tree"
-            onClick={handleDownloadImage}
-          >
-            Download Tree Image
-            <i className="fas fa-download" />
-          </StyledToggleButton>
-        )}
+        { mode === "preview" &&
+          (
+            <div className="absolute-btn-download">
+              <StyledToggleButton
+                value="edit"
+                aria-label="edit tree"
+                onClick={handleExport}
+                style={{marginRight: "10px"}}>
+                Export to JSON
+                <i className="fas fa-download" />
+              </StyledToggleButton>
+              <StyledToggleButton
+                value="edit" aria-label="edit tree" onClick={handleDownloadImage}>
+                Download Tree Image
+                <i className="fas fa-download" />
+              </StyledToggleButton>
+            </div>
+          )
+        }
         <StyledToggleButton value="preview" aria-label="preview tree">
           Preview
         </StyledToggleButton>

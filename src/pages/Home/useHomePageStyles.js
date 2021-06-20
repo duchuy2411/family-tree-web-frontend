@@ -3,14 +3,15 @@ import colors from "../../assets/colorPalette";
 
 const useHomePageStyles = makeStyles((theme) => ({
   wrapper: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(4),
+    margin: "20px auto",
+    width: "80%",
+    maxWidth: "1444px",
   },
 
   // top site
   searchBox: {
     height: 40,
+    width: "100%",
   },
   avatarBtn: {
     margin: theme.spacing(0, 0),
@@ -57,6 +58,29 @@ const useHomePageStyles = makeStyles((theme) => ({
   },
   customBtnDashed: {
     border: "dashed 1px black",
+  },
+  customBtnImport: {
+    border: "dashed 1px black",
+    padding: "5px 25px",
+    minWidth: "74px",
+    borderRadius: "3px",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.04)",
+    },
+  },
+  progress: {
+    backgroundColor: colors.pink,
+    height: "12px",
+    borderRadius: "15px",
+  },
+  groupProgress: {
+    width: "100%",
+    height: "300px",
+    marginTop: "30px",
+    "& > * + *": {
+      marginTop: theme.spacing(3),
+    },
   },
 }));
 

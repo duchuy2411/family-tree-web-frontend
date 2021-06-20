@@ -4,8 +4,9 @@ import { fade, makeStyles } from "@material-ui/core";
 
 const useCustomTreePageStyles = makeStyles((theme) => ({
   rootAccording: {
-    width: "99%",
-    margin: "15px 0px",
+    margin: "20px auto",
+    width: "80%",
+    maxWidth: "1444px",
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -42,13 +43,14 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     alignItems: "center",
     borderRadius: "5%",
     "&:hover": {
-      backgroundColor: "gray",
+      backgroundColor: "rgba(0, 0, 0, 0.04)",
       cursor: "pointer",
     },
   },
   inputFields: {
-    width: "90%",
+    width: "96%",
     margin: theme.spacing(1),
+    textAlign: "left",
   },
   label: {
     width: "90%",
@@ -67,7 +69,8 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
+    border: "1px solid #000",
+    borderRadius: "10px",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     top: "50%",
@@ -105,7 +108,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     maxHeight: 440,
   },
   header: {
-    backgroundColor: "black",
+    backgroundColor: "#905842",
     color: "white",
   },
   search: {
@@ -185,7 +188,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     position: "absolute",
     width: 800,
     backgroundColor: theme.palette.background.paper,
-    // border: '2px solid #000',
+    // border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     top: "50%",
@@ -208,6 +211,12 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   },
   dateDetail: {
     textAlign: "center",
+  },
+  tableHead: {
+    color: "#905842",
+  },
+  modalCustom: {
+    borderRadius: "10px",
   },
 }));
 

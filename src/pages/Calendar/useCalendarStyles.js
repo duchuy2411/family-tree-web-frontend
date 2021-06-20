@@ -6,6 +6,9 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     height: "100vh",
+    margin: "20px auto",
+    maxWidth: "1144px",
+    width: "80%"
   },
   paperPanel: {
     backgroundColor: colors.pink,
