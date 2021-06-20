@@ -13,6 +13,7 @@ import { makeStyles } from "@material-ui/core";
 import { Delete, Lens } from "@material-ui/icons";
 import classNames from "classnames";
 import colors from "../../../../assets/colorPalette";
+import { convertTimeToPeriod } from "utils/notifications";
 
 const useStyles = makeStyles(() => ({
   list: {
@@ -48,6 +49,10 @@ const useStyles = makeStyles(() => ({
   iconUnread: {
     fontSize: "small",
     color: colors.brown,
+  },
+  highlighted: {
+    color: colors.brown,
+    fontWeight: "bold",
   },
 }));
 
@@ -94,10 +99,13 @@ export default function NotificationsList(props) {
                 }
                 secondary={
                   <Typography
-                    variant="caption"
-                    color={notification.isRead ? "textSecondary" : "textPrimary"}
+                    variant={notification.isRead ? "caption" : "body2"}
+                    color={notification.isRead ? "textSecondary" : "primary"}
+                    className={classNames({
+                      [classes.highlighted]: !notification.isRead,
+                    })}
                   >
-                    {notification.dateCreated || "dateCreated"}
+                    {convertTimeToPeriod(notification.dateCreated) || "dateCreated"}
                   </Typography>
                 }
               />
