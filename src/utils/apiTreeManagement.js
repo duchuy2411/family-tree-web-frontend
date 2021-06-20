@@ -1,5 +1,4 @@
 import axiosClient from "api";
-import axios from "axios";
 
 const version = 1;
 const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
