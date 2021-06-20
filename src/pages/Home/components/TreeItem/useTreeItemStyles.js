@@ -125,11 +125,10 @@ const useTreeItemStyles = makeStyles((theme) => ({
     },
   },
   menuItem: {
-    margin: "3px 0px",
-    backgroundColor: colors.pink,
+    margin: "0px 0px",
   },
-  menu: {
-    backgroundColor: "none",
+  menuList: {
+    backgroundColor: colors.pink,
   },
 }));
 

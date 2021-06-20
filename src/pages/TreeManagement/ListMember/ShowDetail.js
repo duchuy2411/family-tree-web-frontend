@@ -3,6 +3,7 @@ import { Modal } from "@material-ui/core";
 import useManagementTreeStyle from "../useTreeManagementStyles";
 import moment from "moment";
 import { Grid, Typography } from "@material-ui/core";
+import avt from "../../../assets/img/Portrait_Placeholder.png";
 
 const ShowDetail = (props) => {
   const {
@@ -24,7 +25,7 @@ const ShowDetail = (props) => {
             <Grid container justify="center" alignItems="center" xs={6}>
               <Grid item xs={12}>
                 <div
-                  style={{ backgroundImage: `url(${currentPerson.imageUrl})` }}
+                  style={{ backgroundImage: `url(${currentPerson.imageUrl || avt})` }}
                   className={classes.avatarDetail}
                 />
               </Grid>

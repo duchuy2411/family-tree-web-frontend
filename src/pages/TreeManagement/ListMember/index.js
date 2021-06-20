@@ -90,10 +90,18 @@ export default function ListMember(props) {
     setPage(0);
   };
 
+  const getName = (object) => {
+    const name = _.get(object, "name");
+    if (name === "null null" || name === null) {
+      return "Unknow name";
+    }
+    return name;
+  };
+
   const formatSpouse = (value) => {
     if (value.length === 0) return "";
     const rs = _.join(
-      _.transform(value, (result, ele) => result.push(ele.name), []),
+      _.transform(value, (result, ele) => result.push(getName(ele)), []),
       " "
     );
     return rs;
@@ -183,7 +191,7 @@ export default function ListMember(props) {
       )}
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
-          <TableHead>
+          <TableHead className={classes.tableHeader}>
             <TableRow>
               {columns.map((column) => (
                 <TableCell

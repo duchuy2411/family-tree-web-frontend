@@ -29,7 +29,6 @@ export default function Schedule(props) {
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
         tooltipAccessor={toolTip}
-        style={{ height: 780, width: 850 }}
       />
     </Grid>
   );

@@ -93,6 +93,9 @@ const api = {
   getTreeList: () => {
     return axios.get(`${baseUrl}/tree-management/trees/list`);
   },
+  getTreesPublic: () => {
+    return axios.get(`${baseUrl}/tree-management/trees`);
+  },
   updateFamilyTree: (treeId, payload) => {
     return axios.put(`${baseUrl}/tree-management/tree/${treeId}`, payload);
   },
@@ -129,8 +132,8 @@ const api = {
   getEditorTree: (treeId) => {
     return axios.get(`${baseUrl}/tree-management/tree/${treeId}/editors`);
   },
-  getCalendar: (treeId) => {
-    return axios.get(`${baseUrl}/calendar-management/tree/${treeId}`);
+  fetchCalendar: (treeId) => {
+    return axios.get(`${baseUrl}/calendar-management/events/tree/${treeId}`);
   },
   createCalendar: (payload) => {
     return axios.post(`${baseUrl}/calendar-management/event`, payload);
@@ -155,6 +158,17 @@ const api = {
   },
   deleteMemory: (memoryId) => {
     return axios.delete(`${baseUrl}/memory-management/memory/${memoryId}`);
+  },
+  importTree: (file, config) => {
+    return axios.post(`${baseUrl}/tree-management/tree/import`, file, config);
+  },
+  exportJSON: (treeId) => {
+    return axios.post(`${baseUrl}/tree-management/tree/${treeId}/backup`);
+  },
+  getListByKeyword: (str) => {
+    return axios.get(`${baseUrl}/tree-management/trees-from-keyword`, {
+      params: { q: str }
+    });
   },
   apiTreeManagement: apiTreeManagement,
 };

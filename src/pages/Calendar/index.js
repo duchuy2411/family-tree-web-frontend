@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Grid } from "@material-ui/core";
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import _ from "lodash";
+import { useParams, useHistory } from "react-router-dom";
 
 import LeftMenu from "./LeftMenu";
 import Schedule from "./Schedule";
@@ -11,10 +12,15 @@ import Modal from "./Modal";
 import ViewImage from "./ViewImage";
 
 import {
-  // fetchCalendar,
+  fetchCalendar,
   selectViewImage,
   selectArrayViewImages,
 } from "./calendarSlice";
+import {
+  selectTree,
+  selectTrees,
+} from "../Home/homeSlice";
+
 import useCalendarStyles from "./useCalendarStyles";
 // import UtilCalendar from './utilCalendar';
 
@@ -22,24 +28,26 @@ import "./index.css";
 
 export default function CalendarPage() {
   const classes = useCalendarStyles();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const showViewImage = useSelector(selectViewImage);
+  const [calendar, setCalendar] = useState();
   const [form, setForm] = useState({ notes: "", startDate: null, endDate: null, loop: 0 });
   const [show, setShow] = useState({ isShow: false, mode: "new" });
   const [select, setSelect] = useState("Calendar");
   const [event, setEvent] = useState([]);
   const arrayImages = useSelector(selectArrayViewImages);
+  const { id } = useParams();
+  const curTree = useSelector(selectTree);
+  const listTree = useSelector(selectTrees);
 
-  // useEffect(() => {
-  //   const calendar = await dispatch(fetchCalendar(17));
-  //   if (calendar.data) {
-  //     const parseEvent = UtilCalendar.formatApi(calendar.data);
-  //     console.log("Parse event: ", parseEvent);
-  //   }
-  // }, [])
+  useEffect(async () => {
+    const calendar = await dispatch(fetchCalendar(id));
+    if (calendar) {
+      setCalendar(calendar);
+    }
+  }, []);
 
   const handleSelectSlot = (e) => {
-    console.log("Select slot", e);
     setForm({
       notes: "",
       startDate: moment(e.start).format("YYYY-MM-DD"),
@@ -124,7 +132,11 @@ export default function CalendarPage() {
   return (
     <Container maxWidth="xl" disableGutters className={classes.container}>
       <Grid container direction="row">
-        <LeftMenu handleChangeMode={handleChangeMode} />
+        <LeftMenu
+          curTree={curTree}
+          listTree={listTree}
+          handleChangeMode={handleChangeMode}
+        />
         {select === "Calendar" && (
           <Schedule
             event={event}

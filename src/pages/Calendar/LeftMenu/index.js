@@ -8,7 +8,7 @@ import "./index.css";
 
 export default function LeftMenu(props) {
   const classes = useCalendarStyles();
-  const { handleChangeMode } = props;
+  const { curTree, listTree, handleChangeMode } = props;
   return (
     <Grid item xs={2}>
       {/* Container of Left Side */}
@@ -18,7 +18,7 @@ export default function LeftMenu(props) {
         <Grid item xs={11}>
           <Paper elevation={9} className={classes.paperPanel}>
             <Typography align="center" variant="h5" component="p" className={classes.boldTitle}>
-              Name tree
+              { curTree.name }
             </Typography>
           </Paper>
         </Grid>

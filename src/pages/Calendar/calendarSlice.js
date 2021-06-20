@@ -99,7 +99,7 @@ export const {
 export const fetchCalendar = (treeId) => async () => {
   const rs = await api.fetchCalendar(treeId);
   if (rs.status === 200) {
-    return _.get(rs, "data");
+    return _.get(rs.data, "data");
   }
   return false;
 };

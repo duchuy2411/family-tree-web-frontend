@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import _ from "lodash";
 import { useDispatch } from "react-redux";
+import { useParams, useHistory } from "react-router-dom";
 import { Grid, TextareaAutosize, TextField } from "@material-ui/core";
 import swal from "sweetalert";
 
@@ -13,12 +14,12 @@ const NewCard = () =>
   // const {
   // } = props;
   const dispatch = useDispatch();
+  const { id } = useParams();
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
   const [form, setForm] = useState({ description: "", memoryDate: moment() });
   // eslint-disable-next-line no-unused-vars
   const [urls, setUrl] = useState([]);
-
   const handleChangeDate = (e) => {
     console.log(e.target.value);
     setForm({ ...form, memoryDate: moment(e.target.value).format("YYYY-MM-DD") });
@@ -57,7 +58,7 @@ const NewCard = () =>
       }
     };
     const payload = {
-      familyTreeId: 21,
+      familyTreeId: id,
       description: form.description,
       memoryDate: moment(form.memoryDate).format(),
       imageUrls: await callback(),
@@ -73,11 +74,11 @@ const NewCard = () =>
     }
   };
   return (
-    <Grid xs={7} container className="container-card">
-      <Grid item xs={2} className="avatar-card">
+    <Grid xs={12} container className="container-card">
+      <Grid item xs={1} className="avatar-card">
         <img src="https://ict-imgs.vgcloud.vn/2020/09/01/19/huong-dan-tao-facebook-avatar.jpg" />
       </Grid>
-      <Grid item xs={10} className="input-card">
+      <Grid item xs={11} className="input-card">
         <TextareaAutosize
           className="text-area"
           rowsMin={2}
