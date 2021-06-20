@@ -16,20 +16,19 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     alignItems: "center",
     padding: theme.spacing(1, 2),
+    width: "100%",
   },
   searchIcon: {
     marginRight: "4px",
     height: "100%",
   },
+  searchInput: {
+    width: "100%",
+  },
 }));
 
 export default function SearchBox(props) {
-  const {
-    ariaLabel,
-    className,
-    search,
-    handleChangeSearch,
-  } = props;
+  const { ariaLabel, className, search, handleChangeSearch } = props;
 
   const classes = useStyles();
   const searchBoxClasses = classNames({
@@ -41,6 +40,7 @@ export default function SearchBox(props) {
     <Paper className={searchBoxClasses} elevation={9}>
       <InputBase
         fullWidth
+        className={classes.searchInput}
         startAdornment={<SearchIcon className={classes.searchIcon} />}
         inputProps={{ "aria-label": ariaLabel || "Search box" }}
         value={search}

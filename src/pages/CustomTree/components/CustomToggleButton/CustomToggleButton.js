@@ -59,7 +59,7 @@ const StyledToggleButton = withStyles((theme) => ({
 
 export default function CustomToggleButton(props) {
   const { mode, handleExport, handleChangeMode, handleDownloadImage } = props;
-
+  console.log("==mode==:", mode);
   return (
     <div>
       <StyledToggleButtonGroup
@@ -69,7 +69,7 @@ export default function CustomToggleButton(props) {
         onChange={handleChangeMode}
         aria-label="choose mode"
       >
-        { mode === 'preview' &&
+        { mode === "preview" &&
           (
             <div className="absolute-btn-download">
               <StyledToggleButton

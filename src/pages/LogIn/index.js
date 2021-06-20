@@ -21,6 +21,7 @@ import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
 import useLoginPageStyles from "./useLoginPageStyles";
 import { authActions } from "./../../store/authSlice";
 import api from "../../utils/api";
+import LOCAL_STORAGE_KEYS from "../../configs/localStorageKeys";
 
 const LogInPage = () => {
   const dispatch = useDispatch();
@@ -37,7 +38,6 @@ const LogInPage = () => {
   const smDownMatches = useMediaQuery(theme.breakpoints.down("sm"));
 
   if (redirectToReferrer === true) {
-
     if (location.state) {
       return <Redirect to={location.state.referrer} />;
     } else {
@@ -55,9 +55,9 @@ const LogInPage = () => {
 
     const response = await api.login(loginData);
     const { user, accessToken, refreshToken } = response.data.data;
-    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
     console.log("refresh token: ", refreshToken);
-    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
 
     if (user) {
       dispatch(authActions.login(user));
@@ -98,11 +98,7 @@ const LogInPage = () => {
             </Hidden>
 
             <Hidden mdUp>
-              <Typography
-                className={classes.appTitle}
-                variant="h3"
-                component="h2"
-              >
+              <Typography className={classes.appTitle} variant="h3" component="h2">
                 Origin Keeper
               </Typography>
             </Hidden>

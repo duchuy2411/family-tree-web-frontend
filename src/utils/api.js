@@ -1,14 +1,14 @@
 import axios from "axios";
-import _ from "lodash";
+import LOCAL_STORAGE_KEYS from "configs/localStorageKeys";
 
-import apiTreeManagement from './apiTreeManagement';
+import apiTreeManagement from "./apiTreeManagement";
 
 const version = 1;
 const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
 
 axios.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
     console.log("accessToken in axios client: ", accessToken);
 
     if (accessToken) {
@@ -30,7 +30,7 @@ axios.interceptors.response.use(
   },
   function (error) {
     const originalRequest = error.config;
-    let refreshToken = localStorage.getItem("refreshToken");
+    let refreshToken = localStorage.getItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
     if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       return axios
@@ -45,7 +45,7 @@ axios.interceptors.response.use(
         )
         .then((res) => {
           if (res.status === 200) {
-            localStorage.setItem("accessToken", res.data.data.accessToken);
+            localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, res.data.data.accessToken);
             return axios(originalRequest);
           }
         });
@@ -94,6 +94,9 @@ const api = {
   getTreeList: () => {
     return axios.get(`${baseUrl}/tree-management/trees/list`);
   },
+  getTreesPublic: () => {
+    return axios.get(`${baseUrl}/tree-management/trees`);
+  },
   updateFamilyTree: (treeId, payload) => {
     return axios.put(`${baseUrl}/tree-management/tree/${treeId}`, payload);
   },
@@ -130,8 +133,8 @@ const api = {
   getEditorTree: (treeId) => {
     return axios.get(`${baseUrl}/tree-management/tree/${treeId}/editors`);
   },
-  getCalendar: (treeId) => {
-    return axios.get(`${baseUrl}/calendar-management/tree/${treeId}`);
+  fetchCalendar: (treeId) => {
+    return axios.get(`${baseUrl}/calendar-management/events/tree/${treeId}`);
   },
   createCalendar: (payload) => {
     return axios.post(`${baseUrl}/calendar-management/event`, payload);
@@ -162,6 +165,11 @@ const api = {
   },
   exportJSON: (treeId) => {
     return axios.post(`${baseUrl}/tree-management/tree/${treeId}/backup`);
+  },
+  getListByKeyword: (str) => {
+    return axios.get(`${baseUrl}/tree-management/trees-from-keyword`, {
+      params: { q: str }
+    });
   },
   apiTreeManagement: apiTreeManagement,
 };

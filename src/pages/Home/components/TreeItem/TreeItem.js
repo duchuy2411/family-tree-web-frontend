@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 import moment from "moment";
-import swal from 'sweetalert';
+import swal from "sweetalert";
+import _ from "lodash";
 import { useHistory } from "react-router-dom";
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
-import { deleteTree, selectTrees, SET_CURRENT_TREE } from '../../homeSlice';
+import { deleteTree, selectTrees, SET_CURRENT_TREE } from "../../homeSlice";
 
 // MUI components
 import {
@@ -19,10 +20,8 @@ import {
   Tooltip,
   Typography,
   List,
-  ListItem,
   Menu,
   MenuItem,
-  ListItemText
 } from "@material-ui/core";
 import { AvatarGroup } from "@material-ui/lab";
 
@@ -31,60 +30,88 @@ import { MoreVert, WatchLater as WatchLaterIcon } from "@material-ui/icons";
 
 import useTreeItemStyles from "./useTreeItemStyles";
 
-export default function TreeItem({
-  id,
-  logo,
-  name,
-  updatedAt,
-  author,
-  contributors,
-}) {
+export default function TreeItem({ id, logo, name, updatedAt, author, contributors }) {
   const classes = useTreeItemStyles();
   const dispatch = useDispatch();
   const trees = useSelector(selectTrees);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const history = useHistory();
-  const options = [
-    "Calendar",
-    "Tree Management",
-    "Delete Tree"
-  ];
-  const handleClickListItem = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const options = ["Calendar", "Tree Management", "Delete Tree"];
+  const optionsMore = ["Edit Tree", "Calendar", "Tree Management", "Delete Tree", ];
+
+  // const handleClickListItem = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index);
     setAnchorEl(null);
     switch (index) {
-      case 0: {
-        const current = _.find(trees, ele => ele.id === id);
-        dispatch(SET_CURRENT_TREE(current))
-        history.push(`/calendar/${id}`);
-        break;
-      }
-      case 1: {
-        const current = _.find(trees, ele => ele.id === id);
-        dispatch(SET_CURRENT_TREE(current))
-        history.push(`/tree-management/${id}`);
-        break;
-      }
-      case 2: {
-        swal({
-          title: "Are you sure?",
-          text: "Once deleted, you will not be able to recover this tree!",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        })
-        .then((willDelete) => {
-          if (willDelete) {
-            dispatch(deleteTree(id));
-          }
-        });
-        break;
-      }
+    case 0: {
+      const current = _.find(trees, (ele) => ele.id === id);
+      dispatch(SET_CURRENT_TREE(current));
+      history.push(`/calendar/${id}`);
+      break;
+    }
+    case 1: {
+      const current = _.find(trees, (ele) => ele.id === id);
+      dispatch(SET_CURRENT_TREE(current));
+      history.push(`/tree-management/${id}`);
+      break;
+    }
+    case 2: {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this tree!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          dispatch(deleteTree(id));
+        }
+      });
+      break;
+    }
+    }
+  };
+
+  const handleMenuItemClickMore = (event, index) => {
+    setSelectedIndex(index);
+    setAnchorEl(null);
+    switch (index) {
+    case 0: {
+      history.push(`/custom-tree/${id}`);
+      break;
+    }
+    case 1: {
+      const current = _.find(trees, (ele) => ele.id === id);
+      dispatch(SET_CURRENT_TREE(current));
+      history.push(`/calendar/${id}`);
+      break;
+    }
+    case 2: {
+      const current = _.find(trees, (ele) => ele.id === id);
+      dispatch(SET_CURRENT_TREE(current));
+      history.push(`/tree-management/${id}`);
+      break;
+    }
+    case 3: {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this tree!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          dispatch(deleteTree(id));
+        }
+      });
+      break;
+    }
     }
   };
 
@@ -93,20 +120,13 @@ export default function TreeItem({
   };
   const handleClickMoreMenu = (event) => {
     setAnchorEl(event.currentTarget);
-  }
+  };
   return (
     <Card className={classes.root}>
       <Grid container alignItems="center">
         {/* ava + info */}
-        <Grid
-          item
-          lg={10}
-          xs={11}
-          container
-          alignItems="center"
-          className={classes.gridTree}
-        >
-          <img src={logo} alt="family avatar" className={classes.imgFamily} />
+        <Grid item lg={10} xs={11} container alignItems="center" className={classes.gridTree}>
+          {/* <img src={logo} alt="family avatar" className={classes.imgFamily} /> */}
 
           {/* name - contributors - updatedAt */}
           <Grid
@@ -140,39 +160,26 @@ export default function TreeItem({
                 <Typography>Contributed by </Typography>
               </Hidden>
               <AvatarGroup max={4} className={classes.avatarGroup}>
-                {author &&
-                  <Tooltip title={`${author.username} - Owner`}>
+                {author && (
+                  <Tooltip title={`${_.get(author, "username")} - Owner`}>
                     <Avatar
-                      alt={author.username}
-                      src={author.avatarUrl}
-                      className={classNames(
-                        classes.avatarBorder,
-                        classes.avatarOwner
-                      )}
+                      alt={_.get(author, "username")}
+                      src={_.get(author, "avatarUrl")}
+                      className={classNames(classes.avatarBorder, classes.avatarOwner)}
                     />
                   </Tooltip>
-                }
+                )}
                 {/* Other contributors */}
                 {contributors.map((contributor, index) => (
                   <Tooltip key={index} title={contributor.username}>
-                    <Avatar
-                      alt={contributor.username}
-                      src={contributor.avatarUrl}
-                    />
+                    <Avatar alt={contributor.username} src={_.get(contributor, "avatarUrl")} />
                   </Tooltip>
                 ))}
-            </AvatarGroup>
-          </Grid>
+              </AvatarGroup>
+            </Grid>
 
             {/* updatedAt */}
-            <Grid
-              item
-              xl={2}
-              lg={3}
-              md
-              sm={6}
-              className={classes.gridUpdatedAt}
-            >
+            <Grid item xl={2} lg={3} md sm={6} className={classes.gridUpdatedAt}>
               <WatchLaterIcon className={classes.iconTime} />
               <Typography className={classes.typoUpdatedAt}>
                 {moment(updatedAt).format("YYYY-MM-DD") || "No update"}
@@ -204,8 +211,8 @@ export default function TreeItem({
               aria-controls="lock-menu"
               aria-label="when device is locked"
               onClick={handleClickMoreMenu}
-              >
-                More Option
+            >
+              More Option
             </List>
             <Menu
               id="lock-menu"
@@ -213,16 +220,15 @@ export default function TreeItem({
               keepMounted
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              className={classes.menu}
               elevation={0}
               getContentAnchorEl={null}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
+                vertical: "bottom",
+                horizontal: "center",
               }}
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
+                vertical: "top",
+                horizontal: "center",
               }}
             >
               {options.map((option, index) => (
@@ -233,14 +239,45 @@ export default function TreeItem({
                 >
                   {option}
                 </MenuItem>
-                )
-              )}
+              ))}
             </Menu>
           </Hidden>
           <Hidden lgUp>
-            <IconButton>
+            <IconButton
+              aria-haspopup="true"
+              aria-controls="lock-menu-2"
+              aria-label="when device is locked"
+              onClick={handleClickMoreMenu}
+            >
               <MoreVert />
             </IconButton>
+            <Menu
+              id="lock-menu-2"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              elevation={0}
+              getContentAnchorEl={null}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+            >
+              {optionsMore.map((option, index) => (
+                <MenuItem
+                  key={option}
+                  onClick={(event) => handleMenuItemClickMore(event, index)}
+                  className={classes.menuItem}
+                >
+                  {option}
+                </MenuItem>
+              ))}
+            </Menu>
           </Hidden>
         </Grid>
       </Grid>
