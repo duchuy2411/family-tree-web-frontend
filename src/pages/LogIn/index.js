@@ -32,6 +32,8 @@ const LogInPage = () => {
   //
   const classes = useLoginPageStyles();
   //
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const usernameRef = React.useRef();
   const passwordRef = React.useRef();
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
@@ -45,19 +47,19 @@ const LogInPage = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  if (redirectToReferrer === true) {
-    if (location.state) {
-      return <Redirect to={location.state.referrer} />;
-    } else {
-      return <Redirect to={"/"} />;
-    }
-  }
+  const handleChangeUsername = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handleChangePassword = (event) => {
+    setPassword(event.target.value);
+  };
 
   const handleLogin = async () => {
     dispatch(authActions.setIsLoading(true)); // enable loading
     const loginData = {
-      usernameOrEmail: usernameRef.current.value,
-      password: passwordRef.current.value,
+      usernameOrEmail: username,
+      password: password,
       getRefreshToken: true,
     };
 
@@ -84,6 +86,14 @@ const LogInPage = () => {
       }
     }
   };
+
+  if (redirectToReferrer === true) {
+    if (location.state) {
+      return <Redirect to={location.state.referrer} />;
+    } else {
+      return <Redirect to={"/"} />;
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -142,6 +152,8 @@ const LogInPage = () => {
 
               <Input
                 inputRef={usernameRef}
+                value={username}
+                onChange={handleChangeUsername}
                 placeholder="Username"
                 required
                 fullWidth
@@ -150,6 +162,8 @@ const LogInPage = () => {
               ></Input>
               <Input
                 inputRef={passwordRef}
+                value={password}
+                onChange={handleChangePassword}
                 placeholder="Password"
                 type="password"
                 required
@@ -162,11 +176,7 @@ const LogInPage = () => {
                   variant="contained"
                   onClick={handleLogin}
                   className={classNames(classes.withSpace, classes.btnLogin)}
-                  disabled={
-                    isLoading ||
-                    usernameRef?.current?.value === "" ||
-                    passwordRef?.current?.value === ""
-                  }
+                  disabled={isLoading || username === "" || password === ""}
                 >
                   Login
                 </Button>
