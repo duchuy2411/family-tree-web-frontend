@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   List,
@@ -7,6 +7,7 @@ import {
   ButtonBase,
   Typography,
   IconButton,
+  CircularProgress,
 } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core";
@@ -19,6 +20,7 @@ const useStyles = makeStyles(() => ({
   list: {
     width: "40ch",
     padding: 12,
+    position: "relative",
   },
 
   listItem: {
@@ -54,23 +56,42 @@ const useStyles = makeStyles(() => ({
     color: colors.brown,
     fontWeight: "bold",
   },
+  loading: {
+    display: "none",
+    position: "absolute",
+    width: "100%",
+    left: "50%",
+    zIndex: 10,
+  },
+
+  display: {
+    display: "block",
+  },
+  circularProgress: {
+    marginLeft: -24, //its half size
+    color: colors.brown,
+  },
 }));
 
 export default function NotificationsList(props) {
-  const {
-    // isLoading,
-    notifications,
-    handleTriggerRead,
-    handleDeleteNotification,
-  } = props;
+  const { isLoading, notifications, handleTriggerRead, handleDeleteNotification } = props;
 
   const classes = useStyles();
 
   return (
     <>
       <List className={classes.list}>
-        {/* {isLoading &&
-          Array.from(new Array(1)).map((item, index) => (
+        <div
+          className={classNames({
+            [classes.loading]: true,
+            [classes.display]: isLoading,
+          })}
+        >
+          <CircularProgress className={classes.circularProgress} size={48} />
+        </div>
+
+        {/* {showSkeleton &&
+          Array.from(new Array(12)).map((item, index) => (
             <div key={index} className={classes.listItem}>
               <Skeleton />
               <Skeleton />
