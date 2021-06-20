@@ -22,6 +22,9 @@ import useLoginPageStyles from "./useLoginPageStyles";
 import { authActions } from "./../../store/authSlice";
 import api from "../../utils/api";
 import LOCAL_STORAGE_KEYS from "../../configs/localStorageKeys";
+import { SEVERITY_TYPES } from "configs/constants";
+import { Alert } from "@material-ui/lab";
+import LoadingInside from "components/LoadingInside";
 
 const LogInPage = () => {
   const dispatch = useDispatch();
@@ -36,6 +39,11 @@ const LogInPage = () => {
   //
   const theme = useTheme();
   const smDownMatches = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // ux
+  const [severity, setSeverity] = useState(SEVERITY_TYPES.INFO);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   if (redirectToReferrer === true) {
     if (location.state) {
@@ -53,19 +61,28 @@ const LogInPage = () => {
       getRefreshToken: true,
     };
 
-    const response = await api.login(loginData);
-    const { user, accessToken, refreshToken } = response.data.data;
-    localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-    console.log("refresh token: ", refreshToken);
-    localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    try {
+      setIsLoading(true);
+      const response = await api.login(loginData);
+      const { user, accessToken, refreshToken } = response.data.data;
+      localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+      console.log("refresh token: ", refreshToken);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
 
-    if (user) {
       dispatch(authActions.login(user));
       setRedirectToReferrer(true);
-    } else {
-      // do something
+
+      setSeverity(SEVERITY_TYPES.INFO);
+      setMessage("");
+      dispatch(authActions.setIsLoading(false)); // disable loading
+      setIsLoading(false);
+    } catch (error) {
+      if (error.response) {
+        setSeverity(SEVERITY_TYPES.ERROR);
+        setMessage(error.response.data.message);
+        setIsLoading(false);
+      }
     }
-    dispatch(authActions.setIsLoading(false)); // disable loading
   };
 
   return (
@@ -102,6 +119,7 @@ const LogInPage = () => {
                 Origin Keeper
               </Typography>
             </Hidden>
+
             <Grid
               item
               xs
@@ -116,7 +134,12 @@ const LogInPage = () => {
               alignItems="center"
               justify="center"
             >
-              {/* <div className={classes.rightWrapper}> */}
+              {message && (
+                <Alert severity={severity} className={classes.alert} style={{ marginBottom: 12 }}>
+                  {message}
+                </Alert>
+              )}
+
               <Input
                 inputRef={usernameRef}
                 placeholder="Username"
@@ -134,13 +157,20 @@ const LogInPage = () => {
                 disableUnderline
                 className={classNames(classes.withSpace, classes.inputFields)}
               ></Input>
-              <Button
-                variant="contained"
-                onClick={handleLogin}
-                className={classNames(classes.withSpace, classes.btnLogin)}
-              >
-                Login
-              </Button>
+              <LoadingInside isLoading={isLoading}>
+                <Button
+                  variant="contained"
+                  onClick={handleLogin}
+                  className={classNames(classes.withSpace, classes.btnLogin)}
+                  disabled={
+                    isLoading ||
+                    usernameRef?.current?.value === "" ||
+                    passwordRef?.current?.value === ""
+                  }
+                >
+                  Login
+                </Button>
+              </LoadingInside>
               <div className={classes.link}>
                 <RRDLink to="/signup" className={classes.link}>
                   Create account
@@ -149,7 +179,6 @@ const LogInPage = () => {
                   Forgot password?
                 </RRDLink>
               </div>
-              {/* </div> */}
             </Grid>
           </Paper>
         </Grid>

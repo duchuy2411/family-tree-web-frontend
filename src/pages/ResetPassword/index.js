@@ -5,14 +5,8 @@ import userAPI from "api/user";
 import LoadingInside from "components/LoadingInside";
 import { Redirect } from "react-router-dom";
 import useResetPasswordPageStyles from "./styles";
+import { SEVERITY_TYPES, STATUS_SUCCESS } from "configs/constants";
 
-const SUCCESS = 200;
-const SEVERITY_TYPES = {
-  SUCCESS: "success",
-  WARNING: "warning",
-  INFO: "info",
-  ERROR: "error",
-};
 const timeToWait = 5; // second
 
 export default function ResetPasswordPage() {
@@ -54,8 +48,8 @@ export default function ResetPasswordPage() {
       console.log("handleSubmitNewPassword");
       const response = await userAPI.updateNewPassword(newPassword, email, resetPasswordToken);
 
-      if (response.status === SUCCESS) {
-        setSeverity(SEVERITY_TYPES.SUCCESS);
+      if (response.status === STATUS_SUCCESS) {
+        setSeverity(SEVERITY_TYPES.STATUS_SUCCESS);
         setMessage("Update password successfully!");
         setError("");
         setIsLoading(false);
@@ -70,7 +64,7 @@ export default function ResetPasswordPage() {
   };
 
   useEffect(() => {
-    if (!isLoading && !error && severity === SEVERITY_TYPES.SUCCESS) {
+    if (!isLoading && !error && severity === SEVERITY_TYPES.STATUS_SUCCESS) {
       const interval = setInterval(() => setCountDown((prevCount) => prevCount - 1), 1 * 1000);
 
       const timeout = setTimeout(() => setReadyToRedirect(true), timeToWait * 1000);
@@ -117,7 +111,7 @@ export default function ResetPasswordPage() {
                   {message}
                 </Alert>
               )}
-              {severity === SEVERITY_TYPES.SUCCESS && (
+              {severity === SEVERITY_TYPES.STATUS_SUCCESS && (
                 <Alert
                   severity="info"
                   className={classes.alert}
@@ -156,7 +150,7 @@ export default function ResetPasswordPage() {
                   onClick={handleSubmitNewPassword}
                   disabled={
                     isLoading ||
-                    severity === SEVERITY_TYPES.SUCCESS ||
+                    severity === SEVERITY_TYPES.STATUS_SUCCESS ||
                     !newPassword ||
                     newPassword !== confirmNewPassword
                   }

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import LOCAL_STORAGE_KEYS from "configs/localStorageKeys";
 import api from "../utils/api";
 
 export const updateUserAsync = createAsyncThunk("authentication/updateUser", async (params) => {
@@ -39,8 +40,9 @@ const authSlice = createSlice({
     logout(state) {
       state.isAuthenticated = false;
       state.user = null;
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
       localStorage.removeItem("auth");
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
     },
     setUser(state, action) {
       const user = action.payload;

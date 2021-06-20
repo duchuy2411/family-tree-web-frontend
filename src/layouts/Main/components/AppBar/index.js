@@ -19,9 +19,9 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { selectUser } from "../../../../store/authSlice";
+import { authActions, selectUser } from "../../../../store/authSlice";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 
 import {
   Menu as MenuIcon,
@@ -51,6 +51,7 @@ const PATHS = {
 
 const MenuAppBar = () => {
   const pathname = window.location.pathname;
+  const history = useHistory();
 
   const classes = useAppBarStyles();
 
@@ -119,6 +120,11 @@ const MenuAppBar = () => {
     prevOpen.current = userAvatarOpen;
   }, [userAvatarOpen]);
   //-- end user avatar
+
+  const handleLogout = () => {
+    dispatch(authActions.logout());
+    history.push("/login");
+  };
 
   return (
     <div className={classes.root}>
@@ -241,9 +247,7 @@ const MenuAppBar = () => {
                         <MenuItem onClick={handleCloseUserAvatar} component={NavLink} to="/user">
                           Profile
                         </MenuItem>
-                        <MenuItem onClick={handleCloseUserAvatar} component={NavLink} to="/logout">
-                          Logout
-                        </MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </MenuList>
                     </ClickAwayListener>
                   </Paper>
