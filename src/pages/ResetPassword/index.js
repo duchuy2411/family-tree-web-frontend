@@ -45,7 +45,6 @@ export default function ResetPasswordPage() {
     try {
       setIsLoading(true);
 
-      console.log("handleSubmitNewPassword");
       const response = await userAPI.updateNewPassword(newPassword, email, resetPasswordToken);
 
       if (response.status === STATUS_SUCCESS) {
