@@ -6,7 +6,7 @@ import { baseUrl } from "../configs";
 import LOCAL_STORAGE_KEYS from "../configs/localStorageKeys";
 
 const axiosClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: baseUrl,
   body: (data) => data,
   headers: {
     "Content-Type": "application/json",
@@ -18,7 +18,6 @@ axiosClient.interceptors.request.use(
   async (config) => {
     // Handle token
     const accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-    // console.log('axiosClient.interceptors.request - accessToken: ', accessToken);
 
     config.headers["Authorization"] = `Bearer ${accessToken}`;
 
@@ -35,7 +34,9 @@ axios.interceptors.response.use(
   },
   function (error) {
     const originalRequest = error.config;
+    console.log("originalRequest: ", error.config);
     let refreshToken = localStorage.getItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
+
     if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       return axios
@@ -55,6 +56,7 @@ axios.interceptors.response.use(
           }
         });
     }
+
     return Promise.reject(error);
   }
 );
