@@ -3,7 +3,7 @@ import { Container, Grid } from "@material-ui/core";
 import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
 import _ from "lodash";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import LeftMenu from "./LeftMenu";
 import Schedule from "./Schedule";
@@ -11,15 +11,8 @@ import Memory from "./Memory";
 import Modal from "./Modal";
 import ViewImage from "./ViewImage";
 
-import {
-  fetchCalendar,
-  selectViewImage,
-  selectArrayViewImages,
-} from "./calendarSlice";
-import {
-  selectTree,
-  selectTrees,
-} from "../Home/homeSlice";
+import { fetchCalendar, selectViewImage, selectArrayViewImages } from "./calendarSlice";
+import { selectTree, selectTrees } from "../Home/homeSlice";
 
 import useCalendarStyles from "./useCalendarStyles";
 // import UtilCalendar from './utilCalendar';
@@ -132,11 +125,7 @@ export default function CalendarPage() {
   return (
     <Container maxWidth="xl" disableGutters className={classes.container}>
       <Grid container direction="row">
-        <LeftMenu
-          curTree={curTree}
-          listTree={listTree}
-          handleChangeMode={handleChangeMode}
-        />
+        <LeftMenu curTree={curTree} listTree={listTree} handleChangeMode={handleChangeMode} />
         {select === "Calendar" && (
           <Schedule
             event={event}

@@ -10,11 +10,16 @@ import {
 } from "@material-ui/core";
 import moment from "moment";
 
-import CONSTANT from "../../../utils/const";
 import useTreeManagementStyle from "../useTreeManagementStyles";
 
 const TreeInformation = (props) => {
-  const { formTree, currentTree, handleChange, handleDelete, handleSubmit } = props;
+  const {
+    // formTree,
+    currentTree,
+    handleChange,
+    handleDelete,
+    handleSubmit,
+  } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useTreeManagementStyle();
 

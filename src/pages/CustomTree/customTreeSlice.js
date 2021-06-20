@@ -123,7 +123,7 @@ export const uploadImage = (file) => async () => {
   return false;
 };
 
-export const exportJSON = (treeId) => async (dispatch) => {
+export const exportJSON = (treeId) => async () => {
   const rs = await api.exportJSON(treeId);
   if (rs.status === 200) {
     const json = _.get(rs, "data");

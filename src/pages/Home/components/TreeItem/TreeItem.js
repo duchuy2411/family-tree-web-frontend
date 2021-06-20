@@ -30,7 +30,14 @@ import { MoreVert, WatchLater as WatchLaterIcon } from "@material-ui/icons";
 
 import useTreeItemStyles from "./useTreeItemStyles";
 
-export default function TreeItem({ id, logo, name, updatedAt, author, contributors }) {
+export default function TreeItem({
+  id,
+  // logo,
+  name,
+  updatedAt,
+  author,
+  contributors,
+}) {
   const classes = useTreeItemStyles();
   const dispatch = useDispatch();
   const trees = useSelector(selectTrees);
@@ -39,7 +46,7 @@ export default function TreeItem({ id, logo, name, updatedAt, author, contributo
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const history = useHistory();
   const options = ["Calendar", "Tree Management", "Delete Tree"];
-  const optionsMore = ["Edit Tree", "Calendar", "Tree Management", "Delete Tree", ];
+  const optionsMore = ["Edit Tree", "Calendar", "Tree Management", "Delete Tree"];
 
   // const handleClickListItem = (event) => {
   //   setAnchorEl(event.currentTarget);

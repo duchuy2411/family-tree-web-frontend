@@ -54,7 +54,7 @@ const StyledToggleButton = withStyles((theme) => ({
 }))(ToggleButton);
 
 export default function CustomToggleButton(props) {
-  const {mode, handleChangeMode } = props;
+  const { mode, handleChangeMode } = props;
 
   return (
     <div>

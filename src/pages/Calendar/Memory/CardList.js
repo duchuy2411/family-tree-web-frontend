@@ -40,7 +40,9 @@ const CardList = (props) => {
   };
 
   const getName = (object) => {
-    const name = `${_.get(object, "firstName", " ") || ""}  ${_.get(object, "midName", " ") || ""} ${_.get(object, "lastName", "") || " "}`;
+    const name = `${_.get(object, "firstName", " ") || ""}  ${
+      _.get(object, "midName", " ") || ""
+    } ${_.get(object, "lastName", "") || " "}`;
     return name.trim() !== "" ? name : "Unknow name";
   };
 
@@ -56,7 +58,7 @@ const CardList = (props) => {
       {_.reverse([...arrMemory]).map((ele) => (
         <Grid key={ele.id} container xs={12} className="container-card list">
           <Grid item xs={1} className="avatar-card">
-            <img src={_.get(ele, "creator.avatarUrl", )} />
+            <img src={_.get(ele, "creator.avatarUrl")} />
           </Grid>
           <Grid item xs={10} className="info-card">
             <div className="name-card">{getName(_.get(ele, "creator"))}</div>

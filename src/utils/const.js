@@ -78,7 +78,7 @@ const CONSTANTS = {
   PUBLIC_MODE: [
     { label: "Public", value: true },
     { label: "Private", value: false },
-  ]
+  ],
 };
 
 export default CONSTANTS;

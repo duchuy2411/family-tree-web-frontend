@@ -6,3 +6,10 @@ export const SEVERITY_TYPES = {
   INFO: "info",
   ERROR: "error",
 };
+
+export const SNACKBAR_VARIANTS = {
+  DEFAULT: "default",
+  INFO: "info",
+  SUCCESS: "success",
+  WARNING: "warning",
+};
