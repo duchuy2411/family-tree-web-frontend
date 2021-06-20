@@ -18,7 +18,7 @@ class UtilManagement {
       return "Unknow name";
     }
     return getName;
-  }
+  };
 }
 
 export default new UtilManagement();

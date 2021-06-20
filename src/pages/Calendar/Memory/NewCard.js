@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import _ from "lodash";
 import { useDispatch } from "react-redux";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Grid, TextareaAutosize, TextField } from "@material-ui/core";
 import swal from "sweetalert";
 

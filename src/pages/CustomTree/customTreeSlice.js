@@ -1,9 +1,9 @@
 import _ from "lodash";
 import api from "../../utils/api";
-import axios from "axios";
 import Utils from "../../utils/adapter";
 import { createSlice } from "@reduxjs/toolkit";
 import swal from "sweetalert";
+import axiosClient from "api";
 
 const API = api.baseUrl;
 
@@ -32,7 +32,7 @@ export const fetchTree = (id) => async (dispatch) => {
 };
 
 export const createFamilyTree = (payload) => async (dispatch) => {
-  const rs = await axios.post(`${API}/tree-management/tree`, payload);
+  const rs = await axiosClient.post(`${API}/tree-management/tree`, payload);
   if (rs) {
     dispatch(updateNodeDataArrayRedux(Utils.parse(_.get(rs, "data.people", []))));
   }
@@ -123,7 +123,7 @@ export const uploadImage = (file) => async () => {
   return false;
 };
 
-export const exportJSON = (treeId) => async dispatch => {
+export const exportJSON = (treeId) => async () => {
   const rs = await api.exportJSON(treeId);
   if (rs.status === 200) {
     const json = _.get(rs, "data");
@@ -133,9 +133,9 @@ export const exportJSON = (treeId) => async dispatch => {
   return false;
 };
 
-export const selectNodeDataArrayRedux = state => state.custom_tree.nodeDataArrayRedux;
-export const selectLinkDataArrayRedux = state => state.custom_tree.linkDataArrayRedux;
-export const selectIt = state => {
+export const selectNodeDataArrayRedux = (state) => state.custom_tree.nodeDataArrayRedux;
+export const selectLinkDataArrayRedux = (state) => state.custom_tree.linkDataArrayRedux;
+export const selectIt = (state) => {
   return state.custom_tree.it;
 };
 

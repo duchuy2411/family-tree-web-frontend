@@ -1,8 +1,9 @@
 import { CircularProgress } from "@material-ui/core";
+import colors from "assets/colorPalette";
 import React from "react";
 
 export default function LoadingInside(props) {
-  const { isLoading, children, ...rest } = props;
+  const { isLoading, children, indicatorSize = 24, ...rest } = props;
 
   return (
     <div style={{ position: "relative" }} {...rest}>
@@ -10,13 +11,14 @@ export default function LoadingInside(props) {
 
       {isLoading && (
         <CircularProgress
-          size={24}
+          size={indicatorSize}
           style={{
+            color: colors.brown,
             position: "absolute",
             top: "50%",
             left: "50%",
-            marginTop: -12,
-            marginLeft: -12,
+            marginTop: -indicatorSize / 2,
+            marginLeft: -indicatorSize / 2,
           }}
         />
       )}

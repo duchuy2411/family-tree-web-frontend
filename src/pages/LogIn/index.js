@@ -22,6 +22,9 @@ import useLoginPageStyles from "./useLoginPageStyles";
 import { authActions } from "./../../store/authSlice";
 import api from "../../utils/api";
 import LOCAL_STORAGE_KEYS from "../../configs/localStorageKeys";
+import { SEVERITY_TYPES } from "configs/constants";
+import { Alert } from "@material-ui/lab";
+import LoadingInside from "components/LoadingInside";
 
 const LogInPage = () => {
   const dispatch = useDispatch();
@@ -29,6 +32,8 @@ const LogInPage = () => {
   //
   const classes = useLoginPageStyles();
   //
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const usernameRef = React.useRef();
   const passwordRef = React.useRef();
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
@@ -37,6 +42,51 @@ const LogInPage = () => {
   const theme = useTheme();
   const smDownMatches = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // ux
+  const [severity, setSeverity] = useState(SEVERITY_TYPES.INFO);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChangeUsername = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handleChangePassword = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleLogin = async () => {
+    dispatch(authActions.setIsLoading(true)); // enable loading
+    const loginData = {
+      usernameOrEmail: username,
+      password: password,
+      getRefreshToken: true,
+    };
+
+    try {
+      setIsLoading(true);
+      const response = await api.login(loginData);
+      const { user, accessToken, refreshToken } = response.data.data;
+      localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+      console.log("refresh token: ", refreshToken);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+
+      dispatch(authActions.login(user));
+      setRedirectToReferrer(true);
+
+      setSeverity(SEVERITY_TYPES.INFO);
+      setMessage("");
+      dispatch(authActions.setIsLoading(false)); // disable loading
+      setIsLoading(false);
+    } catch (error) {
+      if (error.response) {
+        setSeverity(SEVERITY_TYPES.ERROR);
+        setMessage(error.response.data.message);
+        setIsLoading(false);
+      }
+    }
+  };
+
   if (redirectToReferrer === true) {
     if (location.state) {
       return <Redirect to={location.state.referrer} />;
@@ -44,29 +94,6 @@ const LogInPage = () => {
       return <Redirect to={"/"} />;
     }
   }
-
-  const handleLogin = async () => {
-    dispatch(authActions.setIsLoading(true)); // enable loading
-    const loginData = {
-      usernameOrEmail: usernameRef.current.value,
-      password: passwordRef.current.value,
-      getRefreshToken: true,
-    };
-
-    const response = await api.login(loginData);
-    const { user, accessToken, refreshToken } = response.data.data;
-    localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-    console.log("refresh token: ", refreshToken);
-    localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
-
-    if (user) {
-      dispatch(authActions.login(user));
-      setRedirectToReferrer(true);
-    } else {
-      // do something
-    }
-    dispatch(authActions.setIsLoading(false)); // disable loading
-  };
 
   return (
     <div className={classes.root}>
@@ -102,6 +129,7 @@ const LogInPage = () => {
                 Origin Keeper
               </Typography>
             </Hidden>
+
             <Grid
               item
               xs
@@ -116,9 +144,16 @@ const LogInPage = () => {
               alignItems="center"
               justify="center"
             >
-              {/* <div className={classes.rightWrapper}> */}
+              {message && (
+                <Alert severity={severity} className={classes.alert} style={{ marginBottom: 12 }}>
+                  {message}
+                </Alert>
+              )}
+
               <Input
                 inputRef={usernameRef}
+                value={username}
+                onChange={handleChangeUsername}
                 placeholder="Username"
                 required
                 fullWidth
@@ -127,6 +162,8 @@ const LogInPage = () => {
               ></Input>
               <Input
                 inputRef={passwordRef}
+                value={password}
+                onChange={handleChangePassword}
                 placeholder="Password"
                 type="password"
                 required
@@ -134,13 +171,16 @@ const LogInPage = () => {
                 disableUnderline
                 className={classNames(classes.withSpace, classes.inputFields)}
               ></Input>
-              <Button
-                variant="contained"
-                onClick={handleLogin}
-                className={classNames(classes.withSpace, classes.btnLogin)}
-              >
-                Login
-              </Button>
+              <LoadingInside isLoading={isLoading}>
+                <Button
+                  variant="contained"
+                  onClick={handleLogin}
+                  className={classNames(classes.withSpace, classes.btnLogin)}
+                  disabled={isLoading || username === "" || password === ""}
+                >
+                  Login
+                </Button>
+              </LoadingInside>
               <div className={classes.link}>
                 <RRDLink to="/signup" className={classes.link}>
                   Create account
@@ -149,7 +189,6 @@ const LogInPage = () => {
                   Forgot password?
                 </RRDLink>
               </div>
-              {/* </div> */}
             </Grid>
           </Paper>
         </Grid>

@@ -19,7 +19,7 @@ export const slice = createSlice({
     GET_TREE_SUCCESS: (state, action) => {
       return { ...state, isFetchList: false, trees: action.payload };
     },
-    GET_TREE_FAIL: (state, action) => {
+    GET_TREE_FAIL: (state) => {
       return { ...state, isFetchList: false };
     },
     SET_TREES_ARRAY: (state, action) => {
@@ -55,7 +55,7 @@ export const {
   GET_TREE_FAIL,
 } = slice.actions;
 
-export const getTreeList = () => async dispatch => {
+export const getTreeList = () => async (dispatch) => {
   dispatch(GET_TREE());
   const rs = await api.getTreeList();
   if (rs.status === 200) {
@@ -66,7 +66,7 @@ export const getTreeList = () => async dispatch => {
   return false;
 };
 
-export const getTreesPublic = () => async dispatch => {
+export const getTreesPublic = () => async (dispatch) => {
   dispatch(GET_TREE());
   const rs = await api.getTreesPublic();
   if (rs.status === 200) {
@@ -149,7 +149,7 @@ export const fetchTreesAndSetCurrent = (treeId) => async (dispatch) => {
   return false;
 };
 
-export const importTree = (file) => async (dispatch) => {
+export const importTree = (file) => async () => {
   const rs = await api.importTree(file, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -162,7 +162,7 @@ export const importTree = (file) => async (dispatch) => {
   return false;
 };
 
-export const getListByKeyword = (key) => async dispatch => {
+export const getListByKeyword = (key) => async (dispatch) => {
   dispatch(GET_TREE());
   const rs = await api.getListByKeyword(key);
   if (rs.status === 200) {

@@ -19,7 +19,7 @@ const theme = createMuiTheme({
 const useStyles = makeStyles((theme) => ({
   customField: {
     width: "100%",
-    margin: "5px"
+    margin: "5px",
   },
   grayout: {
     position: "fixed",

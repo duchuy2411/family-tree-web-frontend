@@ -8,11 +8,6 @@ export default function PrivateRoute({ children, ...rest }) {
   if (authData) {
     isAuthenticated = authData.isAuthenticated;
   }
-  // else {
-  //   isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  // }
-
-  // const current
 
   return (
     <Route

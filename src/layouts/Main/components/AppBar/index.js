@@ -19,9 +19,9 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { selectUser } from "../../../../store/authSlice";
+import { authActions, selectUser } from "../../../../store/authSlice";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 
 import {
   Menu as MenuIcon,
@@ -37,29 +37,45 @@ import NotificationsList from "../NotificationsList";
 import classNames from "classnames";
 
 import {
-  // getAllNotifications,
+  deleteNotification,
+  getAllNotifications,
   markAnNotificationAsRead,
+  notificationsActions,
+  selectIsLoading,
+  // selectError,
+  // selectMessage,
   selectNotifications,
-} from "./slice";
+} from "./notiSlice";
 
 import useAppBarStyles from "./styles";
+import { useSnackbar } from "notistack";
+import { SNACKBAR_VARIANTS } from "configs/constants";
+import { getNumberOfUnread } from "utils/notifications";
 
 const PATHS = {
   HOME: "/",
   CALENDAR: "/calendar",
 };
 
+const AUTO_HIDE_DURATION = 3000;
+
 const MenuAppBar = () => {
   const pathname = window.location.pathname;
+  const history = useHistory();
 
   const classes = useAppBarStyles();
 
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
   const notifications = useSelector(selectNotifications);
+  // const notiSliceMessage = useSelector(selectMessage);
+  // const notiSliceError = useSelector(selectError);
+  const notiSliceIsLoading = useSelector(selectIsLoading);
+  const [idNotiToDelete, setIdNotiToDelete] = useState();
 
   // -- start notifications
   const [notiAnchorEl, setNotiAnchorEl] = useState(null);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleClickNotifications = (event) => {
     setNotiAnchorEl(event.target);
@@ -75,13 +91,73 @@ const MenuAppBar = () => {
   const handleTriggerRead = (idNotification) => (event) => {
     event.preventDefault();
 
-    console.log("trigger already read", idNotification);
-    dispatch(markAnNotificationAsRead(idNotification));
+    const chosenNotification = notifications.filter((noti) => noti.id === idNotification)[0];
+
+    if (!chosenNotification.isRead) {
+      console.log("trigger already read", idNotification);
+      dispatch(markAnNotificationAsRead(idNotification));
+    }
   };
+
+  // customized
+  // eslint-disable-next-line react/display-name
+  const undoDeleteNotiAction = (idNotification) => (key) => {
+    console.log("undoDeleteNotiAction -  idNotification", idNotification);
+    console.log("undoDeleteNotiAction -  key", key);
+
+    const handleUndoDeleteAction = () => {
+      setIdNotiToDelete(undefined); // commit that no noti will be delete
+      dispatch(getAllNotifications()); // fetch all noti again
+
+      enqueueSnackbar("Undo successfully", {
+        variant: SNACKBAR_VARIANTS.INFO,
+        autoHideDuration: AUTO_HIDE_DURATION,
+      });
+    };
+
+    return (
+      <>
+        <Button onClick={handleUndoDeleteAction}>{"Undo"}</Button>
+        <Button
+          onClick={() => {
+            closeSnackbar(key);
+          }}
+        >
+          {"Dismiss"}
+        </Button>
+      </>
+    );
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleDeleteNotification = (idNotification) => (event) => {
+    // update UI
+    const notificationsAfterDelete = notifications.filter((noti) => noti.id !== idNotification);
+    dispatch(notificationsActions.setNotificationsList(notificationsAfterDelete));
+
+    setIdNotiToDelete(idNotification); // commit idNoti to delete
+
+    enqueueSnackbar("Remove notification successfully", {
+      variant: SNACKBAR_VARIANTS.INFO,
+      autoHideDuration: AUTO_HIDE_DURATION,
+      action: undoDeleteNotiAction(idNotification),
+    });
+  };
+
+  // wait user if they want to undo
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (idNotiToDelete) {
+        dispatch(deleteNotification(idNotiToDelete)); // actually call API to delete
+      }
+    }, AUTO_HIDE_DURATION);
+
+    return () => clearTimeout(timeout);
+  }, [idNotiToDelete]);
 
   // get all notifications on mount
   useEffect(() => {
-    // dispatch(getAllNotifications()); // TODO: uncomment this line when attach API for Calendar
+    dispatch(getAllNotifications()); // TODO: uncomment this line when attach API for Calendar
   }, [dispatch]);
 
   // -- end notifications
@@ -119,6 +195,11 @@ const MenuAppBar = () => {
     prevOpen.current = userAvatarOpen;
   }, [userAvatarOpen]);
   //-- end user avatar
+
+  const handleLogout = () => {
+    dispatch(authActions.logout());
+    history.push("/login");
+  };
 
   return (
     <div className={classes.root}>
@@ -182,9 +263,9 @@ const MenuAppBar = () => {
                   [classes.notificationsButtonHighlight]: notiAnchorEl !== null,
                 })}
                 onClick={handleClickNotifications}
-                invisible={notifications?.length < 1}
+                invisible={getNumberOfUnread(notifications) < 1}
                 color="secondary"
-                badgeContent={notifications?.length}
+                badgeContent={getNumberOfUnread(notifications)}
                 max={99}
                 overlap="circle"
               >
@@ -206,8 +287,10 @@ const MenuAppBar = () => {
                 }}
               >
                 <NotificationsList
+                  isLoading={notiSliceIsLoading}
                   notifications={notifications}
                   handleTriggerRead={handleTriggerRead}
+                  handleDeleteNotification={handleDeleteNotification}
                 />
               </Popover>
 
@@ -241,9 +324,7 @@ const MenuAppBar = () => {
                         <MenuItem onClick={handleCloseUserAvatar} component={NavLink} to="/user">
                           Profile
                         </MenuItem>
-                        <MenuItem onClick={handleCloseUserAvatar} component={NavLink} to="/logout">
-                          Logout
-                        </MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </MenuList>
                     </ClickAwayListener>
                   </Paper>
