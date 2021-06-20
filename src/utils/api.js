@@ -1,58 +1,57 @@
 import axios from "axios";
-import LOCAL_STORAGE_KEYS from "configs/localStorageKeys";
 
 import apiTreeManagement from "./apiTreeManagement";
 
 const version = 1;
 const baseUrl = `https://family-tree.azurewebsites.net/api/v${version}`;
 
-axios.interceptors.request.use(
-  (config) => {
-    const accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
-    console.log("accessToken in axios client: ", accessToken);
+// axios.interceptors.request.use(
+//   (config) => {
+//     const accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+//     console.log("accessToken in axios client: ", accessToken);
 
-    if (accessToken) {
-      config.headers["x-auth-token"] = accessToken;
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
-    }
+//     if (accessToken) {
+//       config.headers["x-auth-token"] = accessToken;
+//       config.headers["Authorization"] = `Bearer ${accessToken}`;
+//     }
 
-    return config;
-  },
-  (error) => {
-    Promise.reject(error);
-  }
-);
+//     return config;
+//   },
+//   (error) => {
+//     Promise.reject(error);
+//   }
+// );
 
-//response interceptor to refresh token on receiving token expired error
-axios.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  function (error) {
-    const originalRequest = error.config;
-    let refreshToken = localStorage.getItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
-    if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      return axios
-        .post(
-          `${baseUrl}/authentication/refresh-access-token`,
-          { refreshToken: `${refreshToken}` },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((res) => {
-          if (res.status === 200) {
-            localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, res.data.data.accessToken);
-            return axios(originalRequest);
-          }
-        });
-    }
-    return Promise.reject(error);
-  }
-);
+// //response interceptor to refresh token on receiving token expired error
+// axios.interceptors.response.use(
+//   (response) => {
+//     return response;
+//   },
+//   function (error) {
+//     const originalRequest = error.config;
+//     let refreshToken = localStorage.getItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
+//     if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
+//       originalRequest._retry = true;
+//       return axios
+//         .post(
+//           `${baseUrl}/authentication/refresh-access-token`,
+//           { refreshToken: `${refreshToken}` },
+//           {
+//             headers: {
+//               "Content-Type": "application/json",
+//             },
+//           }
+//         )
+//         .then((res) => {
+//           if (res.status === 200) {
+//             localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, res.data.data.accessToken);
+//             return axios(originalRequest);
+//           }
+//         });
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 //functions to make api calls
 const api = {
