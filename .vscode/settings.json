@@ -1,7 +1,15 @@
 {
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#053606",
-        "titleBar.activeBackground": "#074C08",
-        "titleBar.activeForeground": "#F2FEF3"
-    }
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#053606",
+    "titleBar.activeBackground": "#074C08",
+    "titleBar.activeForeground": "#F2FEF3"
+  },
+  "cSpell.words": ["Genogram", "gojs", "reduxjs", "scrollable", "swal", "sweetalert"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.alwaysShowStatus": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnType": true
 }
