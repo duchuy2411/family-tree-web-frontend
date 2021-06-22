@@ -9,27 +9,30 @@ import {
   Checkbox,
 } from "@material-ui/core";
 import moment from "moment";
-
+import { selectUser } from "../../../store/authSlice";
+import { selectTrees } from "../../Home/homeSlice";
 import useTreeManagementStyle from "../useTreeManagementStyles";
+import Permission from "../../../utils/permission";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import _ from "lodash";
 
 const TreeInformation = (props) => {
   const {
-    // formTree,
+    open,
+    formTree,
     currentTree,
+    handleShow,
+    handleClose,
     handleChange,
     handleDelete,
     handleSubmit,
   } = props;
-  const [open, setOpen] = React.useState(false);
+
   const classes = useTreeManagementStyle();
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleShow = () => {
-    setOpen(true);
-  };
+  const currentUser = useSelector(selectUser);
+  const listTree = useSelector(selectTrees);
+  const { id } = useParams();
 
   return (
     <Grid container>
@@ -85,7 +88,7 @@ const TreeInformation = (props) => {
               label="Tree name"
               variant="outlined"
               type="text"
-              value={currentTree.name}
+              value={formTree.name}
               onChange={(e) => handleChange(e, "name")}
               className={classes.inputFields}
             />
@@ -95,7 +98,7 @@ const TreeInformation = (props) => {
               label="Description"
               variant="outlined"
               type="text"
-              value={currentTree.description}
+              value={formTree.description}
               onChange={(e) => handleChange(e, "description")}
               className={classes.inputFields}
             />
@@ -105,7 +108,7 @@ const TreeInformation = (props) => {
               className={classes.inputFields}
               control={
                 <Checkbox
-                  checked={currentTree.publicMode}
+                  checked={formTree.publicMode}
                   onChange={(e) => handleChange(e, "publicMode")}
                   name="public"
                 />
@@ -114,16 +117,20 @@ const TreeInformation = (props) => {
             />
           </Grid>
           <Grid item xs={6}></Grid>
-          <Grid item xs={3}>
-            <Button className={classes.btnSecond} onClick={handleClose}>
-              Cancel
-            </Button>
-          </Grid>
-          <Grid item xs={3}>
-            <Button className={classes.btnPrimary} onClick={handleSubmit}>
-              Save
-            </Button>
-          </Grid>
+          {Permission.havePermissionAsOwner(listTree, id, _.get(currentUser, "id")) && (
+            <React.Fragment>
+              <Grid item xs={3}>
+                <Button className={classes.btnSecond} onClick={handleClose}>
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item xs={3}>
+                <Button className={classes.btnPrimary} onClick={handleSubmit}>
+                  Save
+                </Button>
+              </Grid>
+            </React.Fragment>)
+          }
         </Grid>
       </Modal>
     </Grid>

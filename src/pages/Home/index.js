@@ -144,6 +144,7 @@ export default function HomePage() {
     e.preventDefault();
     console.log("search:", search);
     dispatch(getListByKeyword(search));
+    setMode("mysearchhh");
   };
 
   const [mode, setMode] = React.useState("myfamily");

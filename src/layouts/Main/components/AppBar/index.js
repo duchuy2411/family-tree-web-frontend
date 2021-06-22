@@ -35,6 +35,7 @@ import {
 import NotificationsList from "../NotificationsList";
 
 import classNames from "classnames";
+import _ from "lodash";
 
 import {
   deleteNotification,
@@ -47,6 +48,11 @@ import {
   selectNotifications,
 } from "./notiSlice";
 
+import {
+  selectTree,
+  selectTrees,
+} from "../../../../pages/Home/homeSlice";
+
 import useAppBarStyles from "./styles";
 import { useSnackbar } from "notistack";
 import { SNACKBAR_VARIANTS } from "configs/constants";
@@ -54,7 +60,7 @@ import { getNumberOfUnread } from "utils/notifications";
 
 const PATHS = {
   HOME: "/",
-  CALENDAR: "/calendar",
+  CALENDAR: (id) => `/calendar/${id}`,
 };
 
 const AUTO_HIDE_DURATION = 3000;
@@ -76,6 +82,9 @@ const MenuAppBar = () => {
   // -- start notifications
   const [notiAnchorEl, setNotiAnchorEl] = useState(null);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const id = _.get(useSelector(selectTree), "id");
+  const firstId = _.get(useSelector(selectTrees), "0.id");
 
   const handleClickNotifications = (event) => {
     setNotiAnchorEl(event.target);
@@ -242,10 +251,10 @@ const MenuAppBar = () => {
                 [classes.navButtonHighlight]: pathname === PATHS.CALENDAR,
               })}
               component={NavLink}
-              to={PATHS.CALENDAR}
+              to={PATHS.CALENDAR(id || firstId)}
               exact
             >
-              {pathname === PATHS.CALENDAR ? (
+              {pathname.includes("calendar") ? (
                 <DateRangeIcon className={classes.navIconHighlight} />
               ) : (
                 <DateRangeOutlinedIcon />

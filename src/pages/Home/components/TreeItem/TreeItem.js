@@ -8,6 +8,8 @@ import { useHistory } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 
+import Permission from "../../../../utils/permission";
+import { selectUser } from "../../../../store/authSlice";
 import { deleteTree, selectTrees, SET_CURRENT_TREE } from "../../homeSlice";
 
 // MUI components
@@ -40,6 +42,7 @@ export default function TreeItem({
 }) {
   const classes = useTreeItemStyles();
   const dispatch = useDispatch();
+  const currentUser = useSelector(selectUser);
   const trees = useSelector(selectTrees);
   const [anchorEl, setAnchorEl] = React.useState(null);
   // eslint-disable-next-line no-unused-vars
@@ -83,6 +86,13 @@ export default function TreeItem({
       break;
     }
     }
+  };
+
+  const filterOption = (id, options) => {
+    if (Permission.havePermissionAsOwner(trees, id, _.get(currentUser, "id"))) {
+      return options;
+    }
+    return _.filter(options, ele => ele !== "Delete Tree");
   };
 
   const handleMenuItemClickMore = (event, index) => {
@@ -238,7 +248,7 @@ export default function TreeItem({
                 horizontal: "center",
               }}
             >
-              {options.map((option, index) => (
+              {filterOption(id, options).map((option, index) => (
                 <MenuItem
                   key={option}
                   onClick={(event) => handleMenuItemClick(event, index)}
@@ -275,7 +285,7 @@ export default function TreeItem({
                 horizontal: "center",
               }}
             >
-              {optionsMore.map((option, index) => (
+              {filterOption(id, optionsMore).map((option, index) => (
                 <MenuItem
                   key={option}
                   onClick={(event) => handleMenuItemClickMore(event, index)}

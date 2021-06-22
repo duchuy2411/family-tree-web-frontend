@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // import useCalendarStyles from "../useCalendarStyles";
 import { Calendar, momentLocalizer } from "react-big-calendar";
@@ -9,8 +9,7 @@ import { Grid } from "@material-ui/core";
 const localizer = momentLocalizer(moment);
 
 export default function Schedule(props) {
-  // const classes = useCalendarStyles();
-  const { event, handleSelectSlot, handleSelectEvent } = props;
+  const { handleNavigate, event, handleSelectSlot, handleSelectEvent } = props;
 
   const toolTip = (e) => {
     return e.title;
@@ -26,6 +25,7 @@ export default function Schedule(props) {
         selectable
         views={["month"]}
         view="month"
+        onNavigate={handleNavigate}
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
         tooltipAccessor={toolTip}

@@ -1,4 +1,4 @@
-import _, { result } from "lodash";
+import _, { get, range, result } from "lodash";
 import moment from "moment";
 
 const mapRepeat = [
@@ -7,56 +7,44 @@ const mapRepeat = [
   { value: 1, unit: "year" },
 ];
 class UtilCalendar {
-  formatApi(data) {
-    const event = [];
-    _.forEach(data, (ele) => {
-      if (Object.prototype.hasOwnProperty.call(ele, "followingEvents")) {
-        //
-      }
-      if (Object.prototype.hasOwnProperty.call(ele, "eventExceptions")) {
-        //
-      }
-    });
-    return event;
-  }
 
-  rangeOriginEvent = (object, repeat, startDate, endDate) => {
-    const results = [];
-    let curStartDate = _.get(object, "startDate");
-    let curEndDate = _.get(object, "endDate");
-    while (moment(curEndDate).isBefore(endDate, "day")) {
-      const format = object;
-      delete format.followingEvents;
-      delete format.eventExceptions;
-      format.startDate = moment(curStartDate);
-      format.endDate = moment(curEndDate);
-      results.push(format);
-      const getRepeat = mapRepeat[repeat];
-      curStartDate = moment(event.startDate).add(getRepeat.value, getRepeat.unit);
-      curEndDate = moment(event.endDate).add(getRepeat.value, getRepeat.unit);
+  init(calendar, startDate, endDate) {
+    let results = [];
+    for (let i = 0; i < calendar.length; i += 1) {
+      const repeat = _.get(calendar[i], "repeat", 0);
+      if (repeat === 0) {
+        if (calendar[i].eventExceptions.length === 0 ||
+          (calendar[i].eventExceptions.length > 0 && this.checkNotCancel(calendar[i].startDate, calendar[i].eventExceptions, 0)))
+        {
+          results.push(calendar[i]);
+        }
+      }
+      if (repeat > 0 && calendar[i].followingEvents.length > 0) {
+        const stopDate = _.get(calendar[i], "followingEvents.0.startDate");
+        const attachment = _.pick(calendar[i], ["id", "parentId", "note", "reminderOffest", "repeat"]);
+        const range = this.rangeRepeat(calendar[i].startDate, calendar[i].endDate, moment(stopDate), repeat, attachment);
+        const compareException = this.compareException(calendar[i], range);
+        results = _.concat(results, compareException);
+      } else if (repeat > 0) {
+        const attachment = _.pick(calendar[i], ["id", "note", "reminderOffest", "repeat"]);
+        const range = this.rangeRepeat(calendar[i].startDate, calendar[i].endDate, moment(endDate), repeat, attachment);
+        results = _.concat(results, range);
+      }
     }
     return results;
-  };
+  }
 
-  getException = (object) => {
-    const results = [];
-    const exceptions = _.get(object, "eventExceptions", []);
-    if (exceptions.length === 0) return null;
-    for (let i = 0; i < exceptions; i += 1) {
-      const isCancelled = _.get(exceptions[i], "isCancelled");
-      const isRescheduled = _.get(exceptions[i], "isRescheduled");
-      if (isCancelled && !isRescheduled) {
-        exceptions[i].typeReplace = 0;
-        result.push(exceptions[i]);
-      } else if (isCancelled && isRescheduled) {
-        exceptions[i].typeReplace = 2;
-        results.push(exceptions[i]);
-        continue;
-      } else {
-        exceptions[i].typeReplace = 1;
-        results.push(exceptions[i]);
-      }
+  getException = (exceptions) => {
+    const isCancelled = _.get(exceptions, "isCancelled");
+    const isRescheduled = _.get(exceptions, "isRescheduled");
+    if (isCancelled && !isRescheduled) {
+      exceptions.typeReplace = "cancel";
+    } else if (isCancelled && isRescheduled) {
+      exceptions.typeReplace = "cancel-reschedule";
+    } else {
+      exceptions.typeReplace = "reschedule";
     }
+    return exceptions;
   };
 
   isSameWeek(firstDay, secondDay, offset) {
@@ -87,50 +75,72 @@ class UtilCalendar {
     return yearFirstDay === yearSecondDay;
   }
 
-  replaceException(startDate, exceptions, repeat) {
-    if (repeat === 0) return;
-    for (let i = 0; i < exceptions.length; i += 1) {
-      if (repeat === 1 && this.isSameWeek(exceptions[i].startDate, startDate)) {
-        if (exceptions[i].typeReplace === 0 || exceptions[i].typeReplace === 2) return null;
-        if (exceptions[i].typeReplace === 1) return exceptions[i];
-      } else if (repeat === 2 && this.isSameMonth(exceptions[i].startDate, startDate)) {
-        if (exceptions[i].typeReplace === 0 || exceptions[i].typeReplace === 2) return null;
-        if (exceptions[i].typeReplace === 1) return exceptions[i];
-      } else if (repeat === 3 && this.isSameYear(exceptions[i].startDate, startDate)) {
-        if (exceptions[i].typeReplace === 0 || exceptions[i].typeReplace === 2) return null;
-        if (exceptions[i].typeReplace === 1) return exceptions[i];
-      } else {
-        return true;
+  checkNotCancel(event, exceptions, repeat, attachment = {}) {
+    const startDate = _.get(event, "startDate");
+    const getException = _.map(exceptions, ele => this.getException(ele));
+    for (let i = 0; i < getException.length; i += 1) {
+      switch (repeat) {
+      case 0: {
+        if (getException[i].typeReplace !== "reschedule") return true;
+        break;
+      }
+      case 1: {
+        if (this.isSameWeek(getException[i].startDate, startDate, 0) && getException[i].typeReplace !== "reschedule") {
+          return true;
+        }
+        break;
+      }
+      case 2: {
+        if (this.isSameMonth(getException[i].startDate, startDate) && getException[i].typeReplace !== "reschedule") {
+          return true;
+        }
+        break;
+      }
+      case 3: {
+        if (this.isSameYear(getException[i].startDate, startDate) && getException[i].typeReplace !== "reschedule") {
+          return true;
+        }
+        break;
+      }
       }
     }
+    return false;
   }
 
-  checkEventFollowing = (object, repeat, startDate, endDate) => {
-    const results = [];
-    const followingEvent = _.get(object, "followingEvents", []);
-    if (followingEvent.length === 0) return null;
-    for (let i = 0; i < followingEvent.length; i += 1) {
-      const flwStartDate = _.get(followingEvent, "startDate"); // event from data
-      const flwEndDate = _.get(followingEvent, "endDate");
-      let curStartDate = moment(flwStartDate);
-      let curEndDate = moment(flwEndDate);
-      let exceptions = [];
-      if (_.get(object, "eventExceptions", []).length > 0) {
-        exceptions = this.getException(_.get(object, "eventExceptions", []));
-      }
-      while (moment(curEndDate).isBefore(endDate, "day")) {
-        const event = followingEvent[i];
-        event.startDate = moment(curStartDate);
-        event.endDate = moment(curEndDate);
-        const replace = this.replaceException(event.startDate, exceptions, repeat);
-        if (replace !== null) results.push(replace);
-        const getRepeat = mapRepeat[repeat];
-        curStartDate = moment(event.startDate).add(getRepeat.value, getRepeat.unit);
-        curEndDate = moment(event.endDate).add(getRepeat.value, getRepeat.unit);
-      }
+  mapSchedule (exceptions, attachment = {}) {
+    let result = [];
+    const getException = _.map(exceptions, ele => this.getException(ele));
+    for (let i = 0; i < getException.length; i += 1) {
+      if (getException[i].typeReplace === "reschedule") result.push(getException[i]);
+    }
+    return result;
+  }
+
+  rangeRepeat = (curDateStart, curDateEnd, stopDate, repeat, attachment = {}) => {
+    let rangeDate = curDateStart;
+    let rangeDateEnd = curDateEnd;
+    let results = [];
+    const getRepeat = mapRepeat[repeat - 1];
+    while (moment(rangeDate).isBefore(stopDate, getRepeat.unit)) {
+      results.push({ startDate: moment(rangeDate).format("YYYY-MM-DD"), endDate: moment(rangeDateEnd).format("YYYY-MM-DD"), ...attachment });
+      rangeDate = moment(rangeDate).add(getRepeat.value, getRepeat.unit);
+      rangeDateEnd = moment(rangeDateEnd).add(getRepeat.value, getRepeat.unit);
     }
     return results;
   };
+
+  compareException = (data, rangeRepeat) => {
+    const exceptions = _.get(data, "eventExceptions", []);
+    if (exceptions.length === 0) return rangeRepeat;
+    const repeat = _.get(data, "repeat", 0);
+    const result = [];
+    _.forEach(rangeRepeat, ele => {
+      if (this.checkNotCancel(ele, exceptions, repeat)) {
+        result.push(ele);
+      }
+    });
+    return result.concat(this.mapSchedule(exceptions));
+  }
 }
 
 export default new UtilCalendar();
