@@ -12,6 +12,7 @@ import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
 import useSignupPageStyles from "./useSignupPageStyles";
 import api from "../../utils/api";
 import { authActions } from "../../store/authSlice";
+import colors from "assets/colorPalette";
 
 export default function SignUpPage() {
   const classes = useSignupPageStyles();
@@ -75,7 +76,7 @@ export default function SignUpPage() {
           <Paper elevation={10} className={classes.paperLeftSide}>
             <img src={logo} alt="logo" className={classes.logo} />
             <Typography className={classes.appTitle} variant="h3" component="h2">
-              Family tree
+              Origin Keeper
             </Typography>
           </Paper>
         </Grid>
@@ -90,6 +91,9 @@ export default function SignUpPage() {
           alignItems="center"
           justify="center"
         >
+          <Typography variant="h4" component="h2" style={{ marginBottom: 8, color: colors.brown }}>
+            {"Create a new account"}
+          </Typography>
           {/* Username */}
           <Input
             inputRef={usernameRef}
@@ -142,7 +146,7 @@ export default function SignUpPage() {
           >
             <div className={classes.link}>
               <RRDLink to="/login" className={classes.link}>
-                Sign in
+                LOG IN
               </RRDLink>
             </div>
             <Button

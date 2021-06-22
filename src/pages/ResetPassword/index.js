@@ -88,80 +88,82 @@ export default function ResetPasswordPage() {
         alignItems="center"
         className={classes.root}
       >
-        <Grid item xs={6} container justify="center">
-          <Paper elevation={9} className={classes.paperFormWrapper}>
-            <Grid item xs={12}>
-              <Typography
-                variant="h4"
-                component="h2"
-                align="center"
-                className={classes.marginBot24}
-              >
-                {"RESET PASSWORD"}
-              </Typography>
-
-              {error && (
-                <Alert severity={severity} className={classes.alert}>
-                  {error}
-                </Alert>
-              )}
-              {message && (
-                <Alert severity={severity} className={classes.alert}>
-                  {message}
-                </Alert>
-              )}
-              {severity === SEVERITY_TYPES.STATUS_SUCCESS && (
-                <Alert
-                  severity="info"
-                  className={classes.alert}
-                >{`You will be redirect to login page after ${countDown}s`}</Alert>
-              )}
-            </Grid>
-
-            <Grid item xs={12} className={classes.marginTop12}>
-              <TextField
-                value={newPassword}
-                onChange={handleChangeNewPassword}
-                variant="outlined"
-                label={"New password"}
-                placeholder={"Enter your new password"}
-                className={classes.marginTop12}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                value={confirmNewPassword}
-                onChange={handleChangeConfirmNewPassword}
-                variant="outlined"
-                label={"Confirm new password"}
-                placeholder={"Enter your new password again"}
-                className={classes.marginTop12}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <LoadingInside isLoading={isLoading}>
-                <Button
-                  variant="contained"
-                  onClick={handleSubmitNewPassword}
-                  disabled={
-                    isLoading ||
-                    severity === SEVERITY_TYPES.STATUS_SUCCESS ||
-                    !newPassword ||
-                    newPassword !== confirmNewPassword
-                  }
-                  color="primary"
-                  fullWidth
-                  className={classes.button}
+        <Grid item xs={4} container justify="center" style={{ backgroundColor: "red" }}>
+          <Grid item xs={12}>
+            <Paper elevation={9} className={classes.paperFormWrapper}>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h4"
+                  component="h2"
+                  align="center"
+                  className={classes.marginBot24}
                 >
-                  {"SUBMIT"}
-                </Button>
-              </LoadingInside>
-            </Grid>
-          </Paper>
+                  {"RESET PASSWORD"}
+                </Typography>
+
+                {error && (
+                  <Alert severity={severity} className={classes.alert}>
+                    {error}
+                  </Alert>
+                )}
+                {message && (
+                  <Alert severity={severity} className={classes.alert}>
+                    {message}
+                  </Alert>
+                )}
+                {severity === SEVERITY_TYPES.STATUS_SUCCESS && (
+                  <Alert
+                    severity="info"
+                    className={classes.alert}
+                  >{`You will be redirect to login page after ${countDown}s`}</Alert>
+                )}
+              </Grid>
+
+              <Grid item xs={12} className={classes.marginTop12}>
+                <TextField
+                  value={newPassword}
+                  onChange={handleChangeNewPassword}
+                  variant="outlined"
+                  label={"New password"}
+                  placeholder={"Enter your new password"}
+                  className={classes.marginTop12}
+                  fullWidth
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  value={confirmNewPassword}
+                  onChange={handleChangeConfirmNewPassword}
+                  variant="outlined"
+                  label={"Confirm new password"}
+                  placeholder={"Enter your new password again"}
+                  className={classes.marginTop12}
+                  fullWidth
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <LoadingInside isLoading={isLoading}>
+                  <Button
+                    variant="contained"
+                    onClick={handleSubmitNewPassword}
+                    disabled={
+                      isLoading ||
+                      severity === SEVERITY_TYPES.STATUS_SUCCESS ||
+                      !newPassword ||
+                      newPassword !== confirmNewPassword
+                    }
+                    color="primary"
+                    fullWidth
+                    className={classes.button}
+                  >
+                    {"SUBMIT"}
+                  </Button>
+                </LoadingInside>
+              </Grid>
+            </Paper>
+          </Grid>
         </Grid>
       </Grid>
     </div>

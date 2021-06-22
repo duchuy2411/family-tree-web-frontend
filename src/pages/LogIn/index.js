@@ -25,6 +25,7 @@ import LOCAL_STORAGE_KEYS from "../../configs/localStorageKeys";
 import { SEVERITY_TYPES } from "configs/constants";
 import { Alert } from "@material-ui/lab";
 import LoadingInside from "components/LoadingInside";
+import colors from "assets/colorPalette";
 
 const LogInPage = () => {
   const dispatch = useDispatch();
@@ -121,6 +122,9 @@ const LogInPage = () => {
                 <Hidden smDown>
                   <img src={logo} alt="logo" className={classes.logo} />
                 </Hidden>
+                <Typography className={classes.appTitle} variant="h3" component="h2">
+                  Origin Keeper
+                </Typography>
               </Grid>
             </Hidden>
 
@@ -144,6 +148,13 @@ const LogInPage = () => {
               alignItems="center"
               justify="center"
             >
+              <Typography
+                variant="h4"
+                component="h2"
+                style={{ color: colors.brown, marginBottom: 8 }}
+              >
+                Welcome back!
+              </Typography>
               {message && (
                 <Alert severity={severity} className={classes.alert} style={{ marginBottom: 12 }}>
                   {message}

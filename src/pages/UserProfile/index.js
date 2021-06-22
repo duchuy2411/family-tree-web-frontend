@@ -209,7 +209,7 @@ export default function ProfilePage() {
                     onClick={handleUpdate}
                     disabled={isLoading || !isAnyChanges}
                   >
-                    UPDATE UPDATE
+                    UPDATE
                   </Button>
                 </LoadingInside>
               </div>
