@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <Grid container justify="center" alignItems="center" className={classes.root}>
-      <Grid item xs={6}>
+      <Grid item xs={4}>
         <Paper className={classes.paper}>
           <Grid item xs={12} container justify="center">
             <Typography variant="h4" className={classes.title}>

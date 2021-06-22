@@ -50,9 +50,12 @@ axiosClient.interceptors.response.use(
           }
         )
         .then((res) => {
+          console.log("res:", res);
           if (res.status === 200) {
-            localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, res.data.data.accessToken);
-            return axios(originalRequest);
+            const newAccessToken = res.data.data.accessToken;
+            localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
+            axiosClient.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+            return axiosClient(originalRequest);
           }
         });
     }
