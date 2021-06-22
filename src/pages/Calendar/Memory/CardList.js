@@ -60,7 +60,7 @@ const CardList = (props) => {
           <Grid item xs={1} className="avatar-card">
             <img src={_.get(ele, "creator.avatarUrl")} />
           </Grid>
-          <Grid item xs={10} className="info-card">
+          <Grid item xs={9} className="info-card">
             <div className="name-card">{getName(_.get(ele, "creator"))}</div>
             <div className="time-card">{moment(ele.memoryDate).format("DD-MM-YYYY")}</div>
           </Grid>

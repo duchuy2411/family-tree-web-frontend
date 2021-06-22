@@ -26,6 +26,7 @@ import swal from "sweetalert";
 const TreeManagement = () => {
   const classes = useStyles();
   const [list, setList] = useState([]);
+  const [open, setOpen] = React.useState(false);
   const [formTree, setFormTree] = useState({ name: "", description: "", publicMode: false });
   const [valSearch, setValSearch] = useState({ firstName: "", lastName: "", age: "" });
   const [originList, setOriginList] = useState();
@@ -35,7 +36,6 @@ const TreeManagement = () => {
   const { id } = useParams();
   const history = useHistory();
   // eslint-disable-next-line no-unused-vars
-  const [publicMode, setPublicMode] = useState(false);
 
   useEffect(async () => {
     const rs = await dispatch(fetchTree(id));
@@ -53,10 +53,12 @@ const TreeManagement = () => {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(currentTree).length !== 0) {
+    console.log("current Tree", currentTree);
+    if (currentTree && Object.keys(currentTree).length !== 0) {
       setFormTree({
         name: currentTree.name,
         description: currentTree.description,
+        publicMode: currentTree.publicMode,
       });
     }
   }, [currentTree]);
@@ -72,7 +74,8 @@ const TreeManagement = () => {
       break;
     }
     case "publicMode": {
-      setPublicMode({ ...formTree, publicMode: e.target.value });
+      console.log("publicMode", e.target.value);
+      setFormTree({ ...formTree, publicMode: !formTree.publicMode });
       break;
     }
     }
@@ -128,6 +131,7 @@ const TreeManagement = () => {
 
   const handleSubmit = () => {
     dispatch(updateTree(id, formTree));
+    setOpen(false);
   };
 
   const handleChangeFormSearch = (e, label) => {
@@ -166,6 +170,15 @@ const TreeManagement = () => {
     setList([...newList]);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleShow = () => {
+    setFormTree({ name: currentTree.name, description: currentTree.description, publicMode: currentTree.publicMode });
+    setOpen(true);
+  };
+
   return (
     <div className={classes.rootAccording}>
       <Accordion className={classes.section}>
@@ -178,14 +191,19 @@ const TreeManagement = () => {
           <Typography className={classes.heading}>{"Tree's information"}</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.details}>
-          <TreeInformation
-            formTree={formTree}
-            currentTree={currentTree}
-            handleChange={handleChange}
-            handleUpdate={handleUpdate}
-            handleDelete={handleDelete}
-            handleSubmit={handleSubmit}
-          />
+          {currentTree && (
+            <TreeInformation
+              formTree={formTree}
+              currentTree={currentTree}
+              open={open}
+              handleClose={handleClose}
+              handleShow={handleShow}
+              handleChange={handleChange}
+              handleUpdate={handleUpdate}
+              handleDelete={handleDelete}
+              handleSubmit={handleSubmit}
+            />)
+          }
         </AccordionDetails>
       </Accordion>
       <Accordion className={classes.section}>
@@ -198,7 +216,7 @@ const TreeManagement = () => {
           <Typography className={classes.heading}>Contribute</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.details}>
-          <Contribute owner={currentTree.owner} editors={currentTree.editors} />
+          {currentTree && <Contribute owner={_.get(currentTree, "owner")} editors={_.get(currentTree, "editors")} />}
         </AccordionDetails>
       </Accordion>
       <Accordion className={classes.section} defaultExpanded={true}>

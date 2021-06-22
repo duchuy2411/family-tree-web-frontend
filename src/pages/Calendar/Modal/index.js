@@ -20,7 +20,7 @@ const theme = createMuiTheme({
 });
 
 function Modal(props) {
-  const { error, form, handleChangeForm, handleSave, handleCancel } = props;
+  const { error, show, form, handleChangeForm, handleSave, handleCancel, handleDelete } = props;
 
   const classes = useCalendarStyles();
 
@@ -47,6 +47,7 @@ function Modal(props) {
                   label="Start date"
                   type="date"
                   variant="outlined"
+                  disabled={show.mode === "upd"}
                   InputLabelProps={{ shrink: true }}
                   value={moment(form.startDate).format("YYYY-MM-DD")}
                   className={classes.textField}
@@ -60,6 +61,7 @@ function Modal(props) {
                   label="End date"
                   InputLabelProps={{ shrink: true }}
                   variant="outlined"
+                  disabled={show.mode === "upd"}
                   value={moment(form.endDate).format("YYYY-MM-DD")}
                   className={classes.textField}
                   onChange={(e) => handleChangeForm(e, "end")}
@@ -71,6 +73,7 @@ function Modal(props) {
                   type="text"
                   variant="outlined"
                   select
+                  disabled={show.mode === "upd"}
                   InputLabelProps={{ shrink: true }}
                   className={classes.textField}
                   value={form.loop}
@@ -83,12 +86,40 @@ function Modal(props) {
                   ))}
                 </TextField>
               </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Loop"
+                  type="text"
+                  variant="outlined"
+                  select
+                  InputLabelProps={{ shrink: true }}
+                  className={classes.textField}
+                  value={form.reminder}
+                  onChange={(e) => handleChangeForm(e, "reminder")}
+                >
+                  {Object.keys(CONSTANTS.REMINDER).map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {_.get(CONSTANTS.REMINDER, `${option}`)}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
             </Grid>
           </Grid>
           <div className="btn-grp">
             <Button variant="contained" color="primary" onClick={handleCancel}>
               Cancel
             </Button>
+            {show.mode === "upd" &&
+              (<Button
+                variant="contained"
+                color="red"
+                onClick={handleDelete}
+                style={{ marginLeft: "10px" }}
+              >
+                Delete
+              </Button>)
+            }
             <Button
               variant="contained"
               color="secondary"
