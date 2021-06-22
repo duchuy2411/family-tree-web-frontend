@@ -145,6 +145,7 @@ export default function CustomTreePage() {
           note: sel.data.note,
           imageUrl: sel.data.imageUrl,
         });
+        console.log("==select==:", sel.data);
       } else {
         // console.log("sel");
       }
@@ -800,11 +801,18 @@ export default function CustomTreePage() {
           isFather ? "data.newMother" : "data.newFather",
           {}
         );
-
+        console.log("===objectParent==", objectParent);
         objectParent.key = objectParent.id;
         objectParent.gender = objectParent.gender === 0 ? "male" : "female";
+        objectParent.firstName = "Unknow";
         const toObject = Adapter.formatData(objectParent);
         diagram.model.addNodeData(toObject);
+        let upd = {};
+        _.set(upd, isFather ? "vir" : "ux", [node.id]);
+        Adapter.editNode(diagram, upd, toObject.key);
+        let updRoot = {};
+        _.set(updRoot, isFather ? "ux" : "vir", [toObject.key]);
+        Adapter.editNode(diagram, updRoot, node.key);
         // alter link
         Adapter.createLinkForMarriages(
           diagram,
@@ -821,8 +829,10 @@ export default function CustomTreePage() {
       }
 
       const parent2Id = nodeAttach || _.get(nodeRelation, "data", null);
+      console.log("==parent2Id==", parent2Id);
       getForm.f = isFather ? node.id : parent2Id.id;
       getForm.m = isFather ? parent2Id.id : node.id;
+      console.log("==getForm==:", getForm);
       diagram.model.addNodeData(getForm);
       Adapter.createLinkForParentToChilds(
         diagram,
@@ -833,6 +843,8 @@ export default function CustomTreePage() {
         getForm
       );
       diagram.model.commitTransaction("addChild");
+      setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
+      tempDiagram.current = diagram;
       return getForm;
     } else {
       alert(result.message);
@@ -876,6 +888,7 @@ export default function CustomTreePage() {
       alert(rs.message);
     }
     tempDiagram.current = diagram;
+    setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
     return getForm;
   };
 
@@ -937,10 +950,12 @@ export default function CustomTreePage() {
         );
         diagram.model.commitTransaction("addParent");
         tempDiagram.current = diagram;
+        setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         return formatSpouse;
       } else {
         alert(result.message);
         tempDiagram.current = diagram;
+        setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         diagram.model.rollbackTransaction("addParent");
       }
     } else {
@@ -957,6 +972,7 @@ export default function CustomTreePage() {
         diagram.model.rollbackTransaction("addParent");
         alert(response.message);
         tempDiagram.current = diagram;
+        setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         return false;
       }
     }
@@ -965,6 +981,10 @@ export default function CustomTreePage() {
   const handleContextMenuDelete = (button, diagram) => {
     const node = button.part.adornedPart.data;
     const arrayNode = Adapter.getWithoutLinkLabel([...diagram.model.nodeDataArray]);
+    if (arrayNode.length === 1) {
+      alert("Can not delete root!");
+      return;
+    }
     if (conditionDelete1(arrayNode, node)) {
       console.log("Condiditon 1");
       deleteForNodeNoSpouseNoChilds(node, arrayNode, diagram);
@@ -1008,10 +1028,10 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(node.id));
     if (response.status === 200) {
       diagram.model.commitTransaction("deleteForNodeNoSpouseNoChilds");
-      alert(response.data);
+      alert(response.data.message);
     } else {
       diagram.model.rollbackTransaction("deleteForNodeNoSpouseNoChilds");
-      alert(response.data.message);
+      alert(response.message);
     }
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
     tempDiagram.current = diagram;
@@ -1037,11 +1057,12 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(id));
     if (response.status === 200 || response) {
       diagram.model.commitTransaction("deleteForNodeHaveSpouse");
-      alert(response.data);
+      alert(response.data.message);
     } else {
-      alert("Error!!");
+      alert(response.message);
       diagram.model.rollbackTransaction("deleteForNodeHaveSpouse");
     }
+    setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
     tempDiagram.current = diagram;
   };
 
@@ -1062,12 +1083,13 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(node.id));
     if (response.status === 200) {
       diagram.model.commitTransaction("deleteForNodeNoSpouseNoParentsHaveAChild");
-      alert(response.data);
+      alert(response.data.message);
     } else {
       diagram.model.rollbackTransaction("deleteForNodeNoSpouseNoParentsHaveAChild");
       alert(response.message);
       return false;
     }
+    setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
     tempDiagram.current = diagram;
   };
 
@@ -1162,7 +1184,8 @@ export default function CustomTreePage() {
     const diagram = tempDiagram.current;
     const arrNode = diagram.model.nodeDataArray;
     const arrSelect = Adapter.getMarriageByArray(arrNode, nodeSelect.key);
-    const res = arrSelect.map((ele) => {
+    console.log("arr Select:", arrSelect);
+    const res = _.filter(arrSelect, ele => ele.type !== CONSTANTS.TYPE.UNDEFINED).map((ele) => {
       const getNodeSpouse = Adapter.getNode(arrNode, ele.key);
       return { label: getNodeSpouse.n, value: getNodeSpouse.key };
     });
