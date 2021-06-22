@@ -108,8 +108,9 @@ export const createCalendar = (payload) => async () => {
   const rs = await api.createCalendar(payload);
   console.log("rs create calendar: ", rs);
   if (rs.status === 200) {
-    return _.get(rs, "data");
+    return _.get(rs, "data.data");
   }
+  swal({ text: _.get(rs, "data.message", "Something error!") });
   return false;
 };
 
@@ -118,6 +119,7 @@ export const updateCalendar = (eventId, payload) => async () => {
   if (rs.status === 200) {
     return _.get(rs, "data");
   }
+  swal({ text: _.get(rs, "data.message", "Something error!") });
   return false;
 };
 
@@ -126,6 +128,7 @@ export const updateCalendarReschedule = (eventId, payload) => async () => {
   if (rs.status === 200) {
     return _.get(rs, "data");
   }
+  swal({ text: _.get(rs, "data.message", "Something error!") });
   return false;
 };
 
@@ -134,6 +137,7 @@ export const updateCalendarCancel = (eventId, payload) => async () => {
   if (rs.status === 200) {
     return _.get(rs, "data");
   }
+  swal({ text: _.get(rs, "data.message", "Something error!") });
   return false;
 };
 
@@ -142,6 +146,7 @@ export const deleteCalendar = (eventId) => async () => {
   if (rs.status === 200) {
     return _.get(rs, "data");
   }
+  swal({ text: _.get(rs, "data.message", "Something error!") });
   return false;
 };
 

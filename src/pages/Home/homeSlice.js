@@ -11,6 +11,7 @@ export const slice = createSlice({
     person: {},
     isFetchList: false,
     isFetchingPerson: false,
+    treePermission: [],
   },
   reducers: {
     GET_TREE: (state) => {
@@ -40,6 +41,10 @@ export const slice = createSlice({
     REFRESH_CURRENT_PERSON: (state) => {
       return { ...state, person: {} };
     },
+    UPDATE_CURRENT_TREE: (state, action) => {
+      const { name, description, publicMode } = action.payload;
+      return { ...state, tree: { ...state.tree, name, description, publicMode } };
+    },
   },
 });
 
@@ -53,6 +58,7 @@ export const {
   GET_TREE,
   GET_TREE_SUCCESS,
   GET_TREE_FAIL,
+  UPDATE_CURRENT_TREE,
 } = slice.actions;
 
 export const getTreeList = () => async (dispatch) => {
@@ -89,9 +95,11 @@ export const deleteTree = (treeId) => async () => {
   return false;
 };
 
-export const updateTree = (treeId, payload) => async () => {
+export const updateTree = (treeId, payload) => async (dispatch) => {
   const rs = await api.apiTreeManagement.updateTree(treeId, payload);
   if (rs.status === 200) {
+    const mapData = _.get(rs, "data.data");
+    dispatch(UPDATE_CURRENT_TREE({ name: mapData.name, description: mapData.description, publicMode: payload.publicMode }));
     swal("Update success fully!!", {
       icon: "success",
     });
@@ -139,7 +147,7 @@ export const getDetailPerson = (personId) => async (dispatch) => {
 };
 
 export const fetchTreesAndSetCurrent = (treeId) => async (dispatch) => {
-  const rs = await api.getTreeList();
+  const rs = await api.getListByKeyword("");
   if (rs.status === 200) {
     const data = _.get(rs.data, "data", []);
     dispatch(SET_TREES_ARRAY(data));

@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { Grid, Card, Typography, Avatar, Modal, TextField, Button } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import _ from "lodash";
 
 import useTreeManagementStyle from "../useTreeManagementStyles";
 import {
   addEditor,
+  selectTrees,
   // removeEditor
 } from "../../Home/homeSlice";
+import { selectUser } from "../../../store/authSlice";
+import Permission from "../../../utils/permission";
 
 const Contribute = (props) => {
   const { owner, editors } = props;
@@ -17,6 +20,8 @@ const Contribute = (props) => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const classes = useTreeManagementStyle();
+  const currentUser = useSelector(selectUser);
+  const listTrees = useSelector(selectTrees);
 
   const handleChangeText = (e) => {
     setValue(e.target.value);
@@ -77,15 +82,17 @@ const Contribute = (props) => {
             </Card>
           </Grid>
         ))}
-      <Grid item xs={2} className={classes.padding}>
-        <Card className={classes.cardContribute}>
-          <Grid xs={12} className={classes.borderTrike} onClick={handleClick}>
-            {" "}
-            +{" "}
-          </Grid>
-          <Typography className={classes.name}> Add editors </Typography>
-        </Card>
-      </Grid>
+      {Permission.havePermissionAsOwner(listTrees, id, currentUser.id) && (
+        <Grid item xs={2} className={classes.padding}>
+          <Card className={classes.cardContribute}>
+            <Grid xs={12} className={classes.borderTrike} onClick={handleClick}>
+              {" "}
+              +{" "}
+            </Grid>
+            <Typography className={classes.name}> Add editors </Typography>
+          </Card>
+        </Grid>)
+      }
       <Modal
         open={open}
         onClose={handleClose}
