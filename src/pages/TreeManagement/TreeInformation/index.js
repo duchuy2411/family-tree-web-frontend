@@ -117,20 +117,16 @@ const TreeInformation = (props) => {
             />
           </Grid>
           <Grid item xs={6}></Grid>
-          {Permission.havePermissionAsOwner(listTree, id, _.get(currentUser, "id")) && (
-            <React.Fragment>
-              <Grid item xs={3}>
-                <Button className={classes.btnSecond} onClick={handleClose}>
-                  Cancel
-                </Button>
-              </Grid>
-              <Grid item xs={3}>
-                <Button className={classes.btnPrimary} onClick={handleSubmit}>
-                  Save
-                </Button>
-              </Grid>
-            </React.Fragment>)
-          }
+          <Grid item xs={3}>
+            <Button className={classes.btnSecond} onClick={handleClose}>
+              Cancel
+            </Button>
+          </Grid>
+          <Grid item xs={3}>
+            <Button className={classes.btnPrimary} onClick={handleSubmit}>
+              Save
+            </Button>
+          </Grid>
         </Grid>
       </Modal>
     </Grid>
