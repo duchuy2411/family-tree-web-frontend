@@ -26,7 +26,7 @@ import { Container, Grid, Paper, Typography } from "@material-ui/core";
 import CONSTANTS from "../../utils/const";
 import Adapter from "../../utils/adapter";
 import UtilDiagram from "./utilDiagram";
-
+import Permission from "../../utils/permission";
 // custom components
 import SearchBox from "../../components/Search/Search";
 import CardMember from "./components/CardMember/CardMember";
@@ -658,21 +658,26 @@ export default function CustomTreePage() {
   const handleForRelOption = (button, diagram) => {
     const nodedata = button.part.adornedPart.data;
     const arrNode = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray);
-    const rel = [CHILDREN];
+    const rel = [];
     // For spouse
     const spouses = Adapter.getMarriageByArray(arrNode, nodedata.key);
-
-    if (spouses.length >= 1) {
-      const getLengthSpouse = Adapter.getMarriageByArray(arrNode, spouses[0].key);
-      if (getLengthSpouse.length === 1) rel.push(SPOUSE); // Spouse have only 1 spouse
-    } else {
+    if (spouses.length === 1 && spouses[0].type !== CONSTANTS.TYPE.UNDEFINED) {
+      rel.push(CHILDREN);
+    };
+    // if (spouses.length >= 1) {
+    //   const getLengthSpouse = Adapter.getMarriageByArray(arrNode, spouses[0].key);
+    //   if (getLengthSpouse.length === 1) rel.push(SPOUSE); // Spouse have only 1 spouse
+    // } else {
+    //   rel.push(SPOUSE);
+    // }
+    if (spouses.length === 0) {
       rel.push(SPOUSE);
-    }
+    };
     // For father
     const getFather = Adapter.getFather(arrNode, nodedata);
-    if (_.get(getFather, "type") === CONSTANTS.TYPE.UNDEFINED || !getFather) rel.push(FATHER);
+    if (!getFather) rel.push(FATHER);
     const getMother = Adapter.getMother(arrNode, nodedata);
-    if (_.get(getMother, "type") === CONSTANTS.TYPE.UNDEFINED || !getMother) rel.push(MOTHER);
+    if (!getMother) rel.push(MOTHER);
     return rel;
   };
 
@@ -783,6 +788,11 @@ export default function CustomTreePage() {
           ? 1
           : 2;
     // Prepare for Call API.
+    if (getCaseAdd === 0 || getCaseAdd === 1) {
+      alert("Can not add children for this node! Please add spouse or delete link relate this node!");
+      diagram.model.rollbackTransaction("addChild");
+      return;
+    }
     const idFather = isFather ? node.id : paramParent;
     const idMother = isFather ? paramParent : node.id;
     const dataAPI = Adapter.toFormChildrenAPI(getForm, idFather, idMother);
