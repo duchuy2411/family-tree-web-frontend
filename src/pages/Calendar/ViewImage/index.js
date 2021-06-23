@@ -41,7 +41,6 @@ const ViewImage = (props) => {
 
   useEffect(() => {
     function logKey(e) {
-      console.log("E.code: ", e);
       if (e.keyCode === 37) {
         clickBack();
       }
@@ -56,7 +55,6 @@ const ViewImage = (props) => {
   });
 
   const clickBack = () => {
-    console.log(cur);
     if (cur !== 0) {
       //dispatch(PREV_IMAGE())
       setCur(cur - 1);
@@ -64,10 +62,8 @@ const ViewImage = (props) => {
   };
 
   const clickNext = () => {
-    console.log(cur, arrayImages.length - 1);
     if (cur !== arrayImages.length - 1) {
       //dispatch(NEXT_IMAGE())
-      console.log("Next", cur);
       setCur(cur + 1);
     }
   };
@@ -77,7 +73,7 @@ const ViewImage = (props) => {
   };
 
   const handlePress = (e) => {
-    console.log(e.target.value);
+    //console.log(e.target.value);
   };
 
   return (

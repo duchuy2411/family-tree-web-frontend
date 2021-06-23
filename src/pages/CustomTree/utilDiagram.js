@@ -3,9 +3,9 @@ import Adapter from "../../utils/adapter";
 
 class UtilDiagram {
   removeSpouseIfSpouseUndefined(node, diagram) {
-    const arr = diagram.model.nodeDataArray;
-    const getMarriage = Adapter.getMarriageByArray(arr, node);
-    if (getMarriage.length === 1) {
+    const arr = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray);
+    const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+    if (getMarriage.length > 0) {
       const index = Adapter.getIndex(arr, getMarriage[0].key);
       const ux = _.get(arr[index], "ux", []);
       const vir = _.get(arr[index], "vir", []);

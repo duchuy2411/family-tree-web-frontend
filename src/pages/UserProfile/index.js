@@ -169,15 +169,14 @@ export default function ProfilePage() {
         // message = message;
       }
     } catch (error) {
-      console.log("Error in upload avatar image: ", error);
+      //console.log("Error in upload avatar image: ", error);
     }
 
     try {
       const actionResult = await dispatch(updateUserAsync(infoValues));
       const currentUser = unwrapResult(actionResult);
-      console.log("handleUpdate - currentUser: ", currentUser);
     } catch (error) {
-      console.log("Error in handleUpdate: ", error);
+      //console.log("Error in handleUpdate: ", error);
 
       // load snackbar
     }
@@ -209,7 +208,7 @@ export default function ProfilePage() {
                     onClick={handleUpdate}
                     disabled={isLoading || !isAnyChanges}
                   >
-                    UPDATE UPDATE
+                    UPDATE
                   </Button>
                 </LoadingInside>
               </div>

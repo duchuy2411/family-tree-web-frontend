@@ -9,7 +9,6 @@ const GroupImage = (props) => {
   const dispatch = useDispatch();
   const showImage = (ind) => {
     dispatch(SHOW_VIEW_IMAGE(ind));
-    console.log("arrayImages: ", arrayImages);
     dispatch(SET_ARR_IMAGES(arrayImages));
   };
   return (

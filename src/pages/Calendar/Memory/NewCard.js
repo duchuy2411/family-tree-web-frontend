@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import _ from "lodash";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Grid, TextareaAutosize, TextField } from "@material-ui/core";
+import { selectUser } from "../../../store/authSlice";
 import swal from "sweetalert";
 
 import { uploadArrayImage, createMemory, CREATING_SPINNER } from "../calendarSlice";
@@ -20,8 +21,8 @@ const NewCard = () =>
   const [form, setForm] = useState({ description: "", memoryDate: moment() });
   // eslint-disable-next-line no-unused-vars
   const [urls, setUrl] = useState([]);
+  const currentUser = useSelector(selectUser);
   const handleChangeDate = (e) => {
-    console.log(e.target.value);
     setForm({ ...form, memoryDate: moment(e.target.value).format("YYYY-MM-DD") });
   };
 
@@ -76,7 +77,7 @@ const NewCard = () =>
   return (
     <Grid xs={12} container className="container-card">
       <Grid item xs={1} className="avatar-card">
-        <img src="https://ict-imgs.vgcloud.vn/2020/09/01/19/huong-dan-tao-facebook-avatar.jpg" />
+        <img src={`${currentUser ? currentUser.avatarUrl : "https://ict-imgs.vgcloud.vn/2020/09/01/19/huong-dan-tao-facebook-avatar.jpg"}`} />
       </Grid>
       <Grid item xs={11} className="input-card">
         <TextareaAutosize

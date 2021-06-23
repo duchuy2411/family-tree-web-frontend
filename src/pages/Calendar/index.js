@@ -3,6 +3,7 @@ import { Container, Grid } from "@material-ui/core";
 import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
 import _ from "lodash";
+import swal from "sweetalert";
 import { useParams } from "react-router-dom";
 
 import LeftMenu from "./LeftMenu";
@@ -11,11 +12,18 @@ import Memory from "./Memory";
 import Modal from "./Modal";
 import ViewImage from "./ViewImage";
 
-import { fetchCalendar, selectViewImage, selectArrayViewImages } from "./calendarSlice";
-import { selectTree, selectTrees } from "../Home/homeSlice";
+import {
+  fetchCalendar,
+  selectViewImage,
+  selectArrayViewImages,
+  createCalendar,
+  updateCalendar,
+  deleteCalendar,
+} from "./calendarSlice";
+import { selectTree, selectTrees, fetchTreesAndSetCurrent } from "../Home/homeSlice";
 
 import useCalendarStyles from "./useCalendarStyles";
-// import UtilCalendar from './utilCalendar';
+import UtilCalendar from "./utilCalendar";
 
 import "./index.css";
 
@@ -28,66 +36,132 @@ export default function CalendarPage() {
   const [show, setShow] = useState({ isShow: false, mode: "new" });
   const [select, setSelect] = useState("Calendar");
   const [event, setEvent] = useState([]);
+  const [view, setView] = useState();
   const arrayImages = useSelector(selectArrayViewImages);
   const { id } = useParams();
   const curTree = useSelector(selectTree);
   const listTree = useSelector(selectTrees);
+  
 
   useEffect(async () => {
-    const calendar = await dispatch(fetchCalendar(id));
+    const calendar = await dispatch(fetchCalendar(id));                                                       
     if (calendar) {
       setCalendar(calendar);
+      const getyear = moment().year();
+      setView(getyear);
+      const rs = UtilCalendar.init(calendar, moment(`${getyear}-01-01`), moment(`${getyear + 1}-01-01`));
+      const mapCalendar = _.map(rs, ele => ({
+        start: ele.startDate,
+        end: ele.endDate,
+        title: ele.note,
+        reminderOffest: ele.reminderOffest,
+        repeat: ele.repeat,
+        id: ele.id,
+      }));
+      setEvent(mapCalendar);
     }
+    dispatch(fetchTreesAndSetCurrent(id));
   }, []);
+
+  const handleNavigate = async (date) => {
+    const year = moment(date).year();
+    if (year !== view) {
+      const getCalendar = await dispatch(fetchCalendar(id));
+      setCalendar(getCalendar);
+      const rs = UtilCalendar.init(getCalendar, moment(`${year}-01-01`), moment(`${year + 1}-01-01`));
+      const mapCalendar = _.map(rs, ele => ({
+        start: ele.startDate,
+        end: ele.endDate,
+        title: ele.note,
+        reminderOffest: ele.reminderOffest,
+        repeat: ele.repeat,
+        id: ele.id,
+      }));
+      setEvent(mapCalendar);
+      setView(year);
+    }
+  };
 
   const handleSelectSlot = (e) => {
     setForm({
       notes: "",
       startDate: moment(e.start).format("YYYY-MM-DD"),
-      endDate: moment(e.end).format("YYYY-MM-DD"),
+      endDate: moment(e.end),
       loop: 0,
     });
     setShow({ isShow: true, mode: "new" });
   };
 
   const handleSelectEvent = (e) => {
-    console.log("Select event", e);
-    setForm({ id: e.id, notes: e.title, startDate: e.start, endDate: e.end, loop: 0 });
+    setForm({ id: e.id, notes: e.title, startDate: e.start, endDate: e.end, loop: e.repeat, reminder: e.reminderOffest });
     setShow({ isShow: true, mode: "upd" });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setShow({ ...show, isShow: false });
-    const curEvent = [...event];
     switch (show.mode) {
     case "new": {
-      curEvent.push({
-        id: curEvent.length + 1,
-        title: form.notes,
-        start: moment(form.startDate).format(),
-        end: moment(form.endDate).format(),
-      });
-      console.log("curEvent", curEvent);
-
+      const newEvent = {
+        note: form.notes,
+        startDate: moment(form.startDate).add(1, "day"),
+        endDate: moment(form.endDate),
+        repeat: form.loop,
+        reminderOffest: form.reminder,
+        familyTreeId: id,
+      };
+      const rs = await dispatch(createCalendar(newEvent));
+      if (rs) {
+        const getCalendar = await dispatch(fetchCalendar(id));                                                       
+        if (getCalendar) {
+          setCalendar(getCalendar);
+          const rs = UtilCalendar.init(getCalendar, moment(`${view}-01-01`), moment(`${view + 1}-01-01`));
+          const mapCalendar = _.map(rs, ele => ({
+            start: ele.startDate,
+            end: ele.endDate,
+            title: ele.note,
+            reminderOffest: ele.reminderOffest,
+            repeat: ele.repeat,
+            id: ele.id,
+          }));
+          swal("Your memory has been created!", {
+            icon: "success",
+          });
+          setEvent(mapCalendar);
+        }
+      }
       break;
     }
     case "upd": {
-      const index = _.findIndex(curEvent, (ele) => ele.id === form.id);
-
-      curEvent[index] = {
-        ...curEvent[index],
-        title: form.notes,
-        start: moment(form.startDate).format(),
-        end: moment(form.endDate).format(),
+      const updEvent = {
+        note: form.notes,
+        reminderOffest: form.reminder,
       };
-
+      const rs = await dispatch(updateCalendar(form.id, updEvent));
+      if (rs) {
+        const getCalendar = await dispatch(fetchCalendar(id));                                                       
+        if (getCalendar) {
+          setCalendar(getCalendar);
+          const rs = UtilCalendar.init(getCalendar, moment(`${view}-01-01`), moment(`${view + 1}-01-01`));
+          const mapCalendar = _.map(rs, ele => ({
+            start: ele.startDate,
+            end: ele.endDate,
+            title: ele.note,
+            reminderOffest: ele.reminderOffest,
+            repeat: ele.repeat,
+            id: ele.id,
+          }));
+          swal("Your memory has been updated!", {
+            icon: "success",
+          });
+          setEvent(mapCalendar);
+        }
+      }
       break;
     }
     default: {
       break;
     }
     }
-    setEvent(curEvent);
   };
 
   const handleCancel = () => {
@@ -116,10 +190,36 @@ export default function CalendarPage() {
       setForm({ ...form, loop: e.target.value });
       break;
     }
+    case "reminder": {
+      setForm({ ...form, reminder: e.target.value });
+      break;
+    }
     default: {
       break;
     }
     }
+  };
+
+  const handleDelete = async () => {
+    const select = form.id;
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this event!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        const rs = dispatch(deleteCalendar(select));
+        if (rs) {
+          swal("Your memory has been deleted!", {
+            icon: "success",
+          });
+          setEvent(_.filter(event, ele => ele.id !== select));
+        }
+      }
+    });
+    setShow({ ...show, isShow: false });
   };
 
   return (
@@ -129,6 +229,7 @@ export default function CalendarPage() {
         {select === "Calendar" && (
           <Schedule
             event={event}
+            handleNavigate={handleNavigate}
             handleSelectSlot={handleSelectSlot}
             handleSelectEvent={handleSelectEvent}
           />
@@ -137,6 +238,8 @@ export default function CalendarPage() {
         {show.isShow && (
           <Modal
             form={form}
+            show={show}
+            handleDelete={handleDelete}
             handleChangeForm={handleChangeForm}
             handleSave={handleSave}
             handleCancel={handleCancel}

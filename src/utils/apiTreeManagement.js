@@ -23,6 +23,9 @@ const apiTreeManagement = {
       payload
     );
   },
+  getAllEditors: (treeId) => {
+    return axiosClient.get(`${baseUrl}/tree-management/tree/${treeId}/editors`);
+  },
   getDetailPerson: (personId) => {
     return axiosClient.get(`${baseUrl}/person-management/person/${personId}`);
   },
