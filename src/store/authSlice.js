@@ -3,10 +3,8 @@ import LOCAL_STORAGE_KEYS from "configs/localStorageKeys";
 import api from "../utils/api";
 
 export const updateUserAsync = createAsyncThunk("authentication/updateUser", async (params) => {
-  console.log("in createAsyncThunk ne, params: ", params);
 
   const response = await api.updateUser(params);
-  console.log("updateUserAsync - response: ", response);
 
   return response.data;
 });

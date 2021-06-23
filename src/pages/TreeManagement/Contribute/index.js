@@ -6,54 +6,18 @@ import _ from "lodash";
 
 import useTreeManagementStyle from "../useTreeManagementStyles";
 import {
-  addEditor,
   selectTrees,
-  // removeEditor
 } from "../../Home/homeSlice";
 import { selectUser } from "../../../store/authSlice";
 import Permission from "../../../utils/permission";
 
 const Contribute = (props) => {
-  const { owner, editors } = props;
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState();
+  const { openEditor, value, owner, editors, handleSubmitEditor, handleChangeText, handleCloseEditor, handleClickEditor, handleRemoveEditor } = props;
   const { id } = useParams();
   const dispatch = useDispatch();
   const classes = useTreeManagementStyle();
   const currentUser = useSelector(selectUser);
   const listTrees = useSelector(selectTrees);
-
-  const handleChangeText = (e) => {
-    setValue(e.target.value);
-  };
-
-  // const handleRemoveEditor = (name) => {
-  //   swal({
-  //     title: "Are you sure?",
-  //     text: "Once deleted, you will not be able to recover this tree!",
-  //     icon: "warning",
-  //     buttons: true,
-  //     dangerMode: true,
-  //   }).then((willDelete) => {
-  //     if (willDelete) {
-  //       dispatch(removeEditor(name));
-  //     }
-  //   });
-  // };
-
-  const handleSubmit = async () => {
-    await dispatch(addEditor(id, { usernames: [value] }));
-    setOpen(false);
-    setValue("");
-  };
-
-  const handleClick = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   return (
     <Grid container>
@@ -79,13 +43,16 @@ const Contribute = (props) => {
               <Typography className={classes.name}>
                 Editors: {_.get(ele, "username", "")}
               </Typography>
+              <Button color="primary" onClick={() => handleRemoveEditor(_.get(ele, "username", ""))}>
+                Delete
+              </Button>
             </Card>
           </Grid>
         ))}
       {Permission.havePermissionAsOwner(listTrees, id, currentUser.id) && (
         <Grid item xs={2} className={classes.padding}>
           <Card className={classes.cardContribute}>
-            <Grid xs={12} className={classes.borderTrike} onClick={handleClick}>
+            <Grid xs={12} className={classes.borderTrike} onClick={handleClickEditor}>
               {" "}
               +{" "}
             </Grid>
@@ -94,8 +61,8 @@ const Contribute = (props) => {
         </Grid>)
       }
       <Modal
-        open={open}
-        onClose={handleClose}
+        open={openEditor}
+        onClose={handleCloseEditor}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
@@ -107,7 +74,7 @@ const Contribute = (props) => {
             value={value}
             className={classes.inputText}
           />
-          <Button onClick={handleSubmit} className={classes.btnPrimary}>
+          <Button onClick={handleSubmitEditor} className={classes.btnPrimary}>
             Submit
           </Button>
         </div>

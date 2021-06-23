@@ -69,7 +69,6 @@ const LogInPage = () => {
       const response = await api.login(loginData);
       const { user, accessToken, refreshToken } = response.data.data;
       localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-      console.log("refresh token: ", refreshToken);
       localStorage.setItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
 
       dispatch(authActions.login(user));

@@ -106,7 +106,6 @@ export const fetchCalendar = (treeId) => async () => {
 
 export const createCalendar = (payload) => async () => {
   const rs = await api.createCalendar(payload);
-  console.log("rs create calendar: ", rs);
   if (rs.status === 200) {
     return _.get(rs, "data.data");
   }
@@ -153,7 +152,6 @@ export const deleteCalendar = (eventId) => async () => {
 export const fetchMemory = (treeId) => async (dispatch) => {
   dispatch(FETCH_MEMORY());
   const rs = await api.fetchMemory(treeId);
-  console.log("rs: ", rs);
   if (rs.status === 200) {
     dispatch(FETCH_MEMORY_SUCCESS(_.get(rs.data, "data")));
   } else {
@@ -166,7 +164,6 @@ export const fetchMemory = (treeId) => async (dispatch) => {
 export const createMemory = (payload) => async (dispatch) => {
   dispatch(CREATE_MEMORY());
   const rs = await api.createMemory(payload);
-  console.log("rs create memo", rs);
   if (rs.status === 200) {
     const data = _.get(rs, "data.data");
     dispatch(CREATE_MEMORY_SUCCESS(data));
@@ -180,7 +177,6 @@ export const createMemory = (payload) => async (dispatch) => {
 
 export const deleteMemory = (memoryId) => async (dispatch) => {
   const rs = await api.deleteMemory(memoryId);
-  console.log("rs delete memo", rs);
   if (rs.status === 200) {
     dispatch(DELETE_MEMORY_SUCCESS(memoryId));
     return true;

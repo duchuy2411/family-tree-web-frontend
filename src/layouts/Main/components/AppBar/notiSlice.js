@@ -7,8 +7,6 @@ export const getAllNotifications = createAsyncThunk(
     const response = await notificationAPI.getAllNotifications();
     const { message, errors, data } = response.data;
 
-    console.log("getAllNotifications - response.data.data: ", data);
-
     return { message, errors, data };
   }
 );
@@ -19,8 +17,6 @@ export const markAnNotificationAsRead = createAsyncThunk(
     const response = await notificationAPI.markAnNotificationsAsRead(idNotification);
     const { message, errors, data } = response.data;
 
-    console.log("markAnNotificationAsRead - response.data.data: ", data);
-
     return { message, errors, data };
   }
 );
@@ -30,8 +26,6 @@ export const deleteNotification = createAsyncThunk(
   async (idNotification) => {
     const response = await notificationAPI.deleteNotification(idNotification);
     const { message, errors, data } = response.data;
-
-    console.log("deleteNotification - response.data.data: ", data);
 
     return { message, errors, data, idNotificationWasRemoved: idNotification };
   }
@@ -57,9 +51,6 @@ const notificationsSlice = createSlice({
     [getAllNotifications.fulfilled]: (state, action) => {
       const { message, errors, data } = action.payload;
 
-      console.log("getAllNotifications.fulfilled - message: ", message);
-      console.log("getAllNotifications.fulfilled - errors: ", errors);
-      console.log("getAllNotifications.fulfilled - data: ", data);
       state.notifications = data;
       state.message = message;
       state.errors = errors;

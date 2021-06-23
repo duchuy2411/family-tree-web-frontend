@@ -156,7 +156,6 @@ function ModalUpdate(props) {
     var formData = new FormData(form);
     let rs = null;
     if (formData.entries().next().value[1].name) {
-      console.log(formData.entries().next().value);
       rs = await dispatch(uploadImage(formData));
       rs = rs.data;
     }

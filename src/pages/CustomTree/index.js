@@ -145,7 +145,6 @@ export default function CustomTreePage() {
           note: sel.data.note,
           imageUrl: sel.data.imageUrl,
         });
-        console.log("==select==:", sel.data);
       } else {
         // console.log("sel");
       }
@@ -801,7 +800,6 @@ export default function CustomTreePage() {
           isFather ? "data.newMother" : "data.newFather",
           {}
         );
-        console.log("===objectParent==", objectParent);
         objectParent.key = objectParent.id;
         objectParent.gender = objectParent.gender === 0 ? "male" : "female";
         objectParent.firstName = "Unknow";
@@ -829,10 +827,8 @@ export default function CustomTreePage() {
       }
 
       const parent2Id = nodeAttach || _.get(nodeRelation, "data", null);
-      console.log("==parent2Id==", parent2Id);
       getForm.f = isFather ? node.id : parent2Id.id;
       getForm.m = isFather ? parent2Id.id : node.id;
-      console.log("==getForm==:", getForm);
       diagram.model.addNodeData(getForm);
       Adapter.createLinkForParentToChilds(
         diagram,
@@ -929,8 +925,6 @@ export default function CustomTreePage() {
           getForm.s === "M"
             ? { f: getForm.key, m: formatSpouse.key }
             : { f: formatSpouse.key, m: getForm.key };
-        console.log("node: ", node);
-        console.log("parent: ", addIdParent);
         Adapter.editNode(diagram, addIdParent, node.key);
         const nodeArr = Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray);
         Adapter.createLinkForMarriages(
@@ -986,13 +980,10 @@ export default function CustomTreePage() {
       return;
     }
     if (conditionDelete1(arrayNode, node)) {
-      console.log("Condiditon 1");
       deleteForNodeNoSpouseNoChilds(node, arrayNode, diagram);
     } else if (conditionDelete2(arrayNode, node)) {
-      console.log("Condiditon 2");
       deleteForNodeNoSpouseNoParentsHaveAChild(node, arrayNode, diagram);
     } else if (conditionDelete3(arrayNode, node)) {
-      console.log("Condiditon 3");
       deleteForNodeHaveSpouse(node, arrayNode, diagram);
     } else {
       alert("Can not delete this node!!");
@@ -1041,7 +1032,6 @@ export default function CustomTreePage() {
     const id = node.id;
     diagram.model.startTransaction("deleteForNodeHaveSpouse");
     const getChilds = Adapter.getChilds(arr, node);
-    console.log("Get Childs:", getChilds);
     if (getChilds.length === 0) {
       const getMarriage = Adapter.getMarriageByArray(arr, node.key);
       const indexMarriage = Adapter.getIndex(arr, getMarriage[0].key);
@@ -1105,13 +1095,11 @@ export default function CustomTreePage() {
   const conditionDelete2 = (arr, node) => {
     // no spouse, no parent, have atleast 1
     const getMarriage = Adapter.getMarriageByArray(arr, node.key);
-    console.log("get Marriage: ", getMarriage);
     const isAlone =
       getMarriage.length === 0 ||
       (getMarriage.length === 1 && _.get(getMarriage[0], "type") === CONSTANTS.TYPE.UNDEFINED);
     const noParents = !Adapter.getFather(arr, node) && !Adapter.getMother(arr, node);
     const getChilds = Adapter.getChilds(arr, node);
-    console.log("noParents getChilds isAlone", noParents, getChilds, isAlone);
     return isAlone && noParents && getChilds.length <= 1;
   };
 
@@ -1184,7 +1172,6 @@ export default function CustomTreePage() {
     const diagram = tempDiagram.current;
     const arrNode = diagram.model.nodeDataArray;
     const arrSelect = Adapter.getMarriageByArray(arrNode, nodeSelect.key);
-    console.log("arr Select:", arrSelect);
     const res = _.filter(arrSelect, ele => ele.type !== CONSTANTS.TYPE.UNDEFINED).map((ele) => {
       const getNodeSpouse = Adapter.getNode(arrNode, ele.key);
       return { label: getNodeSpouse.n, value: getNodeSpouse.key };

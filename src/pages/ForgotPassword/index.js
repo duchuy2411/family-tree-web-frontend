@@ -29,8 +29,6 @@ export default function ForgotPasswordPage() {
           setIsLoading(false);
         }
       } catch (error) {
-        console.log("Error in handleSubmitEmail:", error.config);
-        console.log(error);
         setError(error.message);
         setMessage("");
         setIsLoading(false);

@@ -23,7 +23,6 @@ const NewCard = () =>
   const [urls, setUrl] = useState([]);
   const currentUser = useSelector(selectUser);
   const handleChangeDate = (e) => {
-    console.log(e.target.value);
     setForm({ ...form, memoryDate: moment(e.target.value).format("YYYY-MM-DD") });
   };
 

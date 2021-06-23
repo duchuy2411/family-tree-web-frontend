@@ -34,7 +34,6 @@ axiosClient.interceptors.response.use(
   },
   function (error) {
     const originalRequest = error.config;
-    console.log("originalRequest: ", error.config);
     let refreshToken = localStorage.getItem(LOCAL_STORAGE_KEYS.REFRESH_TOKEN);
 
     if (refreshToken && error.response.status === 401 && !originalRequest._retry) {
@@ -50,7 +49,6 @@ axiosClient.interceptors.response.use(
           }
         )
         .then((res) => {
-          console.log("res:", res);
           if (res.status === 200) {
             const newAccessToken = res.data.data.accessToken;
             localStorage.setItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
