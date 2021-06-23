@@ -2,6 +2,7 @@ import _ from "lodash";
 import api from "../../utils/api";
 import { createSlice } from "@reduxjs/toolkit";
 import swal from "sweetalert";
+import Permission from "../../utils/permission";
 
 export const slice = createSlice({
   name: "managementTree",
@@ -48,7 +49,7 @@ export const slice = createSlice({
     UPDATE_EDITORS: (state, action) => {
       const { owner, editors } = action.payload;
       owner.username = _.get(owner, "userName", "");
-      const mapname = _.map(editors, ele => ({ ...ele, username: _.get(ele, "userName", "") }));
+      const mapname = _.map(editors, (ele) => ({ ...ele, username: _.get(ele, "userName", "") }));
       return { ...state, tree: { ...state.tree, owner, editors: mapname } };
     },
   },
@@ -72,7 +73,10 @@ export const getTreeList = () => async (dispatch) => {
   dispatch(GET_TREE());
   const rs = await api.getTreeList();
   if (rs.status === 200) {
-    dispatch(GET_TREE_SUCCESS(_.get(rs.data, "data", [])));
+    const treeList = _.get(rs.data, "data", []);
+    console.log(treeList);
+    Permission.mapPermission([...treeList]);
+    dispatch(GET_TREE_SUCCESS(treeList));
     return true;
   }
   dispatch(GET_TREE_FAIL());
@@ -106,7 +110,13 @@ export const updateTree = (treeId, payload) => async (dispatch) => {
   const rs = await api.apiTreeManagement.updateTree(treeId, payload);
   if (rs.status === 200) {
     const mapData = _.get(rs, "data.data");
-    dispatch(UPDATE_CURRENT_TREE({ name: mapData.name, description: mapData.description, publicMode: payload.publicMode }));
+    dispatch(
+      UPDATE_CURRENT_TREE({
+        name: mapData.name,
+        description: mapData.description,
+        publicMode: payload.publicMode,
+      })
+    );
     swal("Update success fully!!", {
       icon: "success",
     });
