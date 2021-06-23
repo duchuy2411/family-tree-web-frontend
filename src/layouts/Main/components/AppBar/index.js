@@ -103,7 +103,6 @@ const MenuAppBar = () => {
     const chosenNotification = notifications.filter((noti) => noti.id === idNotification)[0];
 
     if (!chosenNotification.isRead) {
-      console.log("trigger already read", idNotification);
       dispatch(markAnNotificationAsRead(idNotification));
     }
   };
@@ -111,9 +110,6 @@ const MenuAppBar = () => {
   // customized
   // eslint-disable-next-line react/display-name
   const undoDeleteNotiAction = (idNotification) => (key) => {
-    console.log("undoDeleteNotiAction -  idNotification", idNotification);
-    console.log("undoDeleteNotiAction -  key", key);
-
     const handleUndoDeleteAction = () => {
       setIdNotiToDelete(undefined); // commit that no noti will be delete
       dispatch(getAllNotifications()); // fetch all noti again

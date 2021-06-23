@@ -1,6 +1,6 @@
 import React from "react";
 import { Paper, makeStyles, Grid, Typography } from "@material-ui/core";
-
+import _ from "lodash";
 import classNames from "classnames";
 
 const useStyles = makeStyles(() => ({
@@ -27,7 +27,7 @@ export default function ListMember(props) {
     [className]: className,
   });
 
-  const memberRows = listSearch.map((member, index) => {
+  const memberRows = _.filter(listSearch, ele => ele.type !== "U").map((member, index) => {
     return (
       <div onClick={() => handleClickItemSearch(member.key)} key={index}>
         <Grid container>

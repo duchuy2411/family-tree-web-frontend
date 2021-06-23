@@ -50,7 +50,7 @@ export default function SignUpPage() {
       }
       dispatch(authActions.setIsLoading(false)); // disable loading
     } catch (e) {
-      console.log("Error in handleSignUp: ", e);
+      //console.log("Error in handleSignUp: ", e);
     }
   };
 

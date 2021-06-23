@@ -93,7 +93,6 @@ export default function CalendarPage() {
   };
 
   const handleSelectEvent = (e) => {
-    console.log("Select event", e);
     setForm({ id: e.id, notes: e.title, startDate: e.start, endDate: e.end, loop: e.repeat, reminder: e.reminderOffest });
     setShow({ isShow: true, mode: "upd" });
   };
@@ -110,7 +109,6 @@ export default function CalendarPage() {
         reminderOffest: form.reminder,
         familyTreeId: id,
       };
-      console.log("newEvent", newEvent);
       const rs = await dispatch(createCalendar(newEvent));
       if (rs) {
         const getCalendar = await dispatch(fetchCalendar(id));                                                       

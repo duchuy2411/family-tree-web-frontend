@@ -129,20 +129,17 @@ export default function HomePage() {
     let formData = new FormData();
     formData.append("ImportedFile", file);
     const rs = await dispatch(importTree(formData));
-    console.log("===rs===:", rs);
     if (rs.id) {
       history.push(`/custom-tree/${rs.id}`);
     }
   };
 
   const handleChangeSearch = (e) => {
-    console.log(e.target.value);
     setSearch(e.target.value);
   };
 
   const handleSubmitSearch = (e) => {
     e.preventDefault();
-    console.log("search:", search);
     dispatch(getListByKeyword(search));
     setMode("mysearchhh");
   };

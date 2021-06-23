@@ -45,6 +45,12 @@ export const slice = createSlice({
       const { name, description, publicMode } = action.payload;
       return { ...state, tree: { ...state.tree, name, description, publicMode } };
     },
+    UPDATE_EDITORS: (state, action) => {
+      const { owner, editors } = action.payload;
+      owner.username = _.get(owner, "userName", "");
+      const mapname = _.map(editors, ele => ({ ...ele, username: _.get(ele, "userName", "") }));
+      return { ...state, tree: { ...state.tree, owner, editors: mapname } };
+    },
   },
 });
 
@@ -59,6 +65,7 @@ export const {
   GET_TREE_SUCCESS,
   GET_TREE_FAIL,
   UPDATE_CURRENT_TREE,
+  UPDATE_EDITORS,
 } = slice.actions;
 
 export const getTreeList = () => async (dispatch) => {
@@ -109,24 +116,32 @@ export const updateTree = (treeId, payload) => async (dispatch) => {
   return false;
 };
 
-export const addEditor = (treeId, payload) => async () => {
+export const addEditor = (treeId, payload) => async (dispatch) => {
   const rs = await api.apiTreeManagement.addEditor(treeId, payload);
   if (rs.status === 200) {
     swal("Update success fully!!", {
       icon: "success",
     });
+    const getEdit = await api.apiTreeManagement.getAllEditors(treeId);
+    if (getEdit.status === 200) {
+      dispatch(UPDATE_EDITORS(_.get(getEdit, "data.data")));
+    }
     return true;
   }
   swal(_.get(rs, "title", "Something wrong!!"));
   return false;
 };
 
-export const removeEditor = (treeId, payload) => async () => {
+export const removeEditor = (treeId, payload) => async (dispatch) => {
   const rs = await api.apiTreeManagement.removeEditor(treeId, payload);
   if (rs.status === 200) {
     swal("Update success fully!!", {
       icon: "success",
     });
+    const getEdit = await api.apiTreeManagement.getAllEditors(treeId);
+    if (getEdit.status === 200) {
+      dispatch(UPDATE_EDITORS(_.get(getEdit, "data.data")));
+    }
     return true;
   }
   swal(_.get(rs, "title", "Something wrong!!"));

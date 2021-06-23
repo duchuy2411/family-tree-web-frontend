@@ -17,6 +17,8 @@ import {
   // selectTrees,
   fetchTreesAndSetCurrent,
   deleteTree,
+  addEditor,
+  removeEditor,
 } from "../Home/homeSlice";
 import { fetchTree } from "../CustomTree/customTreeSlice";
 import Adapter from "../../utils/adapter";
@@ -27,6 +29,8 @@ const TreeManagement = () => {
   const classes = useStyles();
   const [list, setList] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [openEditor, setOpenEditor] = useState(false);
+  const [value, setValue] = useState();
   const [formTree, setFormTree] = useState({ name: "", description: "", publicMode: false });
   const [valSearch, setValSearch] = useState({ firstName: "", lastName: "", age: "" });
   const [originList, setOriginList] = useState();
@@ -42,18 +46,15 @@ const TreeManagement = () => {
     if (rs.data) {
       setFormTree({ ...formTree, publicMode: _.get(rs.data, "data.publicMode", false) });
       const listTree = Adapter.parseList(_.get(rs.data, "data.people", []));
-      console.log("==listTree==:", listTree);
       const parse = _.map(listTree, (ele) => createData(ele, classes));
       setList(parse);
       setOriginList(parse);
     }
-    console.log("current tree: ", currentTree);
     if (!currentTree || Object.keys(currentTree).length === 0)
       dispatch(fetchTreesAndSetCurrent(id));
   }, []);
 
   useEffect(() => {
-    console.log("current Tree", currentTree);
     if (currentTree && Object.keys(currentTree).length !== 0) {
       setFormTree({
         name: currentTree.name,
@@ -74,7 +75,6 @@ const TreeManagement = () => {
       break;
     }
     case "publicMode": {
-      console.log("publicMode", e.target.value);
       setFormTree({ ...formTree, publicMode: !formTree.publicMode });
       break;
     }
@@ -157,7 +157,6 @@ const TreeManagement = () => {
 
   const handleSubmitSearch = (age = null) => {
     const valAge = age || valSearch.age || 0;
-    console.log(valAge, valSearch.firstName, valSearch.lastName);
     const newList = _.filter(
       originList,
       (ele) =>
@@ -177,6 +176,44 @@ const TreeManagement = () => {
   const handleShow = () => {
     setFormTree({ name: currentTree.name, description: currentTree.description, publicMode: currentTree.publicMode });
     setOpen(true);
+  };
+
+  // contribute
+  const handleChangeText = (e) => {
+    setValue(e.target.value);
+  };
+
+  const handleRemoveEditor = async (name) => {
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this editor!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (willDelete) => {
+      if (willDelete) {
+        const rs = await dispatch(removeEditor(id, { usernames: [name] }));
+        if (rs) {
+          swal("Your memory has been created!", {
+            icon: "success",
+          });
+        }
+      }
+    });
+  };
+
+  const handleSubmitEditor = async () => {
+    await dispatch(addEditor(id, { usernames: [value] }));
+    setOpenEditor(false);
+    setValue("");
+  };
+
+  const handleClickEditor = () => {
+    setOpenEditor(true);
+  };
+
+  const handleCloseEditor = () => {
+    setOpenEditor(false);
   };
 
   return (
@@ -216,7 +253,19 @@ const TreeManagement = () => {
           <Typography className={classes.heading}>Contribute</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.details}>
-          {currentTree && <Contribute owner={_.get(currentTree, "owner")} editors={_.get(currentTree, "editors")} />}
+          {currentTree &&
+            <Contribute
+              owner={_.get(currentTree, "owner")}
+              editors={_.get(currentTree, "editors")}
+              value={value}
+              openEditor={openEditor}
+              handleChangeText={handleChangeText}
+              handleCloseEditor={handleCloseEditor}
+              handleClickEditor={handleClickEditor}
+              handleSubmitEditor={handleSubmitEditor}
+              handleRemoveEditor={handleRemoveEditor}
+            />
+          }
         </AccordionDetails>
       </Accordion>
       <Accordion className={classes.section} defaultExpanded={true}>

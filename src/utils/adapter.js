@@ -350,7 +350,6 @@ class Adapter {
       };
       const parent1Id = _.get(ele, "parent1Id");
       const infoParent1 = _.find(data, (father) => father.id === parent1Id);
-      console.log("==infoParent1==: ", infoParent1);
       _.set(
         member,
         "father",
@@ -363,7 +362,6 @@ class Adapter {
       );
       const parent2Id = _.get(ele, "parent2Id");
       const infoParent2 = _.find(data, (mother) => mother.id === parent2Id);
-      console.log("==infoParent2==: ", infoParent2);
       _.set(
         member,
         "mother",
