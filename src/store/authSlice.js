@@ -35,7 +35,7 @@ const authSlice = createSlice({
         isAuthenticated: true,
         user: user,
       };
-      localStorage.setItem("auth", JSON.stringify(authData));
+      localStorage.setItem(LOCAL_STORAGE_KEYS.AUTH, JSON.stringify(authData));
     },
     logout(state) {
       state.isAuthenticated = false;
@@ -72,7 +72,7 @@ const authSlice = createSlice({
       if (updatedUserInfo) {
         state.user = { ...state.user, ...updatedUserInfo };
 
-        const auth = JSON.parse(localStorage.getItem("auth"));
+        const auth = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.AUTH));
 
         localStorage.setItem(
           "auth",
