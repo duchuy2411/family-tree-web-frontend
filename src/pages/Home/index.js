@@ -169,12 +169,12 @@ export default function HomePage() {
           <CustomToggleButton mode={mode} handleChangeMode={handleChangeMode} />
 
           <div className={classes.btnNewTree}>
-            <form className={classes.searchBox} onSubmit={handleSubmitSearch}>
+            <form className={classes.searchForm} onSubmit={handleSubmitSearch}>
               <SearchBox
                 ariaLabel="Search for family"
                 search={search}
                 handleChangeSearch={handleChangeSearch}
-                className={classes.test}
+                className={classes.searchBox}
               />
             </form>
 
