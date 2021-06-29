@@ -12,6 +12,8 @@ const useHomePageStyles = makeStyles((theme) => ({
   searchBox: {
     height: 40,
     width: "100%",
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   avatarBtn: {
     margin: theme.spacing(0, 0),
@@ -28,9 +30,11 @@ const useHomePageStyles = makeStyles((theme) => ({
     backgroundColor: colors.pink,
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
   },
   welcomeText: {
-    marginLeft: theme.spacing(5),
+    // marginLeft: theme.spacing(5),
+    marginLeft: "1vw",
   },
   bigText: {
     fontWeight: 900,
@@ -52,14 +56,22 @@ const useHomePageStyles = makeStyles((theme) => ({
   treeList: {
     marginTop: theme.spacing(2),
   },
+  test: {
+    // alignSelf: "flex-start",
+    height: "2.5rem",
+  },
 
   btnNewTree: {
-    textAlign: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   customBtnDashed: {
     border: "dashed 1px black",
   },
+
   customBtnImport: {
+    marginRight: 8,
     border: "dashed 1px black",
     padding: "5px 25px",
     minWidth: "74px",

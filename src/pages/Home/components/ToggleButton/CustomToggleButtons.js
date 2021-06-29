@@ -8,7 +8,7 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 const StyledToggleButtonGroup = withStyles((theme) => ({
   grouped: {
     border: "none",
-    width: 100,
+    width: 120,
     "&:not(:first-child)": {
       borderRadius: 16,
       marginLeft: theme.spacing(1),
