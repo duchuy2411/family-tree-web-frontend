@@ -7,15 +7,8 @@ import { createTree } from "../Slice";
 
 // MUI
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
-import {
-  Grid,
-  Paper,
-  Typography,
-  Hidden,
-  Button,
-  Tooltip,
-  LinearProgress,
-} from "@material-ui/core";
+import { Button, Tooltip, LinearProgress } from "@material-ui/core";
+
 // components
 import SearchBox from "../../components/Search/Search";
 import CustomToggleButton from "./components/ToggleButton/CustomToggleButtons";
