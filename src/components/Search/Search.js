@@ -37,7 +37,7 @@ export default function SearchBox(props) {
   });
 
   return (
-    <Paper className={searchBoxClasses} elevation={9}>
+    <Paper className={searchBoxClasses}>
       <InputBase
         fullWidth
         className={classes.searchInput}

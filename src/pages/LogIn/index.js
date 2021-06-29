@@ -4,19 +4,10 @@ import { useDispatch } from "react-redux";
 import classNames from "classnames";
 
 // MUI components
-import {
-  Button,
-  Grid,
-  Hidden,
-  Input,
-  Paper,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@material-ui/core";
+import { Button, Grid, Hidden, Input, Paper, Typography, Divider } from "@material-ui/core";
 
 // logo
-import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
+import logo from "assets/img/tree.png";
 
 import useLoginPageStyles from "./useLoginPageStyles";
 import { authActions } from "./../../store/authSlice";
@@ -38,10 +29,6 @@ const LogInPage = () => {
   const usernameRef = React.useRef();
   const passwordRef = React.useRef();
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
-
-  //
-  const theme = useTheme();
-  const smDownMatches = useMediaQuery(theme.breakpoints.down("sm"));
 
   // ux
   const [severity, setSeverity] = useState(SEVERITY_TYPES.INFO);
@@ -97,115 +84,127 @@ const LogInPage = () => {
 
   return (
     <div className={classes.root}>
-      <Grid container justify="center" className={classes.container}>
-        <Grid item xs={11} md={10} lg={8} xl={6} container>
-          <Paper
-            elevation={10}
-            className={classes.wrapper}
-            style={{
-              flexDirection: smDownMatches ? "column" : "row",
-            }}
+      <Grid container justify="center" alignItems="center" className={classes.wrapper}>
+        {/* Left side container*/}
+        <Hidden smDown>
+          <Grid
+            item
+            xs={6}
+            className={classes.leftSide}
+            container
+            alignItems="center"
+            justify="center"
+            direction="column"
           >
-            <Hidden smDown>
-              <Grid
-                item
-                xs
-                sm
-                lg
-                className={classes.leftSide}
-                container
-                alignItems="center"
-                justify="center"
-                direction="column"
-              >
-                <Hidden smDown>
-                  <img src={logo} alt="logo" className={classes.logo} />
-                </Hidden>
-                <Typography className={classes.appTitle} variant="h3" component="h2">
-                  Origin Keeper
-                </Typography>
-              </Grid>
-            </Hidden>
-
-            <Hidden mdUp>
+            <Paper elevation={10} className={classes.paperLeftSide}>
+              <img src={logo} alt="logo" className={classes.logo} />
               <Typography className={classes.appTitle} variant="h3" component="h2">
                 Origin Keeper
               </Typography>
-            </Hidden>
+            </Paper>
+          </Grid>
+        </Hidden>
 
-            <Grid
-              item
-              xs
-              lg
-              className={classNames({
-                [classes.rightSide]: true,
-                [classes.formAsRowBorder]: !smDownMatches,
-                [classes.formAsColumnBorder]: smDownMatches,
-              })}
-              container
-              direction="column"
-              alignItems="center"
-              justify="center"
-            >
+        {/* Right side container */}
+        <Grid
+          item
+          xs={10}
+          sm={6}
+          md={4}
+          className={classes.rightSide}
+          container
+          alignItems="center"
+          justify="center"
+        >
+          <Hidden mdUp>
+            <Grid item xs={12} className={classes.gridItemPadding}>
               <Typography
-                variant="h4"
+                variant="h3"
                 component="h2"
-                style={{ color: colors.brown, marginBottom: 8 }}
+                style={{
+                  color: colors.brown,
+                }}
               >
-                Welcome back!
+                Origin Keeper
               </Typography>
-              {message && (
-                <Alert severity={severity} className={classes.alert} style={{ marginBottom: 12 }}>
-                  {message}
-                </Alert>
-              )}
-
-              <Input
-                inputRef={usernameRef}
-                value={username}
-                onChange={handleChangeUsername}
-                placeholder="Username"
-                required
-                fullWidth
-                disableUnderline
-                className={classNames(classes.withSpace, classes.inputFields)}
-              ></Input>
-              <Input
-                inputRef={passwordRef}
-                value={password}
-                onChange={handleChangePassword}
-                placeholder="Password"
-                type="password"
-                required
-                fullWidth
-                disableUnderline
-                className={classNames(classes.withSpace, classes.inputFields)}
-              ></Input>
-              <LoadingInside isLoading={isLoading}>
-                <Button
-                  variant="contained"
-                  onClick={handleLogin}
-                  className={classNames(classes.withSpace, classes.btnLogin)}
-                  disabled={isLoading || username === "" || password === ""}
-                >
-                  Login
-                </Button>
-              </LoadingInside>
-              <div className={classes.link}>
-                <RRDLink to="/signup" className={classes.link}>
-                  Create account
-                </RRDLink>
-                <RRDLink to="/forgot-password" className={classes.link}>
-                  Forgot password?
-                </RRDLink>
-              </div>
             </Grid>
-          </Paper>
+          </Hidden>
+
+          <Grid item xs={12} className={classes.gridItemPadding} style={{ marginBottom: 24 }}>
+            <Typography
+              variant="h5"
+              component="h2"
+              style={{ color: colors.brown, marginBottom: 8 }}
+            >
+              Welcome back!
+            </Typography>
+          </Grid>
+
+          {message && (
+            <Alert severity={severity} className={classes.alert} style={{ marginBottom: 12 }}>
+              {message}
+            </Alert>
+          )}
+
+          {/* Username */}
+          <Grid
+            item
+            xs={12}
+            className={classes.gridItemPadding}
+            // style={{ backgroundColor: "violet" }}
+          >
+            <Input
+              inputRef={usernameRef}
+              value={username}
+              onChange={handleChangeUsername}
+              placeholder="Username"
+              required
+              fullWidth
+              disableUnderline
+              className={classNames(classes.withSpace, classes.inputFields)}
+            />
+          </Grid>
+
+          <Grid item xs={12} className={classes.gridItemPadding}>
+            <Input
+              inputRef={passwordRef}
+              value={password}
+              onChange={handleChangePassword}
+              placeholder="Password"
+              type="password"
+              required
+              fullWidth
+              disableUnderline
+              className={classNames(classes.withSpace, classes.inputFields)}
+            />
+          </Grid>
+
+          <Grid item xs={12} container justify="center" className={classes.gridItemPadding}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleLogin}
+              className={classNames(classes.withSpace, classes.btnLogin)}
+              disabled={isLoading || username === "" || password === ""}
+            >
+              <LoadingInside isLoading={isLoading}>Login</LoadingInside>
+            </Button>
+          </Grid>
+          <div className={classes.link}>
+            <RRDLink to="/signup" className={classes.link}>
+              Create account
+            </RRDLink>
+
+            <Divider />
+
+            <RRDLink to="/forgot-password" className={classes.link}>
+              Forgot password?
+            </RRDLink>
+          </div>
         </Grid>
       </Grid>
     </div>
   );
 };
 
-// export default withLoading(LogInPage);
 export default LogInPage;

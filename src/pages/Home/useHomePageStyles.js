@@ -9,9 +9,14 @@ const useHomePageStyles = makeStyles((theme) => ({
   },
 
   // top site
-  searchBox: {
+  searchForm: {
     height: 40,
     width: "100%",
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+  searchBox: {
+    height: 40,
   },
   avatarBtn: {
     margin: theme.spacing(0, 0),
@@ -28,10 +33,9 @@ const useHomePageStyles = makeStyles((theme) => ({
     backgroundColor: colors.pink,
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
   },
-  welcomeText: {
-    marginLeft: theme.spacing(5),
-  },
+
   bigText: {
     fontWeight: 900,
     fontSize: 30,
@@ -54,12 +58,16 @@ const useHomePageStyles = makeStyles((theme) => ({
   },
 
   btnNewTree: {
-    textAlign: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   customBtnDashed: {
     border: "dashed 1px black",
   },
+
   customBtnImport: {
+    marginRight: 8,
     border: "dashed 1px black",
     padding: "5px 25px",
     minWidth: "74px",

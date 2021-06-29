@@ -1,8 +1,9 @@
+import LOCAL_STORAGE_KEYS from "configs/localStorageKeys";
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
 
 export default function PrivateRoute({ children, ...rest }) {
-  const authData = JSON.parse(localStorage.getItem("auth"));
+  const authData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.AUTH));
 
   let isAuthenticated = false;
   if (authData) {
