@@ -29,7 +29,6 @@ const useLoginPageStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   rightSide: {
-    // backgroundColor: "blue",
     backgroundColor: colors.pink,
     height: "100%",
   },

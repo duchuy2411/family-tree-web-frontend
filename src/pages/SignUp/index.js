@@ -63,7 +63,6 @@ export default function SignUpPage() {
         direction="row"
         justify="space-between"
         alignItems="center"
-        // style={{ backgroundColor: "violet" }}
       >
         {/* Left side container*/}
         <Hidden smDown>
@@ -75,7 +74,6 @@ export default function SignUpPage() {
             alignItems="center"
             justify="center"
             direction="column"
-            // style={{ backgroundColor: "green" }}
           >
             <Paper elevation={10} className={classes.paperLeftSide}>
               <img src={logo} alt="logo" className={classes.logo} />
@@ -95,7 +93,6 @@ export default function SignUpPage() {
           container
           alignItems="center"
           justify="center"
-          // style={{ backgroundColor: "blue" }}
         >
           <Hidden mdUp>
             <Grid item xs={12} className={classes.gridItemPadding}>
@@ -154,13 +151,7 @@ export default function SignUpPage() {
             />
           </Grid>
 
-          <Grid
-            item
-            xs={12}
-            md={6}
-            className={classes.gridItemPadding}
-            // style={{ backgroundColor: "green" }}
-          >
+          <Grid item xs={12} md={6} className={classes.gridItemPadding}>
             <Input
               inputRef={confirmPasswordRef}
               placeholder="Confirm password"

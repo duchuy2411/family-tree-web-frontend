@@ -16,7 +16,8 @@ import {
 } from "@material-ui/core";
 
 // logo
-import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
+// import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
+import logo from "assets/img/logo.png";
 
 import useLoginPageStyles from "./useLoginPageStyles";
 import { authActions } from "./../../store/authSlice";
