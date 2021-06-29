@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core/styles";
+import { fade, makeStyles } from "@material-ui/core/styles";
 import colors from "assets/colorPalette";
 
 const useSignupPageStyles = makeStyles((theme) => ({
@@ -7,12 +7,10 @@ const useSignupPageStyles = makeStyles((theme) => ({
     backgroundColor: "#F2E1DA",
   },
   wrapper: {
-    // padding: theme.spacing(5, 0),
     height: "100vh",
     maxWidth: theme.breakpoints.width("lg"),
     padding: 24,
     margin: "0 auto",
-    // backgroundColor: "red",
   },
   leftSide: {
     // backgroundColor: "red",
@@ -53,6 +51,9 @@ const useSignupPageStyles = makeStyles((theme) => ({
   btnLogin: {
     color: "#905842",
     backgroundColor: "#fff",
+    "&:hover": {
+      backgroundColor: fade("#fff", 0.6),
+    },
     fontWeight: "bold",
     textDecoration: "none",
     marginBottom: theme.spacing(2),
@@ -72,7 +73,7 @@ const useSignupPageStyles = makeStyles((theme) => ({
     color: "#905842",
     marginBottom: theme.spacing(1),
     "&:hover": {
-      color: "#fff",
+      color: fade(colors.brown, 0.6),
     },
   },
 }));

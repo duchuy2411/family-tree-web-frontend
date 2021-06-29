@@ -8,7 +8,7 @@ import { Button, Grid, Input, Paper, Typography, Hidden } from "@material-ui/cor
 
 // logo
 // import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
-import logo from "assets/img/logo.png";
+import logo from "assets/img/tree.png";
 
 import useSignupPageStyles from "./useSignupPageStyles";
 import api from "../../utils/api";
@@ -61,7 +61,7 @@ export default function SignUpPage() {
         className={classes.wrapper}
         container
         direction="row"
-        justify="space-between"
+        justify="center"
         alignItems="center"
       >
         {/* Left side container*/}
@@ -87,8 +87,9 @@ export default function SignUpPage() {
         {/* Right side container */}
         <Grid
           item
-          xs={12}
-          md={6}
+          xs={10}
+          sm={6}
+          md={4}
           className={classes.rightSide}
           container
           alignItems="center"
@@ -139,7 +140,7 @@ export default function SignUpPage() {
           </Grid>
 
           {/* Password & confirm */}
-          <Grid item xs={12} md={6} className={classes.gridItemPadding}>
+          <Grid item xs={12} className={classes.gridItemPadding}>
             <Input
               inputRef={passwordRef}
               placeholder="Password"
@@ -151,7 +152,7 @@ export default function SignUpPage() {
             />
           </Grid>
 
-          <Grid item xs={12} md={6} className={classes.gridItemPadding}>
+          <Grid item xs={12} className={classes.gridItemPadding}>
             <Input
               inputRef={confirmPasswordRef}
               placeholder="Confirm password"
@@ -166,25 +167,26 @@ export default function SignUpPage() {
           <Grid
             item
             xs={12}
-            className={classes.buttonArea}
+            className={(classes.buttonArea, classes.gridItemPadding)}
             container
             direction="row"
             justify="space-around"
             alignItems="baseline"
           >
-            <div className={classes.link}>
-              <RRDLink to="/login" className={classes.link}>
-                I already have an account!
-              </RRDLink>
-            </div>
             <Button
               variant="contained"
+              fullWidth
               onClick={handleSignUp}
               className={classNames(classes.withSpace, classes.btnLogin)}
             >
               Sign Up
             </Button>
           </Grid>
+          <div className={classes.link}>
+            <RRDLink to="/login" className={classes.link}>
+              I already have an account!
+            </RRDLink>
+          </div>
         </Grid>
       </Grid>
     </div>

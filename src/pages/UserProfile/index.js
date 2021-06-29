@@ -28,26 +28,27 @@ import DateFnsUtils from "@date-io/date-fns";
 import useProfilePageStyle from "./useProfilePageStyles";
 import { useDispatch, useSelector } from "react-redux";
 
-import { selectIsLoading, selectUser, updateUserAsync } from "../../store/authSlice";
+import { selectError, selectIsLoading, selectUser, updateUserAsync } from "../../store/authSlice";
 
 import LoadingInside from "../../components/LoadingInside/index";
 
 import avatarPlaceholder from "../../assets/img/Portrait_Placeholder.png";
 
 import api from "../../utils/api";
+import classNames from "classnames";
+import { useSnackbar } from "notistack";
 
 export default function ProfilePage() {
   const classes = useProfilePageStyle();
 
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
-  // console.log("currentUser:", currentUser);
 
   const [showPassword, setShowPassword] = useState(false);
   const [isAnyChanges, setIsAnyChanges] = useState(false);
   const isLoading = useSelector(selectIsLoading);
-  // const error = useSelector(selectError);
-  // const message=useSelector(selectMessage)
+  const error = useSelector(selectError);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const fileInputRef = useRef();
   const [file, setFile] = useState();
@@ -71,9 +72,6 @@ export default function ProfilePage() {
       for (let [key, value] of Object.entries(sourceObj)) {
         // console.log(`${key}: ${value}`);
         if (targetObj[key] !== value) {
-          // console.log(typeof targetObj[key]);
-          // console.log(typeof value);
-          // console.log(`targetObj[${key}] (=${targetObj[key]}): !== ${value}`);
           return true;
         }
       }
@@ -175,10 +173,11 @@ export default function ProfilePage() {
     try {
       const actionResult = await dispatch(updateUserAsync(infoValues));
       const currentUser = unwrapResult(actionResult);
-    } catch (error) {
-      //console.log("Error in handleUpdate: ", error);
-
+      enqueueSnackbar("Update profile successfully", { variant: "success" });
+    } catch (err) {
+      // console.log("Error in handleUpdate: ", error);
       // load snackbar
+      enqueueSnackbar(error, { variant: "error" });
     }
   };
 
@@ -186,38 +185,27 @@ export default function ProfilePage() {
     <div className={classes.root}>
       <Container>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={12} style={{ marginTop: 24 }}>
             <div className={classes.pageTitle}>
-              <Typography variant="h2">Profile</Typography>
+              <Typography variant="h4" component="h2">
+                Profile
+              </Typography>
               <div className={classes.wrapper}>
                 <Button
                   variant="contained"
-                  color="secondary"
-                  className={classes.marginLeft}
+                  // color="primary"
+                  className={classNames(classes.marginLeft, classes.buttonUpdate)}
                   onClick={handleUpdate}
                   disabled={isLoading || !isAnyChanges}
                 >
-                  DISCARD ALL CHANGES
+                  <LoadingInside isLoading={isLoading}>UPDATE</LoadingInside>
                 </Button>
-
-                <LoadingInside isLoading={isLoading}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.marginLeft}
-                    onClick={handleUpdate}
-                    disabled={isLoading || !isAnyChanges}
-                  >
-                    UPDATE
-                  </Button>
-                </LoadingInside>
               </div>
             </div>
           </Grid>
 
           {/* Account information area */}
           <Grid item lg={12} container>
-            <Typography variant="h3">Account Information</Typography>
             <div className={classes.accountInfoContainer}>
               <div>
                 <ButtonBase onClick={handleSelectFile}>
@@ -285,8 +273,8 @@ export default function ProfilePage() {
           </Grid>
 
           {/* Personal information area */}
-          <Grid item lg={12}>
-            <Typography variant="h3">Personal Information</Typography>
+          <Grid item lg={12} style={{ marginTop: 24 }}>
+            <Typography variant="h4">Personal Information</Typography>
             <div className={classes.detailsInfoContainer}>
               <TextField
                 label="First name"
@@ -348,14 +336,6 @@ export default function ProfilePage() {
                 </MuiPickersUtilsProvider>
               </div>
 
-              {/* 
-              <TextField
-                label="Phone"
-                value={infoValues.phone}
-                onChange={handleChangeInfo("phone")}
-                className={classes.detailsInfoItem}
-              /> */}
-
               <TextField
                 label="Address"
                 value={infoValues.address}
@@ -364,33 +344,6 @@ export default function ProfilePage() {
                 multiline
                 className={classes.detailsInfoItem}
               />
-
-              {/* 
-              <TextField
-                label="Hometown"
-                value={infoValues.hometown}
-                // onChange={handleChangeHometown}
-                onChange={handleChangeInfo("hometown")}
-                multiline
-                className={classes.detailsInfoItem}
-              />
-
-              <TextField
-                label="Job title"
-                value={infoValues.jobTitle}
-                // onChange={handleChangeJobTitle}
-                onChange={handleChangeInfo("jobTitle")}
-                className={classes.detailsInfoItem}
-              />
-
-              <TextField
-                label="Working address"
-                value={infoValues.workingAddress}
-                // onChange={handleChangeWorkingAddress}
-                onChange={handleChangeInfo("workingAddress")}
-                multiline
-                className={classes.detailsInfoItem}
-              /> */}
             </div>
           </Grid>
         </Grid>

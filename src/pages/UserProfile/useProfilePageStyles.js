@@ -1,4 +1,5 @@
-import { makeStyles } from "@material-ui/core";
+import { fade, makeStyles } from "@material-ui/core";
+import colors from "assets/colorPalette";
 
 const useProfilePageStyle = makeStyles(() => ({
   root: {
@@ -15,6 +16,13 @@ const useProfilePageStyle = makeStyles(() => ({
   wrapper: {
     display: "flex",
     alignItems: "center",
+  },
+  buttonUpdate: {
+    backgroundColor: colors.brown,
+    color: colors.white,
+    "&:hover": {
+      backgroundColor: fade(colors.brown, 0.7),
+    },
   },
   marginLeft: {
     marginLeft: 12,
