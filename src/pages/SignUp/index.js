@@ -4,10 +4,11 @@ import { Link as RRDLink, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
 // MUI components
-import { Button, Grid, Input, Paper, Typography } from "@material-ui/core";
+import { Button, Grid, Input, Paper, Typography, Hidden } from "@material-ui/core";
 
 // logo
-import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
+// import logo from "./../../assets/svg/tree-shape-of-straight-lines.svg";
+import logo from "assets/img/logo.png";
 
 import useSignupPageStyles from "./useSignupPageStyles";
 import api from "../../utils/api";
@@ -62,59 +63,86 @@ export default function SignUpPage() {
         direction="row"
         justify="space-between"
         alignItems="center"
+        // style={{ backgroundColor: "violet" }}
       >
         {/* Left side container*/}
-        <Grid
-          item
-          xs={5}
-          className={classes.leftSide}
-          container
-          alignItems="center"
-          justify="center"
-          direction="column"
-        >
-          <Paper elevation={10} className={classes.paperLeftSide}>
-            <img src={logo} alt="logo" className={classes.logo} />
-            <Typography className={classes.appTitle} variant="h3" component="h2">
-              Origin Keeper
-            </Typography>
-          </Paper>
-        </Grid>
+        <Hidden smDown>
+          <Grid
+            item
+            xs={6}
+            className={classes.leftSide}
+            container
+            alignItems="center"
+            justify="center"
+            direction="column"
+            // style={{ backgroundColor: "green" }}
+          >
+            <Paper elevation={10} className={classes.paperLeftSide}>
+              <img src={logo} alt="logo" className={classes.logo} />
+              <Typography className={classes.appTitle} variant="h3" component="h2">
+                Origin Keeper
+              </Typography>
+            </Paper>
+          </Grid>
+        </Hidden>
 
         {/* Right side container */}
         <Grid
           item
-          xs={5}
+          xs={12}
+          md={6}
           className={classes.rightSide}
           container
-          direction="column"
           alignItems="center"
           justify="center"
+          // style={{ backgroundColor: "blue" }}
         >
-          <Typography variant="h4" component="h2" style={{ marginBottom: 8, color: colors.brown }}>
-            {"Create a new account"}
-          </Typography>
+          <Hidden mdUp>
+            <Grid item xs={12} className={classes.gridItemPadding}>
+              <Typography
+                variant="h3"
+                component="h2"
+                style={{
+                  color: colors.brown,
+                }}
+              >
+                Origin Keeper
+              </Typography>
+            </Grid>
+          </Hidden>
+
+          <Grid item xs={12} className={classes.gridItemPadding} style={{ marginBottom: 24 }}>
+            <Typography variant="h5" component="h2" className={classes.subText}>
+              {"Let's create a new account!"}
+            </Typography>
+          </Grid>
+
           {/* Username */}
-          <Input
-            inputRef={usernameRef}
-            placeholder="Username"
-            required
-            fullWidth
-            disableUnderline
-            className={classNames(classes.withSpace, classes.inputFields)}
-          />
+          <Grid item xs={12} className={classes.gridItemPadding}>
+            <Input
+              inputRef={usernameRef}
+              placeholder="Username"
+              required
+              fullWidth
+              disableUnderline
+              className={classNames(classes.withSpace, classes.inputFields)}
+            />
+          </Grid>
+
           {/* Email */}
-          <Input
-            inputRef={emailRef}
-            placeholder="Email"
-            required
-            fullWidth
-            disableUnderline
-            className={classNames(classes.withSpace, classes.inputFields)}
-          />
+          <Grid item xs={12} className={classes.gridItemPadding}>
+            <Input
+              inputRef={emailRef}
+              placeholder="Email"
+              required
+              fullWidth
+              disableUnderline
+              className={classNames(classes.withSpace, classes.inputFields)}
+            />
+          </Grid>
+
           {/* Password & confirm */}
-          <Grid item xs={12} container direction="row" alignItems="center" justify="space-between">
-            {/* Password */}
+          <Grid item xs={12} md={6} className={classes.gridItemPadding}>
             <Input
               inputRef={passwordRef}
               placeholder="Password"
@@ -124,7 +152,15 @@ export default function SignUpPage() {
               disableUnderline
               className={classNames(classes.withSpace, classes.inputFields, classes.passwordFields)}
             />
-            {/* Confirm password */}
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            md={6}
+            className={classes.gridItemPadding}
+            // style={{ backgroundColor: "green" }}
+          >
             <Input
               inputRef={confirmPasswordRef}
               placeholder="Confirm password"
@@ -135,6 +171,7 @@ export default function SignUpPage() {
               className={classNames(classes.withSpace, classes.inputFields, classes.passwordFields)}
             />
           </Grid>
+
           <Grid
             item
             xs={12}
@@ -146,7 +183,7 @@ export default function SignUpPage() {
           >
             <div className={classes.link}>
               <RRDLink to="/login" className={classes.link}>
-                LOG IN
+                I already have an account!
               </RRDLink>
             </div>
             <Button
