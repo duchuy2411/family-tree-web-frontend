@@ -103,7 +103,7 @@ const useTreeItemStyles = makeStyles((theme) => ({
   actionBtn: {
     textDecoration: "none",
     color: colors.black,
-    border: "3px solid grey",
+    border: "2px solid grey",
     borderRadius: "8px",
     padding: theme.spacing(1),
     cursor: "pointer",
