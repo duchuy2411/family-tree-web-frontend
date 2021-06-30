@@ -54,7 +54,7 @@ const NewCard = () =>
     });
     dispatch(CREATING_SPINNER());
     const callback = async () => {
-      if (formData.entries().next().value[1].name) {
+      if (formData.entries().next().value && formData.entries().next().value[1].name) {
         return await dispatch(uploadArrayImage(formData));
       }
     };
