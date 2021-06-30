@@ -12,6 +12,7 @@ export const slice = createSlice({
   initialState: {
     nodeDataArrayRedux: [],
     linkDataArrayReduxRedux: [],
+    isLoading: false,
   },
   reducers: {
     updateNodeDataArrayRedux: (state, action) => {
@@ -20,10 +21,16 @@ export const slice = createSlice({
     updateLinkDataArrayRedux: (state, action) => {
       return { ...state, linkDataArrayRedux: action.payload };
     },
+    LOADING: (state, action) => {
+      return { ...state, isLoading: true };
+    },
+    RESPONSE_API: (state, action) => {
+      return { ...state, isLoading: false };
+    }
   },
 });
 
-export const { updateNodeDataArrayRedux, updateLinkDataArrayRedux } = slice.actions;
+export const { updateNodeDataArrayRedux, updateLinkDataArrayRedux, LOADING, RESPONSE_API } = slice.actions;
 
 export const fetchTree = (id) => async (dispatch) => {
   const rs = await api.fetchFamilyTreeById(id);
@@ -55,19 +62,25 @@ export const deleteFamilyTree = (treeId) => async () => {
   return false;
 };
 
-export const createParent = (personId, payload) => async () => {
+export const createParent = (personId, payload) => async (dispatch) => {
+  dispatch(LOADING());
   const rs = await api.createParent(personId, payload);
   if (rs) {
+    dispatch(RESPONSE_API());
     return rs;
   }
+  dispatch(RESPONSE_API());
   return false;
 };
 
-export const createSpouse = (personId, payload) => async () => {
+export const createSpouse = (personId, payload) => async (dispatch) => {
+  dispatch(LOADING());
   const rs = await api.createSpouse(personId, payload);
   if (rs) {
+    dispatch(RESPONSE_API());
     return rs;
   }
+  dispatch(RESPONSE_API());
   return false;
 };
 
@@ -87,9 +100,11 @@ export const getChildOfPerson = (personId) => async () => {
   return false;
 };
 
-export const updatePerson = (personId, payload) => async () => {
+export const updatePerson = (personId, payload) => async (dispatch) => {
+  dispatch(LOADING());
   const rs = await api.updatePerson(personId, payload);
   if (rs) {
+    dispatch(RESPONSE_API());
     return rs;
   }
   return false;
@@ -105,9 +120,14 @@ export const deletePerson = (personId) => async () => {
   }
 };
 
-export const createChild = (payload) => async () => {
+export const createChild = (payload) => async (dispatch) => {
+  dispatch(LOADING());
   const rs = await api.createChild(payload);
-  if (rs) return rs;
+  if (rs) {
+    dispatch(RESPONSE_API());
+    return rs;
+  }
+  dispatch(RESPONSE_API());
   return false;
 };
 
@@ -135,6 +155,7 @@ export const exportJSON = (treeId) => async () => {
 
 export const selectNodeDataArrayRedux = (state) => state.custom_tree.nodeDataArrayRedux;
 export const selectLinkDataArrayRedux = (state) => state.custom_tree.linkDataArrayRedux;
+export const isLoading = (state) => state.custom_tree.isLoading;
 export const selectIt = (state) => {
   return state.custom_tree.it;
 };

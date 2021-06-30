@@ -695,23 +695,23 @@ export default function CustomTreePage() {
     setShowModal(false);
   };
 
-  const handleSave = (imageUrl) => {
+  const handleSave = async (imageUrl) => {
     const diagram = tempDiagram.current;
     switch (showModal.select) {
     case CONSTANTS.SPOUSE: {
-      processAddSpouse(nodeSelect, diagram, imageUrl);
+      await processAddSpouse(nodeSelect, diagram, imageUrl);
       break;
     }
     case CONSTANTS.FATHER: {
-      processAddParent(nodeSelect, diagram, imageUrl);
+      await processAddParent(nodeSelect, diagram, imageUrl);
       break;
     }
     case CONSTANTS.MOTHER: {
-      processAddParent(nodeSelect, diagram, imageUrl);
+      await processAddParent(nodeSelect, diagram, imageUrl);
       break;
     }
     case CONSTANTS.CHILDREN: {
-      processAddChild(nodeSelect, diagram, imageUrl);
+      await processAddChild(nodeSelect, diagram, imageUrl);
       break;
     }
     default: {
@@ -799,7 +799,7 @@ export default function CustomTreePage() {
       // );
       enqueueSnackbar(
         "Can not add children for this node! Please add spouse or delete link relate this node!",
-        { variant: "success" }
+        { variant: "warning" }
       );
 
       diagram.model.rollbackTransaction("addChild");
