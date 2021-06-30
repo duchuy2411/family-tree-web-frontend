@@ -14,6 +14,10 @@ const useHomePageStyles = makeStyles((theme) => ({
     width: "100%",
     paddingLeft: 20,
     paddingRight: 20,
+    [theme.breakpoints.down("sm")]: {
+      paddingLeft: 0,
+      paddingRight: 10,
+    },
   },
   searchBox: {
     height: 40,

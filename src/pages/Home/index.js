@@ -7,7 +7,7 @@ import { createTree } from "../Slice";
 
 // MUI
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
-import { Button, Tooltip, LinearProgress } from "@material-ui/core";
+import { Button, Tooltip, LinearProgress, Hidden } from "@material-ui/core";
 
 // components
 import SearchBox from "../../components/Search/Search";
@@ -163,9 +163,7 @@ export default function HomePage() {
         />
       )}
       <div className={classes.wrapper}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <CustomToggleButton mode={mode} handleChangeMode={handleChangeMode} />
-
+        <Hidden mdUp>
           <div className={classes.btnNewTree}>
             <form className={classes.searchForm} onSubmit={handleSubmitSearch}>
               <SearchBox
@@ -197,6 +195,44 @@ export default function HomePage() {
               <span className="fas fa-plus"></span>
             </Button>
           </div>
+        </Hidden>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <CustomToggleButton mode={mode} handleChangeMode={handleChangeMode} />
+
+          <Hidden smDown>
+            <div className={classes.btnNewTree}>
+              <form className={classes.searchForm} onSubmit={handleSubmitSearch}>
+                <SearchBox
+                  ariaLabel="Search for family"
+                  search={search}
+                  handleChangeSearch={handleChangeSearch}
+                  className={classes.searchBox}
+                />
+              </form>
+
+              <Tooltip title="Import file JSON">
+                <div>
+                  <label htmlFor="importss" className={classes.customBtnImport}>
+                    <span className="fas fa-file-import"></span>
+                  </label>
+                  <form>
+                    <input
+                      id="importss"
+                      style={{ display: "none" }}
+                      type="file"
+                      name="ImportedFile"
+                      onChange={handleImport}
+                    />
+                  </form>
+                </div>
+              </Tooltip>
+
+              <Button className={classes.customBtnDashed} onClick={() => handleShow(true)}>
+                <span className="fas fa-plus"></span>
+              </Button>
+            </div>
+          </Hidden>
         </div>
 
         {fetching ? (
