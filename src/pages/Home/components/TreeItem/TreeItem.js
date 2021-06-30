@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React from "react";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
@@ -59,32 +60,32 @@ export default function TreeItem({
     setSelectedIndex(index);
     setAnchorEl(null);
     switch (index) {
-    case 0: {
-      const current = _.find(trees, (ele) => ele.id === id);
-      dispatch(SET_CURRENT_TREE(current));
-      history.push(`/calendar/${id}`);
-      break;
-    }
-    case 1: {
-      const current = _.find(trees, (ele) => ele.id === id);
-      dispatch(SET_CURRENT_TREE(current));
-      history.push(`/tree-management/${id}`);
-      break;
-    }
-    case 2: {
-      swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this tree!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      }).then((willDelete) => {
-        if (willDelete) {
-          dispatch(deleteTree(id));
-        }
-      });
-      break;
-    }
+      case 0: {
+        const current = _.find(trees, (ele) => ele.id === id);
+        dispatch(SET_CURRENT_TREE(current));
+        history.push(`/calendar/${id}`);
+        break;
+      }
+      case 1: {
+        const current = _.find(trees, (ele) => ele.id === id);
+        dispatch(SET_CURRENT_TREE(current));
+        history.push(`/tree-management/${id}`);
+        break;
+      }
+      case 2: {
+        swal({
+          title: "Are you sure?",
+          text: "Once deleted, you will not be able to recover this tree!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            dispatch(deleteTree(id));
+          }
+        });
+        break;
+      }
     }
   };
 
@@ -92,43 +93,43 @@ export default function TreeItem({
     if (Permission.havePermissionAsOwner(trees, id, _.get(currentUser, "id"))) {
       return options;
     }
-    return _.filter(options, ele => ele !== "Delete Tree");
+    return _.filter(options, (ele) => ele !== "Delete Tree");
   };
 
   const handleMenuItemClickMore = (event, index) => {
     setSelectedIndex(index);
     setAnchorEl(null);
     switch (index) {
-    case 0: {
-      history.push(`/custom-tree/${id}`);
-      break;
-    }
-    case 1: {
-      const current = _.find(trees, (ele) => ele.id === id);
-      dispatch(SET_CURRENT_TREE(current));
-      history.push(`/calendar/${id}`);
-      break;
-    }
-    case 2: {
-      const current = _.find(trees, (ele) => ele.id === id);
-      dispatch(SET_CURRENT_TREE(current));
-      history.push(`/tree-management/${id}`);
-      break;
-    }
-    case 3: {
-      swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this tree!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      }).then((willDelete) => {
-        if (willDelete) {
-          dispatch(deleteTree(id));
-        }
-      });
-      break;
-    }
+      case 0: {
+        history.push(`/custom-tree/${id}`);
+        break;
+      }
+      case 1: {
+        const current = _.find(trees, (ele) => ele.id === id);
+        dispatch(SET_CURRENT_TREE(current));
+        history.push(`/calendar/${id}`);
+        break;
+      }
+      case 2: {
+        const current = _.find(trees, (ele) => ele.id === id);
+        dispatch(SET_CURRENT_TREE(current));
+        history.push(`/tree-management/${id}`);
+        break;
+      }
+      case 3: {
+        swal({
+          title: "Are you sure?",
+          text: "Once deleted, you will not be able to recover this tree!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            dispatch(deleteTree(id));
+          }
+        });
+        break;
+      }
     }
   };
 
@@ -142,7 +143,16 @@ export default function TreeItem({
     <Card className={classes.root}>
       <Grid container alignItems="center">
         {/* ava + info */}
-        <Grid item lg={10} xs={11} container alignItems="center" className={classes.gridTree}>
+        <Grid
+          item
+          lg={10}
+          sm={11}
+          xs={10}
+          container
+          alignItems="center"
+          className={classes.gridTree}
+          // style={{ backgroundColor: "green" }}
+        >
           {/* <img src={logo} alt="family avatar" className={classes.imgFamily} /> */}
 
           {/* name - contributors - updatedAt */}
@@ -153,9 +163,18 @@ export default function TreeItem({
             justify="space-between"
             alignItems="center"
             className={classes.gridInfo}
+            // style={{ backgroundColor: "aqua" }}
           >
             {/* family name */}
-            <Grid item xl={3} lg={3} md={5} sm={10}>
+            <Grid
+              item
+              xl={3}
+              lg={3}
+              md={5}
+              sm={10}
+              xs={12}
+              // style={{ backgroundColor: "red" }}
+            >
               <Typography className={classes.typoName}>
                 <strong>{name}</strong>
               </Typography>
@@ -169,9 +188,11 @@ export default function TreeItem({
               md
               // sm={10}
               sm={6}
+              xs={12}
               container
               alignItems="center"
               className={classes.gridAvatarGroup}
+              // style={{ backgroundColor: "grey" }}
             >
               <Hidden mdDown>
                 <Typography>Contributed by </Typography>
@@ -196,7 +217,16 @@ export default function TreeItem({
             </Grid>
 
             {/* updatedAt */}
-            <Grid item xl={2} lg={3} md sm={6} className={classes.gridUpdatedAt}>
+            <Grid
+              item
+              xl={2}
+              lg={3}
+              md
+              sm={6}
+              xs={12}
+              className={classes.gridUpdatedAt}
+              // style={{ backgroundColor: "blue" }}
+            >
               <WatchLaterIcon className={classes.iconTime} />
               <Typography className={classes.typoUpdatedAt}>
                 {moment(updatedAt).format("YYYY-MM-DD") || "No update"}
@@ -212,10 +242,11 @@ export default function TreeItem({
           lg={2}
           md={1}
           sm={1}
-          xs={1}
+          xs={2}
           container
           justify="flex-end"
           className={classes.gridActions}
+          // style={{ backgroundColor: "yellow" }}
         >
           <Hidden mdDown>
             <NavLink to={`/custom-tree/${id}`} className={classes.actionBtn}>

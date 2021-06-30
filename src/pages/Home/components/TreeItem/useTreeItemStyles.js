@@ -13,6 +13,9 @@ const useTreeItemStyles = makeStyles((theme) => ({
       transform: "scale(1.01) ",
       boxShadow: "0px 4px 4px 2px rgb(123,123,123,0.4)",
     },
+    [theme.breakpoints.down("md")]: {
+      padding: 8,
+    },
   },
 
   // ava + info
