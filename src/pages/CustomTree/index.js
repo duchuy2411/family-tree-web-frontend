@@ -28,6 +28,7 @@ import CONSTANTS from "../../utils/const";
 import Adapter from "../../utils/adapter";
 import UtilDiagram from "./utilDiagram";
 import Permission from "../../utils/permission";
+import config from "../../configs/localStorageKeys";
 // custom components
 import SearchBox from "../../components/Search/Search";
 import CardMember from "./components/CardMember/CardMember";
@@ -576,6 +577,7 @@ export default function CustomTreePage() {
   }
 
   const contextHandler = ($, myDiagram) => {
+    if (!Permission.havePermissionAsEditor(id) && !Permission.havePermissionAsOwner(id)) return false;
     return $(
       go.Adornment,
       "Vertical",
@@ -757,7 +759,6 @@ export default function CustomTreePage() {
     };
     Adapter.editNode(diagram, modelUpdate, nodeSelect.key);
     const formatForm = Adapter.toFormAPI(modelUpdate);
-    delete formatForm.gender;
     if (formatForm.imageUrl === CONSTANTS.sourceDefaultImg) delete formatForm.imageUrl;
     const response = await dispatch(updatePerson(nodeSelect.id, formatForm));
     if (response.status === 200) {

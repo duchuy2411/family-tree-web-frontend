@@ -1,12 +1,17 @@
 import { find, filter, map, get } from "lodash";
-
+import config from "../configs/localStorageKeys";
 class Permission {
   havePermission(listTree, idTree, idUser) {
     if (find(listTree, (ele) => ele.id === idTree)) return true;
     return false;
   }
 
-  havePermissionAsOwner(listTree, idTree, idUser) {
+  havePermissionAsOwner(idTree) {
+    const listTree = JSON.parse(localStorage.getItem("listPermission"));
+    const getUser = JSON.parse(localStorage.getItem(`${config.AUTH}`));
+    const idUser = get(getUser, "user.id");
+    if (!listTree || !idUser) return false;
+
     const tree = find(listTree, (ele) => `${ele.id}` === `${idTree}`);
     if (!tree) return false;
     const owner = get(tree, "owner");
@@ -15,21 +20,30 @@ class Permission {
     return false;
   }
 
-  havePermissionAsEditor(listTree, idTree, idUser) {
-    const tree = find(listTree, (ele) => ele.id === idTree);
+  havePermissionAsEditor(idTree) {
+    const listTree = JSON.parse(localStorage.getItem("listPermission"));
+    const getUser = JSON.parse(localStorage.getItem(`${config.AUTH}`));
+    const idUser = get(getUser, "user.id");
+    if (!listTree || !idUser) return false;
+
+    const tree = find(listTree, (ele) => `${ele.id}` === `${idTree}`);
     if (!tree) return false;
     const editors = get(tree, "editors");
-    const findUser = find(editors, (ele) => ele.id === idUser);
+    const findUser = find(editors, (ele) => `${ele.id}` === `${idUser}`);
     if (findUser) return true;
     return false;
   }
 
   mapPermission(listTree) {
-    localStorage.setItem("listPermission", listTree);
+    localStorage.setItem("listPermission", JSON.stringify(listTree));
+  }
+
+  havePermissionRoles(idTree) {
+    return this.havePermissionAsOwner(idTree) || this.havePermissionAsEditor(idTree);
   }
 
   checkPermission(idTree) {
-    const data = localStorage.getItem("listPermission");
+    const data = JSON.parse(localStorage.getItem("listPermission"));
     console.log("data", data);
     const findData = find(data, (ele) => `${ele.id}` === `${idTree}`);
     if (!findData) return false;

@@ -66,7 +66,7 @@ export const slice = createSlice({
       return { ...state, isCreating: true };
     },
     CREATE_MEMORY_SUCCESS: (state, action) => {
-      return { ...state, isCreating: false, arrMemory: [...state.arrMemory, action.payload] };
+      return { ...state, isCreating: false, arrMemory: [action.payload, ...state.arrMemory] };
     },
     CREATE_MEMORY_FAIL: (state) => {
       return { ...state, isCreating: false };

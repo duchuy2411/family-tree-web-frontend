@@ -10,6 +10,7 @@ import TreeInformation from "./TreeInformation";
 import Contribute from "./Contribute";
 import ListMember from "./ListMember";
 import utilManagement from "./utilManagement";
+import Permission from "../../utils/permission";
 
 import {
   updateTree,
