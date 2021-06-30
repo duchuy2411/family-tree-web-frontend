@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import * as go from "gojs";
 import _ from "lodash";
 import moment from "moment";
+import { useSnackbar } from "notistack";
 import GenogramLayout from "../../layouts/GenogramLayout/GenogramLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -45,6 +46,7 @@ const { SPOUSE, MOTHER, FATHER, CHILDREN } = CONSTANTS;
 // sample data
 export default function CustomTreePage() {
   const classes = useCustomTreePageStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const nodeDataArrayRedux = useSelector(selectNodeDataArrayRedux);
   const { GENDER, RELATIONSHIP } = CONSTANTS;
@@ -663,7 +665,7 @@ export default function CustomTreePage() {
     const spouses = Adapter.getMarriageByArray(arrNode, nodedata.key);
     if (spouses.length === 1 && spouses[0].type !== CONSTANTS.TYPE.UNDEFINED) {
       rel.push(CHILDREN);
-    };
+    }
     // if (spouses.length >= 1) {
     //   const getLengthSpouse = Adapter.getMarriageByArray(arrNode, spouses[0].key);
     //   if (getLengthSpouse.length === 1) rel.push(SPOUSE); // Spouse have only 1 spouse
@@ -672,7 +674,7 @@ export default function CustomTreePage() {
     // }
     if (spouses.length === 0) {
       rel.push(SPOUSE);
-    };
+    }
     // For father
     const getFather = Adapter.getFather(arrNode, nodedata);
     if (!getFather) rel.push(FATHER);
@@ -759,10 +761,13 @@ export default function CustomTreePage() {
     if (formatForm.imageUrl === CONSTANTS.sourceDefaultImg) delete formatForm.imageUrl;
     const response = await dispatch(updatePerson(nodeSelect.id, formatForm));
     if (response.status === 200) {
-      alert(response.data.message);
+      // alert(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: "success" });
       diagram.model.commitTransaction("updatePerson");
     } else {
-      alert(response.data);
+      // alert(response.data);
+      enqueueSnackbar(response.data, { variant: "success" });
+
       diagram.model.rollbackTransaction("updatePerson");
     }
     setShowModal({ ...showModal, show: false, mode: "", step: 0 });
@@ -789,7 +794,14 @@ export default function CustomTreePage() {
           : 2;
     // Prepare for Call API.
     if (getCaseAdd === 0 || getCaseAdd === 1) {
-      alert("Can not add children for this node! Please add spouse or delete link relate this node!");
+      // alert(
+      //   "Can not add children for this node! Please add spouse or delete link relate this node!"
+      // );
+      enqueueSnackbar(
+        "Can not add children for this node! Please add spouse or delete link relate this node!",
+        { variant: "success" }
+      );
+
       diagram.model.rollbackTransaction("addChild");
       return;
     }
@@ -853,7 +865,9 @@ export default function CustomTreePage() {
       tempDiagram.current = diagram;
       return getForm;
     } else {
-      alert(result.message);
+      // alert(result.message);
+      enqueueSnackbar(result.message, { variant: "success" });
+
       diagram.model.rollbackTransaction("addChild");
       return false;
     }
@@ -888,10 +902,12 @@ export default function CustomTreePage() {
         getForm.id
       );
       diagram.model.commitTransaction("addNode");
-      alert(rs.data.message);
+      // alert(rs.data.message);
+      enqueueSnackbar(rs.data.message, { variant: "success" });
     } else {
       diagram.model.rollbackTransaction("addNode");
-      alert(rs.message);
+      // alert(rs.message);
+      enqueueSnackbar(rs.message, { variant: "error" });
     }
     tempDiagram.current = diagram;
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
@@ -957,7 +973,9 @@ export default function CustomTreePage() {
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         return formatSpouse;
       } else {
-        alert(result.message);
+        // alert(result.message);
+        enqueueSnackbar(result.message);
+
         tempDiagram.current = diagram;
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         diagram.model.rollbackTransaction("addParent");
@@ -974,7 +992,9 @@ export default function CustomTreePage() {
         return response.data;
       } else {
         diagram.model.rollbackTransaction("addParent");
-        alert(response.message);
+        // alert(response.message);
+        enqueueSnackbar(response.message);
+
         tempDiagram.current = diagram;
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         return false;
@@ -986,7 +1006,9 @@ export default function CustomTreePage() {
     const node = button.part.adornedPart.data;
     const arrayNode = Adapter.getWithoutLinkLabel([...diagram.model.nodeDataArray]);
     if (arrayNode.length === 1) {
-      alert("Can not delete root!");
+      // alert("Can not delete root!");
+      enqueueSnackbar("Can not delete root!", { variant: "warning" });
+
       return;
     }
     if (conditionDelete1(arrayNode, node)) {
@@ -996,7 +1018,8 @@ export default function CustomTreePage() {
     } else if (conditionDelete3(arrayNode, node)) {
       deleteForNodeHaveSpouse(node, arrayNode, diagram);
     } else {
-      alert("Can not delete this node!!");
+      // alert("Can not delete this node!!");
+      enqueueSnackbar("Can not delete this node!!", { variant: "warning" });
     }
     setNodeDataArray([...diagram.model.nodeDataArray]);
   };
@@ -1029,10 +1052,12 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(node.id));
     if (response.status === 200) {
       diagram.model.commitTransaction("deleteForNodeNoSpouseNoChilds");
-      alert(response.data.message);
+      // alert(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: "success" });
     } else {
       diagram.model.rollbackTransaction("deleteForNodeNoSpouseNoChilds");
-      alert(response.message);
+      // alert(response.message);
+      enqueueSnackbar(response.message, { variant: "error" });
     }
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
     tempDiagram.current = diagram;
@@ -1057,9 +1082,12 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(id));
     if (response.status === 200 || response) {
       diagram.model.commitTransaction("deleteForNodeHaveSpouse");
-      alert(response.data.message);
+      // alert(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: "success" });
     } else {
-      alert(response.message);
+      // alert(response.message);
+      enqueueSnackbar(response.message, { variant: "error" });
+
       diagram.model.rollbackTransaction("deleteForNodeHaveSpouse");
     }
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
@@ -1083,10 +1111,13 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(node.id));
     if (response.status === 200) {
       diagram.model.commitTransaction("deleteForNodeNoSpouseNoParentsHaveAChild");
-      alert(response.data.message);
+      // alert(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: "success" });
     } else {
       diagram.model.rollbackTransaction("deleteForNodeNoSpouseNoParentsHaveAChild");
-      alert(response.message);
+      // alert(response.message);
+      enqueueSnackbar(response.message, { variant: "error" });
+
       return false;
     }
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
@@ -1182,7 +1213,7 @@ export default function CustomTreePage() {
     const diagram = tempDiagram.current;
     const arrNode = diagram.model.nodeDataArray;
     const arrSelect = Adapter.getMarriageByArray(arrNode, nodeSelect.key);
-    const res = _.filter(arrSelect, ele => ele.type !== CONSTANTS.TYPE.UNDEFINED).map((ele) => {
+    const res = _.filter(arrSelect, (ele) => ele.type !== CONSTANTS.TYPE.UNDEFINED).map((ele) => {
       const getNodeSpouse = Adapter.getNode(arrNode, ele.key);
       return { label: getNodeSpouse.n, value: getNodeSpouse.key };
     });

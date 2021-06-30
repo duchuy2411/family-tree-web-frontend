@@ -28,7 +28,10 @@ import {
   getTreesPublic,
 } from "./homeSlice";
 
+import { useSnackbar } from "notistack";
+
 export default function HomePage() {
+  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const { firstName, midName, lastName } = useSelector(selectUser);
   const name = `${firstName ? firstName : ""} ${midName ? midName : ""} ${
@@ -106,7 +109,9 @@ export default function HomePage() {
   const handleSave = async () => {
     const response = await dispatch(createTree(form));
     if (response.data) {
-      alert(response.message);
+      // alert(response.message);
+      enqueueSnackbar(response.message, { variant: "success" });
+
       history.push(`/custom-tree/${response.data.id}`);
     }
   };
