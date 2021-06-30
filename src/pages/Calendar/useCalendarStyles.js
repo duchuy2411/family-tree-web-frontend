@@ -45,5 +45,9 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   textError: {
     color: "red",
   },
+  selectedMode: {
+    backgroundColor: "white",
+    color: "black",
+  },
 }));
 export default useCustomTreePageStyles;

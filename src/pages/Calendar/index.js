@@ -225,7 +225,7 @@ export default function CalendarPage() {
   return (
     <Container maxWidth="xl" disableGutters className={classes.container}>
       <Grid container direction="row">
-        <LeftMenu curTree={curTree} listTree={listTree} handleChangeMode={handleChangeMode} />
+        <LeftMenu curTree={curTree} select={select} listTree={listTree} handleChangeMode={handleChangeMode} />
         {select === "Calendar" && (
           <Schedule
             event={event}
