@@ -1,5 +1,5 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link as RRDLink, useHistory } from "react-router-dom";
 import classNames from "classnames";
 
@@ -12,8 +12,9 @@ import logo from "assets/img/tree.png";
 
 import useSignupPageStyles from "./useSignupPageStyles";
 import api from "../../utils/api";
-import { authActions } from "../../store/authSlice";
+import { authActions, selectIsLoading } from "../../store/authSlice";
 import colors from "assets/colorPalette";
+import LoadingInside from "components/LoadingInside";
 
 export default function SignUpPage() {
   const classes = useSignupPageStyles();
@@ -22,6 +23,9 @@ export default function SignUpPage() {
   const passwordRef = React.useRef();
   const confirmPasswordRef = React.useRef();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  // const isLoading = useSelector(selectIsLoading);
 
   //
   const history = useHistory();
@@ -39,19 +43,27 @@ export default function SignUpPage() {
     };
 
     try {
+      setIsLoading(true);
       const response = await api.signup(userToRegister);
       // eslint-disable-next-line no-unused-vars
       const { user, accessToken, refreshToken } = response.data.data;
       // eslint-disable-next-line no-unused-vars
       const { message, errors } = response.data;
+
+      setError(errors);
+
       if (user) {
-        history.push("/");
+        history.push("/login");
+        setError("");
       } else {
         // do something
       }
       dispatch(authActions.setIsLoading(false)); // disable loading
+      setIsLoading(false);
     } catch (e) {
       //console.log("Error in handleSignUp: ", e);
+      setError(e.response.errors);
+      setIsLoading(false);
     }
   };
 
@@ -177,9 +189,14 @@ export default function SignUpPage() {
               variant="contained"
               fullWidth
               onClick={handleSignUp}
+              disabled={
+                usernameRef?.current?.value === "" ||
+                passwordRef?.current?.value === "" ||
+                passwordRef?.current?.value !== confirmPasswordRef?.current?.value
+              }
               className={classNames(classes.withSpace, classes.btnLogin)}
             >
-              Sign Up
+              <LoadingInside isLoading={isLoading}>Sign Up</LoadingInside>
             </Button>
           </Grid>
           <div className={classes.link}>
