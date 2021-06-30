@@ -46,6 +46,7 @@ const CardList = (props) => {
     return name.trim() !== "" ? name : "Unknow name";
   };
 
+  const avtUrl = JSON.parse(localStorage.getItem("auth"));
   return (
     <React.Fragment className="scrollabel">
       {creating && (
@@ -58,7 +59,7 @@ const CardList = (props) => {
       {_.reverse([...arrMemory]).map((ele) => (
         <Grid key={ele.id} container xs={12} className="container-card list">
           <Grid item xs={1} className="avatar-card">
-            <img src={_.get(ele, "creator.avatarUrl")} />
+            <img src={_.get(ele, "creator.avatarUrl") || _.get(avtUrl, "user.avatarUrl")} />
           </Grid>
           <Grid item xs={9} className="info-card">
             <div className="name-card">{getName(_.get(ele, "creator"))}</div>
