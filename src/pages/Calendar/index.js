@@ -86,7 +86,7 @@ export default function CalendarPage() {
     setForm({
       notes: "",
       startDate: moment(e.start).format("YYYY-MM-DD"),
-      endDate: moment(e.end),
+      endDate: moment(e.end).add(1, "hours"),
       loop: 0,
     });
     setShow({ isShow: true, mode: "new" });

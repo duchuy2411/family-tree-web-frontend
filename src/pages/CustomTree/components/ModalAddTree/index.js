@@ -260,7 +260,7 @@ function ModalUpdate(props) {
                     className={classes.inputFields}
                     disabled={showModal.mode === CONSTANTS.MODE_FORM.UPDATE}
                   >
-                    {gender.map((option) => (
+                    {gender && gender.length > 0 && gender.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>
