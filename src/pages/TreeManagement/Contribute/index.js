@@ -49,7 +49,7 @@ const Contribute = (props) => {
             </Card>
           </Grid>
         ))}
-      {Permission.havePermissionAsOwner(listTrees, id, currentUser.id) && (
+      {Permission.havePermissionAsOwner(id) && (
         <Grid item xs={2} className={classes.padding}>
           <Card className={classes.cardContribute}>
             <Grid xs={12} className={classes.borderTrike} onClick={handleClickEditor}>
