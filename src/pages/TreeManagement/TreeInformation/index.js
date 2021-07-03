@@ -61,18 +61,20 @@ const TreeInformation = (props) => {
           <Grid item xs={8}>
             <Typography>Public mode: {currentTree.publicMode ? "Public" : "Private"}</Typography>
           </Grid>
-          <Grid item xs={4}>
-            <Button className={classes.btnSecond} onClick={handleShow}>
-              Edit tree
-            </Button>
-            <Button
-              className={classes.btnPrimary}
-              onClick={handleDelete}
-              style={{ marginLeft: "10px" }}
-            >
-              Delete tree
-            </Button>
-          </Grid>
+          {Permission.havePermissionAsOwner(id) && (
+            <Grid item xs={4}>
+              <Button className={classes.btnSecond} onClick={handleShow}>
+                Edit tree
+              </Button>
+              <Button
+                className={classes.btnPrimary}
+                onClick={handleDelete}
+                style={{ marginLeft: "10px" }}
+              >
+                Delete tree
+              </Button>
+            </Grid>)
+          }
         </Grid>
       </Grid>
       <Modal

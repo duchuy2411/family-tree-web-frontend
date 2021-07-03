@@ -90,7 +90,7 @@ export default function TreeItem({
   };
 
   const filterOption = (id, options) => {
-    if (Permission.havePermissionAsOwner(trees, id, _.get(currentUser, "id"))) {
+    if (Permission.havePermissionAsOwner(id)) {
       return options;
     }
     return _.filter(options, (ele) => ele !== "Delete Tree");

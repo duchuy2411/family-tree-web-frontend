@@ -48,7 +48,7 @@ import {
   selectNotifications,
 } from "./notiSlice";
 
-import { selectTree, selectTrees } from "../../../../pages/Home/homeSlice";
+import { selectTree, selectTrees, getTreeList } from "../../../../pages/Home/homeSlice";
 
 import useAppBarStyles from "./styles";
 import { useSnackbar } from "notistack";
@@ -71,6 +71,7 @@ const MenuAppBar = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
   const notifications = useSelector(selectNotifications);
+  const listTree = useSelector(selectTrees);
   // const notiSliceMessage = useSelector(selectMessage);
   // const notiSliceError = useSelector(selectError);
   const notiSliceIsLoading = useSelector(selectIsLoading);
@@ -82,6 +83,10 @@ const MenuAppBar = () => {
 
   const id = _.get(useSelector(selectTree), "id");
   const firstId = _.get(useSelector(selectTrees), "0.id");
+
+  useEffect(() => {
+    if (!listTree || listTree === []) dispatch(getTreeList());
+  }, []);
 
   const handleClickNotifications = (event) => {
     setNotiAnchorEl(event.target);

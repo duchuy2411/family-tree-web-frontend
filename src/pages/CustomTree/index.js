@@ -28,6 +28,7 @@ import CONSTANTS from "../../utils/const";
 import Adapter from "../../utils/adapter";
 import UtilDiagram from "./utilDiagram";
 import Permission from "../../utils/permission";
+import config from "../../configs/localStorageKeys";
 // custom components
 import SearchBox from "../../components/Search/Search";
 import CardMember from "./components/CardMember/CardMember";
@@ -147,6 +148,7 @@ export default function CustomTreePage() {
           note: sel.data.note,
           imageUrl: sel.data.imageUrl,
         });
+        // console.log("sel.data", sel.data);
       } else {
         // console.log("sel");
       }
@@ -302,7 +304,7 @@ export default function CustomTreePage() {
       initialAutoScale: go.Diagram.Uniform,
       initialScale: 2,
       "undoManager.isEnabled": true,
-      "draggingTool.isEnabled": true,
+      "draggingTool.isEnabled": false,
       // when a node is selected, draw a big yellow circle behind it
       nodeSelectionAdornmentTemplate: $(
         go.Adornment,
@@ -530,7 +532,7 @@ export default function CustomTreePage() {
               stroke: "black",
               font: "14px arial",
               alignment: go.Spot.Center,
-            },
+            }, 
             new go.Binding("text", "dod")
           )
         ),
@@ -576,6 +578,7 @@ export default function CustomTreePage() {
   }
 
   const contextHandler = ($, myDiagram) => {
+    if (!Permission.havePermissionAsEditor(id) && !Permission.havePermissionAsOwner(id)) return false;
     return $(
       go.Adornment,
       "Vertical",
@@ -663,6 +666,8 @@ export default function CustomTreePage() {
     const rel = [];
     // For spouse
     const spouses = Adapter.getMarriageByArray(arrNode, nodedata.key);
+    const oneRoot = !_.get(spouses[0], "f") && !_.get(spouses[0], "m");
+
     if (spouses.length === 1 && spouses[0].type !== CONSTANTS.TYPE.UNDEFINED) {
       rel.push(CHILDREN);
     }
@@ -677,9 +682,11 @@ export default function CustomTreePage() {
     }
     // For father
     const getFather = Adapter.getFather(arrNode, nodedata);
-    if (!getFather) rel.push(FATHER);
     const getMother = Adapter.getMother(arrNode, nodedata);
-    if (!getMother) rel.push(MOTHER);
+    if (oneRoot) {
+      if (!getFather) rel.push(FATHER);
+      if (!getMother) rel.push(MOTHER);
+    }
     return rel;
   };
 
@@ -757,7 +764,6 @@ export default function CustomTreePage() {
     };
     Adapter.editNode(diagram, modelUpdate, nodeSelect.key);
     const formatForm = Adapter.toFormAPI(modelUpdate);
-    delete formatForm.gender;
     if (formatForm.imageUrl === CONSTANTS.sourceDefaultImg) delete formatForm.imageUrl;
     const response = await dispatch(updatePerson(nodeSelect.id, formatForm));
     if (response.status === 200) {
@@ -1147,9 +1153,15 @@ export default function CustomTreePage() {
   const conditionDelete3 = (arr, node) => {
     // have 1 spouse, no parent
     const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+    // console.log("==getMarriage==:", getMarriage);
     const noParents = !Adapter.getFather(arr, node) && !Adapter.getMother(arr, node);
+    const getChilds = Adapter.getChilds(arr, node);
     return (
-      getMarriage.length === 1 && getMarriage[0].type !== CONSTANTS.TYPE.UNDEFINED && noParents
+      getMarriage.length === 1
+      && getMarriage[0] !== undefined
+      && getMarriage[0].type !== CONSTANTS.TYPE.UNDEFINED
+      && noParents
+      && getChilds.length === 0
     );
   };
 

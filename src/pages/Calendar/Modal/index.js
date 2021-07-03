@@ -88,7 +88,7 @@ function Modal(props) {
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                  label="Loop"
+                  label="Offset reminder"
                   type="text"
                   variant="outlined"
                   select

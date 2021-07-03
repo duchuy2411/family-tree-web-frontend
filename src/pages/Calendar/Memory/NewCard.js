@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Grid, TextareaAutosize, TextField } from "@material-ui/core";
 import { selectUser } from "../../../store/authSlice";
 import swal from "sweetalert";
-
+import { useSnackbar } from "notistack";
 import { uploadArrayImage, createMemory, CREATING_SPINNER } from "../calendarSlice";
 import moment from "moment";
 
@@ -15,6 +15,7 @@ const NewCard = () =>
   // const {
   // } = props;
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
@@ -48,6 +49,10 @@ const NewCard = () =>
   };
 
   const handleSubmit = async () => {
+    if (!form.memoryDate) {
+      enqueueSnackbar("Please select memory date!", { variant: "warning" });
+      return;
+    }
     var formData = new FormData();
     _.forEach(images, (ele) => {
       formData.append("Files", ele);
