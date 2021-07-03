@@ -7,6 +7,9 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 
 import colors from "../../../../assets/colorPalette";
 
+import Permission from "../../../../utils/permission";
+import { useParams } from "react-router-dom";
+
 const StyledToggleButtonGroup = withStyles((theme) => ({
   grouped: {
     border: "none",
@@ -59,6 +62,7 @@ const StyledToggleButton = withStyles((theme) => ({
 
 export default function CustomToggleButton(props) {
   const { mode, handleExport, handleChangeMode, handleDownloadImage } = props;
+  const { id } = useParams();
   return (
     <div>
       <StyledToggleButtonGroup
@@ -70,15 +74,17 @@ export default function CustomToggleButton(props) {
       >
         {mode === "preview" && (
           <div className="absolute-btn-download">
-            <StyledToggleButton
-              value="edit"
-              aria-label="edit tree"
-              onClick={handleExport}
-              style={{ marginRight: "10px" }}
-            >
-              Export to JSON
-              <i className="fas fa-download" />
-            </StyledToggleButton>
+            {Permission.havePermissionRoles(id) && (
+              <StyledToggleButton
+                value="edit"
+                aria-label="edit tree"
+                onClick={handleExport}
+                style={{ marginRight: "10px" }}
+              >
+                Export to JSON
+                <i className="fas fa-download" />
+              </StyledToggleButton>)
+            }
             <StyledToggleButton value="edit" aria-label="edit tree" onClick={handleDownloadImage}>
               Download Tree Image
               <i className="fas fa-download" />

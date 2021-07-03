@@ -10,13 +10,14 @@ import {
   FormControlLabel,
   Checkbox,
   TextareaAutosize,
+  CircularProgress,
 } from "@material-ui/core";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
-import { useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
 import PhotoUpload from "./PhotoUpload";
+import Loading from "../../../../components/LoadingInside";
 import CONSTANTS from "../../../../utils/const";
-import { uploadImage } from "../../customTreeSlice";
+import { uploadImage, isLoading } from "../../customTreeSlice";
 import "./index.css";
 
 // const fs = require("fs")
@@ -120,7 +121,7 @@ function ModalUpdate(props) {
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [error, setError] = useState();
   const classes = useStyles();
-
+  const saveLoading = useSelector(isLoading);
   async function handleChange(e) {
     setFile(e.target.files[0]);
     setImagePreviewUrl(URL.createObjectURL(e.target.files[0]));
@@ -259,7 +260,7 @@ function ModalUpdate(props) {
                     className={classes.inputFields}
                     disabled={showModal.mode === CONSTANTS.MODE_FORM.UPDATE}
                   >
-                    {gender.map((option) => (
+                    {gender && gender.length > 0 && gender.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>
@@ -412,7 +413,8 @@ function ModalUpdate(props) {
                   onClick={handleClickSave}
                   style={{ marginLeft: "10px" }}
                 >
-                  Save
+                  {"Save"}
+                  {saveLoading && <CircularProgress style={{height: "20px"}} />}
                 </Button>
               ) : (
                 <Button
@@ -421,7 +423,8 @@ function ModalUpdate(props) {
                   onClick={handleClickSave}
                   style={{ marginLeft: "10px" }}
                 >
-                  Save
+                  {"Save"}
+                  {saveLoading && <CircularProgress style={{height: "20px"}} />}
                 </Button>
               )}
             </div>

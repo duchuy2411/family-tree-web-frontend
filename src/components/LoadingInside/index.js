@@ -6,7 +6,7 @@ export default function LoadingInside(props) {
   const { isLoading, children, indicatorSize = 24, ...rest } = props;
 
   return (
-    <div style={{ position: "relative" }} {...rest}>
+    <div style={{ position: "relative", flexGrow: 1 }} {...rest}>
       {children}
 
       {isLoading && (

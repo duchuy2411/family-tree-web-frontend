@@ -1,22 +1,24 @@
-import { makeStyles } from "@material-ui/core/styles";
+import { fade, makeStyles } from "@material-ui/core/styles";
+import colors from "assets/colorPalette";
 
 const useSignupPageStyles = makeStyles((theme) => ({
   root: {
-    padding: "0 15%",
+    // padding: "0 15vw",
     backgroundColor: "#F2E1DA",
   },
   wrapper: {
-    padding: theme.spacing(5, 0),
     height: "100vh",
-    // backgroundColor: "red",
+    maxWidth: theme.breakpoints.width("lg"),
+    padding: 24,
+    margin: "0 auto",
   },
   leftSide: {
     // backgroundColor: "red",
   },
   paperLeftSide: {
     backgroundColor: "#905842",
-    height: "600px",
-    width: "600px",
+    height: "60vh",
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -30,8 +32,12 @@ const useSignupPageStyles = makeStyles((theme) => ({
     color: "#fff",
     marginTop: theme.spacing(3),
   },
+  subText: {
+    marginBottom: 8,
+    color: colors.brown,
+  },
   rightSide: {
-    // backgroundColor: "green",
+    padding: 16,
   },
   withSpace: {
     margin: theme.spacing(1, 0),
@@ -40,19 +46,23 @@ const useSignupPageStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     borderRadius: 24,
     height: theme.spacing(5),
-    maxWidth: "550px",
     padding: theme.spacing(0, 2, 0, 2),
   },
   btnLogin: {
     color: "#905842",
     backgroundColor: "#fff",
+    "&:hover": {
+      backgroundColor: fade("#fff", 0.6),
+    },
     fontWeight: "bold",
     textDecoration: "none",
     marginBottom: theme.spacing(2),
     borderRadius: 24,
   },
-  passwordFields: {
-    maxWidth: "250px",
+  passwordFields: {},
+  gridItemPadding: {
+    paddingLeft: 8,
+    paddingRight: 8,
   },
   link: {
     textDecoration: "none",
@@ -63,7 +73,7 @@ const useSignupPageStyles = makeStyles((theme) => ({
     color: "#905842",
     marginBottom: theme.spacing(1),
     "&:hover": {
-      color: "#fff",
+      color: fade(colors.brown, 0.6),
     },
   },
 }));

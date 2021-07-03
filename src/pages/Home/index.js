@@ -7,15 +7,8 @@ import { createTree } from "../Slice";
 
 // MUI
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
-import {
-  Grid,
-  Paper,
-  Typography,
-  Hidden,
-  Button,
-  Tooltip,
-  LinearProgress,
-} from "@material-ui/core";
+import { Button, Tooltip, LinearProgress, Hidden } from "@material-ui/core";
+
 // components
 import SearchBox from "../../components/Search/Search";
 import CustomToggleButton from "./components/ToggleButton/CustomToggleButtons";
@@ -35,7 +28,10 @@ import {
   getTreesPublic,
 } from "./homeSlice";
 
+import { useSnackbar } from "notistack";
+
 export default function HomePage() {
+  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const { firstName, midName, lastName } = useSelector(selectUser);
   const name = `${firstName ? firstName : ""} ${midName ? midName : ""} ${
@@ -101,25 +97,21 @@ export default function HomePage() {
   };
 
   const handleChangeFormCreate = (e, label) => {
-    switch (label) {
-    case "name": {
+    if (label === "name") {
       setForm({ ...form, name: e.target.value });
-      break;
     }
-    case "description": {
+
+    if (label === "description") {
       setForm({ ...form, description: e.target.value });
-      break;
-    }
-    default: {
-      break;
-    }
     }
   };
 
   const handleSave = async () => {
     const response = await dispatch(createTree(form));
     if (response.data) {
-      alert(response.message);
+      // alert(response.message);
+      enqueueSnackbar(response.message, { variant: "success" });
+
       history.push(`/custom-tree/${response.data.id}`);
     }
   };
@@ -171,62 +163,78 @@ export default function HomePage() {
         />
       )}
       <div className={classes.wrapper}>
-        <Grid container spacing={3}>
-          <Grid item md={6} sm={12} xs={12}>
-            <Grid container justify="space-between" className={classes.grid9}>
-              <Grid item md={9} sm={9} xs container alignItems="center" className={classes.purple}>
-                <form className={classes.searchBox} onSubmit={handleSubmitSearch}>
-                  <SearchBox
-                    ariaLabel="Search for family"
-                    search={search}
-                    handleChangeSearch={handleChangeSearch}
+        <Hidden mdUp>
+          <div className={classes.btnNewTree}>
+            <form className={classes.searchForm} onSubmit={handleSubmitSearch}>
+              <SearchBox
+                ariaLabel="Search for family"
+                search={search}
+                handleChangeSearch={handleChangeSearch}
+                className={classes.searchBox}
+              />
+            </form>
+
+            <Tooltip title="Import file JSON">
+              <div>
+                <label htmlFor="importss" className={classes.customBtnImport}>
+                  <span className="fas fa-file-import"></span>
+                </label>
+                <form>
+                  <input
+                    id="importss"
+                    style={{ display: "none" }}
+                    type="file"
+                    name="ImportedFile"
+                    onChange={handleImport}
                   />
                 </form>
-              </Grid>
-            </Grid>
-          </Grid>
+              </div>
+            </Tooltip>
 
-          {/* Top right panel  */}
+            <Button className={classes.customBtnDashed} onClick={() => handleShow(true)}>
+              <span className="fas fa-plus"></span>
+            </Button>
+          </div>
+        </Hidden>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <CustomToggleButton mode={mode} handleChangeMode={handleChangeMode} />
+
           <Hidden smDown>
-            <Grid item md={6}>
-              <Paper className={classes.welcomePanel} elevation={9}>
-                <div className={classes.welcomeText}>
-                  <Typography
-                    component="p"
-                    className={classes.bigText}
-                  >{`Hello ${name}`}</Typography>
-                  <Typography variant="h6" component="p">
-                    {"Let's create a new tree"}
-                  </Typography>
+            <div className={classes.btnNewTree}>
+              <form className={classes.searchForm} onSubmit={handleSubmitSearch}>
+                <SearchBox
+                  ariaLabel="Search for family"
+                  search={search}
+                  handleChangeSearch={handleChangeSearch}
+                  className={classes.searchBox}
+                />
+              </form>
+
+              <Tooltip title="Import file JSON">
+                <div>
+                  <label htmlFor="importss" className={classes.customBtnImport}>
+                    <span className="fas fa-file-import"></span>
+                  </label>
+                  <form>
+                    <input
+                      id="importss"
+                      style={{ display: "none" }}
+                      type="file"
+                      name="ImportedFile"
+                      onChange={handleImport}
+                    />
+                  </form>
                 </div>
-                <Grid item md={2}></Grid>
-                <Grid item md={2} className={classes.btnNewTree}>
-                  <Tooltip title="Import file JSON">
-                    <div>
-                      <label htmlFor="importss" className={classes.customBtnImport}>
-                        <span className="fas fa-file-import"></span>
-                      </label>
-                      <form>
-                        <input
-                          id="importss"
-                          style={{ display: "none" }}
-                          type="file"
-                          name="ImportedFile"
-                          onChange={handleImport}
-                        />
-                      </form>
-                    </div>
-                  </Tooltip>
-                </Grid>
-                <Grid item md={2} className={classes.btnNewTree}>
-                  <Button className={classes.customBtnDashed} onClick={() => handleShow(true)}>
-                    <span className="fas fa-plus"></span>
-                  </Button>
-                </Grid>
-              </Paper>
-            </Grid>
+              </Tooltip>
+
+              <Button className={classes.customBtnDashed} onClick={() => handleShow(true)}>
+                <span className="fas fa-plus"></span>
+              </Button>
+            </div>
           </Hidden>
-        </Grid>
+        </div>
+
         {fetching ? (
           <div className={classes.groupProgress}>
             <LinearProgress className={classes.progress} />
@@ -234,10 +242,7 @@ export default function HomePage() {
             <LinearProgress className={classes.progress} />
           </div>
         ) : (
-          <div className={classes.treeList}>
-            <CustomToggleButton mode={mode} handleChangeMode={handleChangeMode} />
-            {familyTreeList}
-          </div>
+          <div className={classes.treeList}>{familyTreeList}</div>
         )}
       </div>
     </MuiThemeProvider>

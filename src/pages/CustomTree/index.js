@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import * as go from "gojs";
 import _ from "lodash";
 import moment from "moment";
+import { useSnackbar } from "notistack";
 import GenogramLayout from "../../layouts/GenogramLayout/GenogramLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -27,6 +28,7 @@ import CONSTANTS from "../../utils/const";
 import Adapter from "../../utils/adapter";
 import UtilDiagram from "./utilDiagram";
 import Permission from "../../utils/permission";
+import config from "../../configs/localStorageKeys";
 // custom components
 import SearchBox from "../../components/Search/Search";
 import CardMember from "./components/CardMember/CardMember";
@@ -45,6 +47,7 @@ const { SPOUSE, MOTHER, FATHER, CHILDREN } = CONSTANTS;
 // sample data
 export default function CustomTreePage() {
   const classes = useCustomTreePageStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const nodeDataArrayRedux = useSelector(selectNodeDataArrayRedux);
   const { GENDER, RELATIONSHIP } = CONSTANTS;
@@ -145,6 +148,7 @@ export default function CustomTreePage() {
           note: sel.data.note,
           imageUrl: sel.data.imageUrl,
         });
+        // console.log("sel.data", sel.data);
       } else {
         // console.log("sel");
       }
@@ -300,7 +304,7 @@ export default function CustomTreePage() {
       initialAutoScale: go.Diagram.Uniform,
       initialScale: 2,
       "undoManager.isEnabled": true,
-      "draggingTool.isEnabled": true,
+      "draggingTool.isEnabled": false,
       // when a node is selected, draw a big yellow circle behind it
       nodeSelectionAdornmentTemplate: $(
         go.Adornment,
@@ -528,7 +532,7 @@ export default function CustomTreePage() {
               stroke: "black",
               font: "14px arial",
               alignment: go.Spot.Center,
-            },
+            }, 
             new go.Binding("text", "dod")
           )
         ),
@@ -574,6 +578,7 @@ export default function CustomTreePage() {
   }
 
   const contextHandler = ($, myDiagram) => {
+    if (!Permission.havePermissionAsEditor(id) && !Permission.havePermissionAsOwner(id)) return false;
     return $(
       go.Adornment,
       "Vertical",
@@ -661,9 +666,11 @@ export default function CustomTreePage() {
     const rel = [];
     // For spouse
     const spouses = Adapter.getMarriageByArray(arrNode, nodedata.key);
+    const oneRoot = !_.get(spouses[0], "f") && !_.get(spouses[0], "m");
+
     if (spouses.length === 1 && spouses[0].type !== CONSTANTS.TYPE.UNDEFINED) {
       rel.push(CHILDREN);
-    };
+    }
     // if (spouses.length >= 1) {
     //   const getLengthSpouse = Adapter.getMarriageByArray(arrNode, spouses[0].key);
     //   if (getLengthSpouse.length === 1) rel.push(SPOUSE); // Spouse have only 1 spouse
@@ -672,12 +679,14 @@ export default function CustomTreePage() {
     // }
     if (spouses.length === 0) {
       rel.push(SPOUSE);
-    };
+    }
     // For father
     const getFather = Adapter.getFather(arrNode, nodedata);
-    if (!getFather) rel.push(FATHER);
     const getMother = Adapter.getMother(arrNode, nodedata);
-    if (!getMother) rel.push(MOTHER);
+    if (oneRoot) {
+      if (!getFather) rel.push(FATHER);
+      if (!getMother) rel.push(MOTHER);
+    }
     return rel;
   };
 
@@ -693,23 +702,23 @@ export default function CustomTreePage() {
     setShowModal(false);
   };
 
-  const handleSave = (imageUrl) => {
+  const handleSave = async (imageUrl) => {
     const diagram = tempDiagram.current;
     switch (showModal.select) {
     case CONSTANTS.SPOUSE: {
-      processAddSpouse(nodeSelect, diagram, imageUrl);
+      await processAddSpouse(nodeSelect, diagram, imageUrl);
       break;
     }
     case CONSTANTS.FATHER: {
-      processAddParent(nodeSelect, diagram, imageUrl);
+      await processAddParent(nodeSelect, diagram, imageUrl);
       break;
     }
     case CONSTANTS.MOTHER: {
-      processAddParent(nodeSelect, diagram, imageUrl);
+      await processAddParent(nodeSelect, diagram, imageUrl);
       break;
     }
     case CONSTANTS.CHILDREN: {
-      processAddChild(nodeSelect, diagram, imageUrl);
+      await processAddChild(nodeSelect, diagram, imageUrl);
       break;
     }
     default: {
@@ -755,14 +764,16 @@ export default function CustomTreePage() {
     };
     Adapter.editNode(diagram, modelUpdate, nodeSelect.key);
     const formatForm = Adapter.toFormAPI(modelUpdate);
-    delete formatForm.gender;
     if (formatForm.imageUrl === CONSTANTS.sourceDefaultImg) delete formatForm.imageUrl;
     const response = await dispatch(updatePerson(nodeSelect.id, formatForm));
     if (response.status === 200) {
-      alert(response.data.message);
+      // alert(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: "success" });
       diagram.model.commitTransaction("updatePerson");
     } else {
-      alert(response.data);
+      // alert(response.data);
+      enqueueSnackbar(response.data, { variant: "success" });
+
       diagram.model.rollbackTransaction("updatePerson");
     }
     setShowModal({ ...showModal, show: false, mode: "", step: 0 });
@@ -789,7 +800,14 @@ export default function CustomTreePage() {
           : 2;
     // Prepare for Call API.
     if (getCaseAdd === 0 || getCaseAdd === 1) {
-      alert("Can not add children for this node! Please add spouse or delete link relate this node!");
+      // alert(
+      //   "Can not add children for this node! Please add spouse or delete link relate this node!"
+      // );
+      enqueueSnackbar(
+        "Can not add children for this node! Please add spouse or delete link relate this node!",
+        { variant: "warning" }
+      );
+
       diagram.model.rollbackTransaction("addChild");
       return;
     }
@@ -853,7 +871,9 @@ export default function CustomTreePage() {
       tempDiagram.current = diagram;
       return getForm;
     } else {
-      alert(result.message);
+      // alert(result.message);
+      enqueueSnackbar(result.message, { variant: "success" });
+
       diagram.model.rollbackTransaction("addChild");
       return false;
     }
@@ -888,10 +908,12 @@ export default function CustomTreePage() {
         getForm.id
       );
       diagram.model.commitTransaction("addNode");
-      alert(rs.data.message);
+      // alert(rs.data.message);
+      enqueueSnackbar(rs.data.message, { variant: "success" });
     } else {
       diagram.model.rollbackTransaction("addNode");
-      alert(rs.message);
+      // alert(rs.message);
+      enqueueSnackbar(rs.message, { variant: "error" });
     }
     tempDiagram.current = diagram;
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
@@ -957,7 +979,9 @@ export default function CustomTreePage() {
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         return formatSpouse;
       } else {
-        alert(result.message);
+        // alert(result.message);
+        enqueueSnackbar(result.message);
+
         tempDiagram.current = diagram;
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         diagram.model.rollbackTransaction("addParent");
@@ -974,7 +998,9 @@ export default function CustomTreePage() {
         return response.data;
       } else {
         diagram.model.rollbackTransaction("addParent");
-        alert(response.message);
+        // alert(response.message);
+        enqueueSnackbar(response.message);
+
         tempDiagram.current = diagram;
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         return false;
@@ -986,7 +1012,9 @@ export default function CustomTreePage() {
     const node = button.part.adornedPart.data;
     const arrayNode = Adapter.getWithoutLinkLabel([...diagram.model.nodeDataArray]);
     if (arrayNode.length === 1) {
-      alert("Can not delete root!");
+      // alert("Can not delete root!");
+      enqueueSnackbar("Can not delete root!", { variant: "warning" });
+
       return;
     }
     if (conditionDelete1(arrayNode, node)) {
@@ -996,7 +1024,8 @@ export default function CustomTreePage() {
     } else if (conditionDelete3(arrayNode, node)) {
       deleteForNodeHaveSpouse(node, arrayNode, diagram);
     } else {
-      alert("Can not delete this node!!");
+      // alert("Can not delete this node!!");
+      enqueueSnackbar("Can not delete this node!!", { variant: "warning" });
     }
     setNodeDataArray([...diagram.model.nodeDataArray]);
   };
@@ -1029,10 +1058,12 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(node.id));
     if (response.status === 200) {
       diagram.model.commitTransaction("deleteForNodeNoSpouseNoChilds");
-      alert(response.data.message);
+      // alert(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: "success" });
     } else {
       diagram.model.rollbackTransaction("deleteForNodeNoSpouseNoChilds");
-      alert(response.message);
+      // alert(response.message);
+      enqueueSnackbar(response.message, { variant: "error" });
     }
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
     tempDiagram.current = diagram;
@@ -1057,9 +1088,12 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(id));
     if (response.status === 200 || response) {
       diagram.model.commitTransaction("deleteForNodeHaveSpouse");
-      alert(response.data.message);
+      // alert(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: "success" });
     } else {
-      alert(response.message);
+      // alert(response.message);
+      enqueueSnackbar(response.message, { variant: "error" });
+
       diagram.model.rollbackTransaction("deleteForNodeHaveSpouse");
     }
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
@@ -1083,10 +1117,13 @@ export default function CustomTreePage() {
     const response = await dispatch(deletePerson(node.id));
     if (response.status === 200) {
       diagram.model.commitTransaction("deleteForNodeNoSpouseNoParentsHaveAChild");
-      alert(response.data.message);
+      // alert(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: "success" });
     } else {
       diagram.model.rollbackTransaction("deleteForNodeNoSpouseNoParentsHaveAChild");
-      alert(response.message);
+      // alert(response.message);
+      enqueueSnackbar(response.message, { variant: "error" });
+
       return false;
     }
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
@@ -1116,9 +1153,15 @@ export default function CustomTreePage() {
   const conditionDelete3 = (arr, node) => {
     // have 1 spouse, no parent
     const getMarriage = Adapter.getMarriageByArray(arr, node.key);
+    // console.log("==getMarriage==:", getMarriage);
     const noParents = !Adapter.getFather(arr, node) && !Adapter.getMother(arr, node);
+    const getChilds = Adapter.getChilds(arr, node);
     return (
-      getMarriage.length === 1 && getMarriage[0].type !== CONSTANTS.TYPE.UNDEFINED && noParents
+      getMarriage.length === 1
+      && getMarriage[0] !== undefined
+      && getMarriage[0].type !== CONSTANTS.TYPE.UNDEFINED
+      && noParents
+      && getChilds.length === 0
     );
   };
 
@@ -1182,7 +1225,7 @@ export default function CustomTreePage() {
     const diagram = tempDiagram.current;
     const arrNode = diagram.model.nodeDataArray;
     const arrSelect = Adapter.getMarriageByArray(arrNode, nodeSelect.key);
-    const res = _.filter(arrSelect, ele => ele.type !== CONSTANTS.TYPE.UNDEFINED).map((ele) => {
+    const res = _.filter(arrSelect, (ele) => ele.type !== CONSTANTS.TYPE.UNDEFINED).map((ele) => {
       const getNodeSpouse = Adapter.getNode(arrNode, ele.key);
       return { label: getNodeSpouse.n, value: getNodeSpouse.key };
     });

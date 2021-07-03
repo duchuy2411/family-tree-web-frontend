@@ -52,6 +52,10 @@ export const slice = createSlice({
       const mapname = _.map(editors, (ele) => ({ ...ele, username: _.get(ele, "userName", "") }));
       return { ...state, tree: { ...state.tree, owner, editors: mapname } };
     },
+    REMOVE_TREE: (state, action) => {
+      const id = action.payload;
+      return { ...state, trees: _.filter(state.trees, ele => `${ele.id}` !== `${id}`) };
+    }
   },
 });
 
@@ -67,6 +71,7 @@ export const {
   GET_TREE_FAIL,
   UPDATE_CURRENT_TREE,
   UPDATE_EDITORS,
+  REMOVE_TREE
 } = slice.actions;
 
 export const getTreeList = () => async (dispatch) => {
@@ -94,9 +99,10 @@ export const getTreesPublic = () => async (dispatch) => {
   return false;
 };
 
-export const deleteTree = (treeId) => async () => {
+export const deleteTree = (treeId) => async (dispatch) => {
   const rs = await api.apiTreeManagement.deleteTree(treeId);
   if (rs.status === 200) {
+    dispatch(REMOVE_TREE(treeId));
     swal("Delete success fully!!", {
       icon: "success",
     });

@@ -15,6 +15,7 @@ import LogInPage from "pages/LogIn";
 import SignUpPage from "pages/SignUp";
 import ForgotPasswordPage from "pages/ForgotPassword";
 import ResetPasswordPage from "pages/ResetPassword";
+import LOCAL_STORAGE_KEYS from "configs/localStorageKeys";
 
 function App() {
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ function App() {
     // getUserByToken();
 
     // //
-    const authData = JSON.parse(localStorage.getItem("auth"));
+    const authData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.AUTH));
 
     if (authData) {
       const { isAuthenticated, user } = authData;

@@ -8,7 +8,7 @@ import "./index.css";
 
 export default function LeftMenu(props) {
   const classes = useCalendarStyles();
-  const { curTree, handleChangeMode } = props;
+  const { curTree, handleChangeMode, select } = props;
   return (
     <Grid item xs={2}>
       {/* Container of Left Side */}
@@ -34,7 +34,9 @@ export default function LeftMenu(props) {
               <Grid
                 item
                 xs={12}
-                className={classes.typeEvent}
+                className={`${classes.typeEvent} ${
+                  select === "Calendar" ? classes.selectedMode : ""
+                }`}
                 onClick={() => handleChangeMode("Calendar")}
               >
                 <span className="fas fa-calendar-week menu-event"></span>
@@ -43,7 +45,9 @@ export default function LeftMenu(props) {
               <Grid
                 item
                 xs={12}
-                className={classes.typeEvent}
+                className={`${classes.typeEvent} ${
+                  select === "Memory" ? classes.selectedMode : ""
+                }`}
                 onClick={() => handleChangeMode("Memory")}
               >
                 <span className="fas fa-calendar-week menu-memory"></span>

@@ -86,7 +86,7 @@ export default function CalendarPage() {
     setForm({
       notes: "",
       startDate: moment(e.start).format("YYYY-MM-DD"),
-      endDate: moment(e.end),
+      endDate: moment(e.end).add(1, "hours"),
       loop: 0,
     });
     setShow({ isShow: true, mode: "new" });
@@ -225,7 +225,7 @@ export default function CalendarPage() {
   return (
     <Container maxWidth="xl" disableGutters className={classes.container}>
       <Grid container direction="row">
-        <LeftMenu curTree={curTree} listTree={listTree} handleChangeMode={handleChangeMode} />
+        <LeftMenu curTree={curTree} select={select} listTree={listTree} handleChangeMode={handleChangeMode} />
         {select === "Calendar" && (
           <Schedule
             event={event}
