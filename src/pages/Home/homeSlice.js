@@ -1,8 +1,39 @@
 import _ from "lodash";
 import api from "../../utils/api";
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import swal from "sweetalert";
 import Permission from "../../utils/permission";
+import treeManagementAPI from "api/treeManagement";
+
+export const getPublicTreesWithPagination = createAsyncThunk(
+  "managementTree/getPublicTreesWithPagination",
+  async ({ createBefore, page, itemsPerPage }, thunkAPI) => {
+    const response = await treeManagementAPI.getAllPublicTreesWithPagination({
+      createBefore: createBefore,
+      page: page,
+      itemsPerPage: itemsPerPage,
+    });
+
+    const { data, message, errors } = response.data;
+
+    return { data, message, errors };
+  }
+);
+
+export const getPrivateTreesWithPagination = createAsyncThunk(
+  "managementTree/getPrivateTreesWithPagination",
+  async ({ createBefore, page, itemsPerPage }, thunkAPI) => {
+    const response = await treeManagementAPI.getAllPrivateTreesWithPagination({
+      createBefore: createBefore,
+      page: page,
+      itemsPerPage: itemsPerPage,
+    });
+
+    const { data, message, errors } = response.data;
+
+    return { data, message, errors };
+  }
+);
 
 export const slice = createSlice({
   name: "managementTree",
@@ -13,6 +44,8 @@ export const slice = createSlice({
     isFetchList: false,
     isFetchingPerson: false,
     treePermission: [],
+    errors: "",
+    message: "",
   },
   reducers: {
     GET_TREE: (state) => {
@@ -54,8 +87,49 @@ export const slice = createSlice({
     },
     REMOVE_TREE: (state, action) => {
       const id = action.payload;
-      return { ...state, trees: _.filter(state.trees, ele => `${ele.id}` !== `${id}`) };
-    }
+      return { ...state, trees: _.filter(state.trees, (ele) => `${ele.id}` !== `${id}`) };
+    },
+  },
+  extraReducers: {
+    // public trees
+    [getPublicTreesWithPagination.pending]: (state) => {
+      state.isFetchList = true;
+      state.errors = "";
+      state.message = "";
+    },
+    [getPublicTreesWithPagination.rejected]: (state, action) => {
+      if (state.isFetchList) {
+        state.isFetchList = false;
+        state.errors = action.error;
+        state.message = "";
+      }
+    },
+    [getPublicTreesWithPagination.fulfilled]: (state, action) => {
+      state.isFetchList = false;
+      state.errors = action.payload.errors;
+      state.message = action.payload.message;
+      state.trees = action.payload.data.result;
+    },
+
+    // private trees
+    [getPrivateTreesWithPagination.pending]: (state) => {
+      state.isFetchList = true;
+    },
+    [getPrivateTreesWithPagination.rejected]: (state, action) => {
+      if (state.isFetchList) {
+        state.isFetchList = false;
+        state.message = "";
+        state.errors = action.error;
+      }
+    },
+    [getPrivateTreesWithPagination.fulfilled]: (state, action) => {
+      state.isFetchList = false;
+      state.errors = action.payload.errors;
+      state.message = action.payload.message;
+      state.trees = action.payload.data.result;
+
+      Permission.mapPermission([...action.payload.data.result]);
+    },
   },
 });
 
@@ -71,15 +145,15 @@ export const {
   GET_TREE_FAIL,
   UPDATE_CURRENT_TREE,
   UPDATE_EDITORS,
-  REMOVE_TREE
+  REMOVE_TREE,
 } = slice.actions;
 
 export const getTreeList = () => async (dispatch) => {
   dispatch(GET_TREE());
   const rs = await api.getTreeList();
+
   if (rs.status === 200) {
     const treeList = _.get(rs.data, "data", []);
-    console.log(treeList);
     Permission.mapPermission([...treeList]);
     dispatch(GET_TREE_SUCCESS(treeList));
     return true;
