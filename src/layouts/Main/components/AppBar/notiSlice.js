@@ -35,7 +35,7 @@ const notificationsSlice = createSlice({
   name: "notifications",
   initialState: {
     isLoading: false,
-    notifications: [], // TODO: delete when attach notificationAPI for calendar
+    notifications: [],
     message: "",
     errors: null,
   },
