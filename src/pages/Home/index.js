@@ -36,7 +36,7 @@ import { useSnackbar } from "notistack";
 import colors from "assets/colorPalette";
 import { current, unwrapResult } from "@reduxjs/toolkit";
 
-const ITEMS_PER_PAGE = 3; // TODO: change to 5 or higher
+const ITEMS_PER_PAGE = 5; // TODO: change to 5 or higher
 
 export default function HomePage() {
   const { enqueueSnackbar } = useSnackbar();
