@@ -30,7 +30,7 @@ const columns = [
   { id: "gender", label: "Gender", minWidth: 20, align: "center" },
   {
     id: "dob",
-    label: "Day of birth",
+    label: "Date of birth",
     minWidth: 80,
     align: "center",
   },

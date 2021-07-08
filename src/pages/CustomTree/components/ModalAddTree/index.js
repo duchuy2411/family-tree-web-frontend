@@ -84,8 +84,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: colors.white,
     padding: "10px",
     "&:selected": {
-      border: "none"
-    }
+      border: "none",
+    },
   },
   inputFields: {
     backgroundColor: colors.white,
@@ -153,7 +153,7 @@ function ModalUpdate(props) {
       setError(tempError);
       return false;
     }
-    
+
     var form = document.querySelector("form");
     var formData = new FormData(form);
     let rs = null;
@@ -261,16 +261,18 @@ function ModalUpdate(props) {
                     className={classes.inputFields}
                     disabled={showModal.mode === CONSTANTS.MODE_FORM.UPDATE}
                   >
-                    {gender && gender.length > 0 && gender.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
+                    {gender &&
+                      gender.length > 0 &&
+                      gender.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
                   </TextField>
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
-                    label="Day of birth"
+                    label="Date of birth"
                     type="date"
                     variant="outlined"
                     InputLabelProps={{ shrink: true }}
@@ -414,7 +416,7 @@ function ModalUpdate(props) {
                   style={{ marginLeft: "10px" }}
                 >
                   {"Save"}
-                  {loading && <CircularProgress style={{height: "20px"}} />}
+                  {loading && <CircularProgress style={{ height: "20px" }} />}
                 </Button>
               ) : (
                 <Button
@@ -424,7 +426,7 @@ function ModalUpdate(props) {
                   style={{ marginLeft: "10px" }}
                 >
                   {"Save"}
-                  {loading && <CircularProgress style={{height: "20px"}} />}
+                  {loading && <CircularProgress style={{ height: "20px" }} />}
                 </Button>
               )}
             </div>
