@@ -10,7 +10,7 @@ class Adapter {
       const member = {
         id: ele.id,
         key: ele.id,
-        n: `${_.get(ele, "lastName", " ") || "Unknow"} ${_.get(ele, "firstName", " ") || " "}`,
+        n: `${_.get(ele, "firstName", " ") || "Unknow"} ${_.get(ele, "lastName", " ") || " "}`,
         s: ele.gender === 0 ? "M" : "F",
         dob: ele.dateOfBirth ? moment(ele.dateOfBirth).format("L") : null,
         dod: ele.dateOfDeath ? moment(ele.dateOfDeath).format("L") : null,

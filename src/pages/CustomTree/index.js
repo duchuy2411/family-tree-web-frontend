@@ -20,6 +20,7 @@ import {
   selectNodeDataArrayRedux,
   exportJSON,
 } from "./customTreeSlice";
+import { getTreeList } from "../Home/homeSlice";
 import "./style.css";
 // MUI
 import { Container, Grid, Paper, Typography } from "@material-ui/core";
@@ -103,7 +104,7 @@ export default function CustomTreePage() {
   });
   const [mode, setMode] = useState("edit");
   const [makeImage, setMakeImage] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const { id } = useParams();
   useEffect(() => {
     dispatch(fetchTree(id)).then((rs) => {
@@ -113,6 +114,10 @@ export default function CustomTreePage() {
       setAlterLink([...parseTree]);
       setListSearch([...Adapter.getWithoutLinkLabel(parseTree)]);
     });
+  }, []);
+
+  useEffect(() => {
+    dispatch(getTreeList());
   }, []);
 
   function handleModelChange(data) {
@@ -704,6 +709,7 @@ export default function CustomTreePage() {
 
   const handleSave = async (imageUrl) => {
     const diagram = tempDiagram.current;
+    setLoading(true);
     switch (showModal.select) {
     case CONSTANTS.SPOUSE: {
       await processAddSpouse(nodeSelect, diagram, imageUrl);
@@ -744,7 +750,8 @@ export default function CustomTreePage() {
   };
 
   const handleUpdate = async (imageUrl) => {
-    const getName = form.lastName + " " + form.firstName;
+    setLoading(true);
+    const getName = form.firstName + " " + form.lastName;
     const diagram = tempDiagram.current;
     diagram.model.startTransaction("updateNode");
     const getGender = form.gender === CONSTANTS.MALE ? CONSTANTS.TYPE.MALE : CONSTANTS.TYPE.FEMALE;
@@ -776,6 +783,7 @@ export default function CustomTreePage() {
 
       diagram.model.rollbackTransaction("updatePerson");
     }
+    setLoading(false);
     setShowModal({ ...showModal, show: false, mode: "", step: 0 });
   };
 
@@ -869,12 +877,14 @@ export default function CustomTreePage() {
       diagram.model.commitTransaction("addChild");
       setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
       tempDiagram.current = diagram;
+      setLoading(false);
       return getForm;
     } else {
       // alert(result.message);
       enqueueSnackbar(result.message, { variant: "success" });
 
       diagram.model.rollbackTransaction("addChild");
+      setLoading(false);
       return false;
     }
   };
@@ -916,6 +926,7 @@ export default function CustomTreePage() {
       enqueueSnackbar(rs.message, { variant: "error" });
     }
     tempDiagram.current = diagram;
+    setLoading(false);
     setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
     return getForm;
   };
@@ -977,6 +988,7 @@ export default function CustomTreePage() {
         diagram.model.commitTransaction("addParent");
         tempDiagram.current = diagram;
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
+        setLoading(false);
         return formatSpouse;
       } else {
         // alert(result.message);
@@ -985,6 +997,7 @@ export default function CustomTreePage() {
         tempDiagram.current = diagram;
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
         diagram.model.rollbackTransaction("addParent");
+        setLoading(false);
       }
     } else {
       // get node delete and update
@@ -995,6 +1008,7 @@ export default function CustomTreePage() {
       if (response.data) {
         diagram.model.commitTransaction("addParent");
         tempDiagram.current = diagram;
+        setLoading(false);
         return response.data;
       } else {
         diagram.model.rollbackTransaction("addParent");
@@ -1003,6 +1017,7 @@ export default function CustomTreePage() {
 
         tempDiagram.current = diagram;
         setListSearch(Adapter.getWithoutLinkLabel(diagram.model.nodeDataArray));
+        setLoading(false);
         return false;
       }
     }
@@ -1438,6 +1453,15 @@ export default function CustomTreePage() {
     downloadFile(rs);
   };
 
+  const updateUser = async (model, id) => {
+    const getNode = tempDiagram.current.findNodeForKey(model.id);
+    console.log("===getNode===:", getNode);
+
+    console.log("model:", model);
+    console.log("==idconnect==:", id);
+    // const data = 
+  };
+
   return (
     <Container maxWidth="xl" disableGutters className={classes.container}>
       <Grid container direction="row">
@@ -1458,6 +1482,7 @@ export default function CustomTreePage() {
             {/* Search box*/}
             <Grid item xs={11}>
               <SearchBox
+                className={classes.searchBox}
                 search={search}
                 handleChangeSearch={handleChangeSearch}
                 ariaLabel="search for people in this family"
@@ -1466,7 +1491,7 @@ export default function CustomTreePage() {
 
             {/* Info of a member */}
             <Grid item xs={11}>
-              <CardMember model={model} />
+              <CardMember model={model} updateUser={updateUser} />
             </Grid>
 
             {/* Structure of family tree */}
@@ -1504,7 +1529,7 @@ export default function CustomTreePage() {
             <Grid item xs={12}>
               {/* replace the paper component below with the gojs editor */}
               <Paper
-                elevation={10}
+                elevation={2}
                 style={{
                   height: "79vh",
                   margin: "0px 16px",
@@ -1531,6 +1556,7 @@ export default function CustomTreePage() {
       </Grid>
       {showModal.show && (
         <ModalAddTree
+          loading={loading}
           showModal={showModal}
           form={form}
           gender={gender}

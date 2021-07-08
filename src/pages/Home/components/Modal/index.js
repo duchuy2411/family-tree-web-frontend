@@ -1,17 +1,18 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
+import { createMuiTheme, MuiThemeProvider, TextareaAutosize } from "@material-ui/core";
 import classNames from "classnames";
 
 import { Input, Button, Grid } from "@material-ui/core";
+import colors from "assets/colorPalette";
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#905842",
+      main: colors.blue2,
     },
     secondary: {
-      main: "#F2E1DA",
+      main: colors.blue5,
     },
   },
 });
@@ -40,8 +41,8 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
     justifyContent: "center",
     borderRadius: "10px",
-    boxShadow: "0px 0px 10px 3px rgb(204, 202, 202)",
-    padding: "10px",
+    boxShadow: "0px 2px 3px 1px rgb(204, 202, 202)",
+    padding: "30px",
     transform: "translate(50%, 50%)",
     position: "fixed",
     zIndex: "201",
@@ -63,8 +64,8 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0),
   },
   inputFields: {
-    backgroundColor: "#F2E1DA",
-    borderRadius: 24,
+    border: "1px solid black",
+    borderRadius: "5px",
     height: theme.spacing(5),
     width: "100%",
     padding: theme.spacing(0, 2, 0, 2),
@@ -97,10 +98,11 @@ export default function Modal(props) {
             />
           </Grid>
           <Grid item xs={12}>
-            <Input
+            <TextareaAutosize
               placeholder="Description"
               required
               fullWidth
+              rowsMin={4}
               disableUnderline
               value={form.desctiption}
               className={classNames(classes.withSpace, classes.inputFields)}

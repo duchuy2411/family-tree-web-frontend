@@ -3,6 +3,9 @@ import colors from "../../assets/colorPalette";
 import { fade, makeStyles } from "@material-ui/core";
 
 const useCustomTreePageStyles = makeStyles((theme) => ({
+  media: {
+    height: 300,
+  },
   rootAccording: {
     margin: "20px auto",
     width: "80%",
@@ -13,7 +16,6 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     fontWeight: theme.typography.fontWeightRegular,
   },
   cardContribute: {
-    height: "300px",
     display: "flex",
     justifyContent: "center",
     flexWrap: "wrap",
@@ -27,12 +29,11 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     padding: "10px",
   },
   avatar: {
-    width: theme.spacing(20),
-    height: theme.spacing(20),
+    width: theme.spacing(30),
+    height: theme.spacing(30),
   },
   name: {
-    fontSize: "13px",
-    marginTop: "20px",
+    fontSize: "17px",
   },
   borderTrike: {
     border: "1px dashed black",
@@ -53,9 +54,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     textAlign: "left",
   },
   label: {
-    width: "90%",
     fontWeight: "bolder",
-    margin: theme.spacing(1),
   },
   tab: {
     backgroundColor: colors.pink,
@@ -67,7 +66,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   },
   modal: {
     position: "absolute",
-    width: 400,
+    width: 700,
     backgroundColor: theme.palette.background.paper,
     border: "1px solid #000",
     borderRadius: "10px",
@@ -83,17 +82,17 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   btnSecond: {
-    backgroundColor: colors.pink,
+    backgroundColor: colors.blue5,
   },
   btnPrimary: {
-    backgroundColor: colors.brown,
+    backgroundColor: colors.blue2,
     color: colors.white,
   },
   blockMale: {
     display: "inline-block",
     width: "20px",
     height: "20px",
-    backgroundColor: "blue",
+    backgroundColor: colors.blue4,
   },
   blockFemale: {
     display: "inline-block",
@@ -105,10 +104,11 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     width: "100%",
   },
   container: {
-    maxHeight: 440,
+    maxHeight: 940,
+    marginTop: 20
   },
   header: {
-    backgroundColor: "#905842",
+    backgroundColor: colors.blue3,
     color: "white",
   },
   search: {
@@ -218,6 +218,41 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   modalCustom: {
     borderRadius: "10px",
   },
+  paperContainer: {
+    margin: "10px",
+  },
+  nameTree: {
+    fontSize: theme.spacing(5),
+    fontWeight: "bolder",
+    color: colors.blue2,
+  },
+  publicMode: {
+    fontSize: theme.spacing(2),
+    fontWeight: "bolder",
+    color: colors.blue3
+  },
+  description: {
+    margin: "20px"
+  },
+  containerInformation: {
+    padding: "30px",
+    textAlign: "center"
+  },
+  spinTitle: {
+    borderRadius: "5px",
+    backgroundColor: colors.blue4,
+    display: "inline-block",
+    padding: "10px",
+    textAlign: "center",
+    color: colors.white,
+  },
+  contentCard: {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
+    marginTop: "10px"
+  }
 }));
 
 export default useCustomTreePageStyles;

@@ -21,6 +21,7 @@ const useHomePageStyles = makeStyles((theme) => ({
   },
   searchBox: {
     height: 40,
+    backgroundColor: colors.blue5,
   },
   avatarBtn: {
     margin: theme.spacing(0, 0),
@@ -82,9 +83,10 @@ const useHomePageStyles = makeStyles((theme) => ({
     },
   },
   progress: {
-    backgroundColor: colors.pink,
+    backgroundColor: colors.blue5,
     height: "12px",
     borderRadius: "15px",
+    color: colors.blue4,
   },
   groupProgress: {
     width: "100%",

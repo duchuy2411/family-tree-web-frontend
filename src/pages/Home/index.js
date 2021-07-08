@@ -33,6 +33,7 @@ import {
 } from "./homeSlice";
 
 import { useSnackbar } from "notistack";
+import colors from "assets/colorPalette";
 import { current, unwrapResult } from "@reduxjs/toolkit";
 
 const ITEMS_PER_PAGE = 3; // TODO: change to 5 or higher
@@ -71,10 +72,10 @@ export default function HomePage() {
   const theme = createMuiTheme({
     palette: {
       primary: {
-        main: "#905842",
+        main: colors.blue2,
       },
       secondary: {
-        main: "#F2E1DA",
+        main: colors.blue5,
       },
     },
   });

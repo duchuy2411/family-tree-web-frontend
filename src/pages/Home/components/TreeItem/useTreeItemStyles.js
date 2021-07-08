@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 
 const useTreeItemStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: colors.pink,
+    backgroundColor: colors.white,
     display: "flex",
     alignItems: "center",
     marginBottom: theme.spacing(2),
@@ -11,7 +11,7 @@ const useTreeItemStyles = makeStyles((theme) => ({
     transition: "0.2s",
     "&:hover": {
       transform: "scale(1.01) ",
-      boxShadow: "0px 4px 4px 2px rgb(123,123,123,0.4)",
+      boxShadow: `0px 4px 4px 2px ${colors.blue5}`,
     },
     [theme.breakpoints.down("md")]: {
       padding: 8,
@@ -106,7 +106,7 @@ const useTreeItemStyles = makeStyles((theme) => ({
   actionBtn: {
     textDecoration: "none",
     color: colors.black,
-    border: "2px solid grey",
+    border: `2px solid ${colors.blue1}`,
     borderRadius: "8px",
     padding: theme.spacing(1),
     cursor: "pointer",
@@ -115,7 +115,7 @@ const useTreeItemStyles = makeStyles((theme) => ({
     alignItems: "center",
     //
     "&:hover": {
-      backgroundColor: "#D8C8C2",
+      backgroundColor: colors.blue5,
       boxShadow: "none",
     },
     "&:active": {
@@ -132,6 +132,12 @@ const useTreeItemStyles = makeStyles((theme) => ({
   },
   menuList: {
     backgroundColor: colors.pink,
+  },
+  nameTree: {
+    color: colors.white,
+    backgroundColor: colors.blue4,
+    padding: theme.spacing(5),
+    borderRadius: "5px"
   },
 }));
 

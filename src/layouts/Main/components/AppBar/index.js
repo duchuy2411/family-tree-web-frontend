@@ -276,7 +276,7 @@ const MenuAppBar = () => {
                 max={99}
                 overlap="circle"
               >
-                <NotificationsIcon />
+                <NotificationsIcon style={{ color: "white" }}/>
               </Badge>
 
               <Popover

@@ -7,14 +7,15 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 import CONSTANTS from "../../../utils/const";
 import "../index.css";
 import useCalendarStyles from "../useCalendarStyles";
+import colors from "assets/colorPalette";
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#905842",
+      main: colors.blue2,
     },
     secondary: {
-      main: "#F2E1DA",
+      main: colors.blue5,
     },
   },
 });
