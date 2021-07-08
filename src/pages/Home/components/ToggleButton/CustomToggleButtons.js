@@ -8,7 +8,7 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 const StyledToggleButtonGroup = withStyles((theme) => ({
   grouped: {
     border: "none",
-    width: 120,
+    width: 130,
     "&:not(:first-child)": {
       borderRadius: 16,
       marginLeft: theme.spacing(1),
@@ -70,7 +70,7 @@ export default function CustomToggleButton(props) {
         </StyledToggleButton>
 
         <StyledToggleButton disableRipple value="public" aria-label="edit tree">
-          Tree Public
+          Public trees
         </StyledToggleButton>
       </StyledToggleButtonGroup>
     </div>
