@@ -8,6 +8,7 @@ import { createTree } from "../Slice";
 // MUI
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 import { Button, Tooltip, LinearProgress, Hidden } from "@material-ui/core";
+import Pagination from "@material-ui/lab/Pagination";
 
 // components
 import SearchBox from "../../components/Search/Search";
@@ -26,9 +27,14 @@ import {
   getListByKeyword,
   getTreeList,
   getTreesPublic,
+  getPublicTreesWithPagination,
+  getPrivateTreesWithPagination,
 } from "./homeSlice";
 
 import { useSnackbar } from "notistack";
+import { unwrapResult } from "@reduxjs/toolkit";
+
+const ITEMS_PER_PAGE = 3; // TODO: change to 5 or higher
 
 export default function HomePage() {
   const { enqueueSnackbar } = useSnackbar();
@@ -38,15 +44,20 @@ export default function HomePage() {
     lastName ? lastName : ""
   }`;
   const classes = useHomePageStyles();
-  // eslint-disable-next-line no-unused-vars
-  const [notificationCount, setNotificationCount] = useState(0); // using redux instead
-  // eslint-disable-next-line no-unused-vars
-  const [sortOrder, setSortOrder] = useState("all");
 
   const [show, setShow] = useState(false);
   const [form, setForm] = useState({ name: "", description: "" });
   const [search, setSearch] = useState("");
   const history = useHistory();
+
+  // pagination
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleChangePage = (event, newPageValue) => {
+    setCurrentPage(newPageValue);
+    enqueueSnackbar(`Change to page ${newPageValue}`);
+  };
 
   const theme = createMuiTheme({
     palette: {
@@ -59,20 +70,36 @@ export default function HomePage() {
     },
   });
 
-  // eslint-disable-next-line no-unused-vars
-  const handleSortOrder = (event, newOrder) => {
-    if (newOrder !== null) {
-      setSortOrder(newOrder);
-    }
-  };
-
   // trees
   const trees = useSelector(selectTrees);
   const fetching = useSelector(selectFetching);
 
+  // useEffect(() => {
+  //   dispatch(getTreeList());
+  // }, []);
+
+  /**
+   * this useEffect is re-written to apply pagination
+   */
   useEffect(() => {
-    dispatch(getTreeList());
-  }, []);
+    const getPrivateTreesWithPaginationEffect = async (currentPage) => {
+      const actionResult = await dispatch(
+        getPrivateTreesWithPagination({
+          createBefore: new Date(Date.now()).toISOString(),
+          page: currentPage,
+          itemsPerPage: ITEMS_PER_PAGE,
+        })
+      );
+
+      const { data } = unwrapResult(actionResult);
+
+      if (data) {
+        setTotalPages(data?.totalPages);
+      }
+    };
+
+    getPrivateTreesWithPaginationEffect(currentPage);
+  }, [currentPage]);
 
   const familyTreeList = (
     <div>
@@ -130,6 +157,7 @@ export default function HomePage() {
     setSearch(e.target.value);
   };
 
+  // TODO: apply pagination
   const handleSubmitSearch = (e) => {
     e.preventDefault();
     dispatch(getListByKeyword(search));
@@ -138,15 +166,57 @@ export default function HomePage() {
 
   const [mode, setMode] = React.useState("myfamily");
 
-  const handleChangeMode = (event, newMode) => {
+  // const handleChangeMode = (event, newMode) => {
+  //   if (mode !== newMode) {
+  //     if (newMode !== null) {
+  //       setMode(newMode);
+  //     }
+  //     if (newMode === "myfamily") {
+  //       dispatch(getTreeList());
+  //     } else {
+  //       dispatch(getTreesPublic());
+  //     }
+  //   }
+  // };
+
+  /**
+   * this function is re-written to apply pagination
+   * @param {*} event
+   * @param {*} newMode
+   */
+  const handleChangeMode = async (event, newMode) => {
     if (mode !== newMode) {
       if (newMode !== null) {
         setMode(newMode);
       }
       if (newMode === "myfamily") {
-        dispatch(getTreeList());
+        const actionResult = await dispatch(
+          getPrivateTreesWithPagination({
+            createBefore: new Date(Date.now()).toISOString(),
+            page: currentPage,
+            itemsPerPage: ITEMS_PER_PAGE,
+          })
+        );
+
+        const { data } = unwrapResult(actionResult);
+
+        if (data) {
+          setTotalPages(data?.totalPages);
+        }
       } else {
-        dispatch(getTreesPublic());
+        const actionResult = await dispatch(
+          getPublicTreesWithPagination({
+            createBefore: new Date(Date.now()).toISOString(),
+            page: currentPage,
+            itemsPerPage: ITEMS_PER_PAGE,
+          })
+        );
+
+        const { data } = unwrapResult(actionResult);
+
+        if (data) {
+          setTotalPages(data?.totalPages);
+        }
       }
     }
   };
@@ -242,7 +312,18 @@ export default function HomePage() {
             <LinearProgress className={classes.progress} />
           </div>
         ) : (
-          <div className={classes.treeList}>{familyTreeList}</div>
+          <div className={classes.treeList}>
+            {familyTreeList}
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handleChangePage}
+                boundaryCount={2}
+                disabled={fetching}
+              />
+            </div>
+          </div>
         )}
       </div>
     </MuiThemeProvider>

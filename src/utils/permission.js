@@ -44,14 +44,10 @@ class Permission {
 
   checkPermission(idTree) {
     const data = JSON.parse(localStorage.getItem("listPermission"));
-    console.log("data", data);
     const findData = find(data, (ele) => `${ele.id}` === `${idTree}`);
     if (!findData) return false;
-    console.log("findData", findData);
     const userId = get(localStorage.getItem("auth"), "user.id");
-    console.log("userId", userId);
     const findUser = find(data, (ele) => `${get(ele, "owner.id")}` === `${userId}`);
-    console.log("findUser", findUser);
     return !!findUser;
   }
 }
