@@ -24,15 +24,16 @@ import {
   selectFetching,
   selectTrees,
   importTree,
-  getListByKeyword,
-  getTreeList,
-  getTreesPublic,
+  // getListByKeyword,
+  // getTreeList,
+  // getTreesPublic,
   getPublicTreesWithPagination,
   getPrivateTreesWithPagination,
+  getTreesFromKeywordWithPagination,
 } from "./homeSlice";
 
 import { useSnackbar } from "notistack";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { current, unwrapResult } from "@reduxjs/toolkit";
 
 const ITEMS_PER_PAGE = 3; // TODO: change to 5 or higher
 
@@ -49,6 +50,14 @@ export default function HomePage() {
   const [form, setForm] = useState({ name: "", description: "" });
   const [search, setSearch] = useState("");
   const history = useHistory();
+
+  // clear search
+  const handleClearInput = () => {
+    if (!fetching && search) {
+      setSearch("");
+      setMode("myfamily");
+    }
+  };
 
   // pagination
   const [totalPages, setTotalPages] = useState(1);
@@ -98,8 +107,33 @@ export default function HomePage() {
       }
     };
 
-    getPrivateTreesWithPaginationEffect(currentPage);
-  }, [currentPage]);
+    const getPublicTreesWithPaginationEffect = async (currentPage) => {
+      const actionResult = await dispatch(
+        getPublicTreesWithPagination({
+          createBefore: new Date(Date.now()).toISOString(),
+          page: currentPage,
+          itemsPerPage: ITEMS_PER_PAGE,
+        })
+      );
+
+      const { data } = unwrapResult(actionResult);
+
+      if (data) {
+        setTotalPages(data?.totalPages);
+      }
+    };
+
+    if (!search) {
+      if (mode === "myfamily") {
+        getPrivateTreesWithPaginationEffect(currentPage);
+        return;
+      }
+      if (mode === "public") {
+        getPublicTreesWithPaginationEffect(currentPage);
+        return;
+      }
+    }
+  }, [currentPage, search]);
 
   const familyTreeList = (
     <div>
@@ -136,7 +170,6 @@ export default function HomePage() {
   const handleSave = async () => {
     const response = await dispatch(createTree(form));
     if (response.data) {
-      // alert(response.message);
       enqueueSnackbar(response.message, { variant: "success" });
 
       history.push(`/custom-tree/${response.data.id}`);
@@ -158,10 +191,38 @@ export default function HomePage() {
   };
 
   // TODO: apply pagination
-  const handleSubmitSearch = (e) => {
-    e.preventDefault();
-    dispatch(getListByKeyword(search));
+  // const handleSubmitSearch = (e) => {
+  //   e.preventDefault();
+  // dispatch(getListByKeyword(search));
+  //   setMode("mysearchhh");
+  // };
+
+  /**
+   * this function is re-written to apply pagination for search feature
+   * @param {*} e
+   */
+  const handleSubmitSearch = async (e) => {
     setMode("mysearchhh");
+    e.preventDefault();
+    // dispatch(getListByKeyword(search));
+    // setMode("mysearchhh");
+
+    const actionResult = await dispatch(
+      getTreesFromKeywordWithPagination({
+        query: search,
+        createBefore: new Date(Date.now()).toISOString(),
+        page: currentPage,
+        itemsPerPage: ITEMS_PER_PAGE,
+      })
+    );
+
+    const { data } = unwrapResult(actionResult);
+
+    console.log(">>>> data: ", data);
+
+    if (data) {
+      setTotalPages(data?.totalPages);
+    }
   };
 
   const [mode, setMode] = React.useState("myfamily");
@@ -277,6 +338,7 @@ export default function HomePage() {
                   ariaLabel="Search for family"
                   search={search}
                   handleChangeSearch={handleChangeSearch}
+                  handleClearInput={handleClearInput}
                   className={classes.searchBox}
                 />
               </form>

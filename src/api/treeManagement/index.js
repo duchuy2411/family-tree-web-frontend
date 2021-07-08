@@ -24,6 +24,19 @@ const treeManagementAPI = {
       },
     });
   },
+
+  getTreesFromKeywordWithPagination: ({ query, createBefore, page, itemsPerPage }) => {
+    const url = "/tree-management/trees-from-keyword/using-pagination";
+
+    return axiosClient.get(url, {
+      params: {
+        q: query,
+        CreatedBefore: createBefore,
+        Page: page,
+        ItemsPerPage: itemsPerPage,
+      },
+    });
+  },
 };
 
 export default treeManagementAPI;
