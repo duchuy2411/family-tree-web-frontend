@@ -9,7 +9,7 @@ const useAppBarStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   appBar: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.blue2,
   },
   toolBarOffset: theme.mixins.toolbar,
   leftArea: {
@@ -18,7 +18,7 @@ const useAppBarStyles = makeStyles((theme) => ({
   },
   title: {
     textDecoration: "none",
-    color: colors.brown,
+    color: colors.white,
     fontWeight: "bold",
   },
   centerArea: {
@@ -32,28 +32,28 @@ const useAppBarStyles = makeStyles((theme) => ({
     borderBottomWidth: 4,
     borderBottomStyle: "solid",
     borderBottomColor: "transparent",
-
+    color: "white",
     borderRadius: 8,
     margin: "0px 4px",
   },
   navButtonHighlight: {
-    borderBottomColor: colors.brown,
+    borderBottomColor: colors.white,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
   navIconHighlight: {
-    color: colors.brown,
+    color: colors.white,
   },
   notificationsButton: {
     margin: "0px 4px",
-    backgroundColor: fade(colors.brown, 0.1),
+    backgroundColor: fade(colors.white, 0.1),
     "&:hover, &:active": {
-      backgroundColor: fade(colors.brown, 0.3),
+      backgroundColor: fade(colors.white, 0.3),
     },
   },
   notificationsButtonHighlight: {
-    color: colors.brown,
-    backgroundColor: fade(colors.brown, 0.3),
+    color: colors.white,
+    backgroundColor: fade(colors.white, 0.3),
   },
   avatarBtn: {
     margin: theme.spacing(0, 0),
@@ -61,7 +61,7 @@ const useAppBarStyles = makeStyles((theme) => ({
     borderRadius: "50%",
   },
   avatarBtnActive: {
-    border: `3px solid ${colors.brown}`,
+    border: `3px solid ${colors.white}`,
     padding: 0,
   },
 }));

@@ -122,7 +122,7 @@ const LogInPage = () => {
                 variant="h3"
                 component="h2"
                 style={{
-                  color: colors.brown,
+                  color: colors.blue2,
                 }}
               >
                 Origin Keeper
@@ -134,7 +134,7 @@ const LogInPage = () => {
             <Typography
               variant="h5"
               component="h2"
-              style={{ color: colors.brown, marginBottom: 8 }}
+              style={{ color: colors.blue2, marginBottom: 8 }}
             >
               Welcome back!
             </Typography>

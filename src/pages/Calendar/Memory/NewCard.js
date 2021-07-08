@@ -97,7 +97,7 @@ const NewCard = () =>
         {imagesPreview.length > 0 &&
             imagesPreview.map((ele, index) => (
               <Grid key={ele.id} xs={6} className="img-item">
-                <img src={ele} />
+                <img src={ele}/>
                 <div className="btn-trash" onClick={() => deleteImg(index)}>
                   <i className="fas fa-trash-alt"></i>
                 </div>

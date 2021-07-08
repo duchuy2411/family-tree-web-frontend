@@ -170,6 +170,9 @@ const api = {
       params: { q: str },
     });
   },
+  getListConnectUser: () => {
+    return axiosClient.post(`${baseUrl}/user-management/users`, {});
+  },
   apiTreeManagement: apiTreeManagement,
 };
 

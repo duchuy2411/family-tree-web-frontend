@@ -29,6 +29,7 @@ import {
 } from "./homeSlice";
 
 import { useSnackbar } from "notistack";
+import colors from "assets/colorPalette";
 
 export default function HomePage() {
   const { enqueueSnackbar } = useSnackbar();
@@ -51,10 +52,10 @@ export default function HomePage() {
   const theme = createMuiTheme({
     palette: {
       primary: {
-        main: "#905842",
+        main: colors.blue2,
       },
       secondary: {
-        main: "#F2E1DA",
+        main: colors.blue5,
       },
     },
   });

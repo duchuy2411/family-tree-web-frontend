@@ -7,6 +7,7 @@ import {
   Modal,
   FormControlLabel,
   Checkbox,
+  Box,
 } from "@material-ui/core";
 import moment from "moment";
 import { selectUser } from "../../../store/authSlice";
@@ -38,43 +39,31 @@ const TreeInformation = (props) => {
     <Grid container>
       <Grid container xs={12}>
         <Grid item container xs={12}>
-          <Grid item xs={8}>
-            <Typography>Name tree: {currentTree.name}</Typography>
-          </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} className={classes.containerInformation}>
+            <Box className={classes.publicMode}>{currentTree.publicMode ? "Share Family Tree" : "Private Family Tree"}</Box>
+            <Box letterSpacing={15} className={classes.nameTree}>{currentTree.name}</Box>
+            <p className={classes.description}>{currentTree.description}</p>
             <Typography className={classes.label}>
-              Date created: {moment(currentTree.dateCreated).format("DD - MM - YYYY")}
+              Created at: {moment(currentTree.dateCreated).format("DD - MM - YYYY")}
             </Typography>
-          </Grid>
-        </Grid>
-        <Grid item container xs={12}>
-          <Grid item xs={8}>
-            <Typography>Description: {currentTree.description}</Typography>
-          </Grid>
-          <Grid item xs={4}>
             <Typography className={classes.label}>
-              Date updated: {moment(currentTree.lastModified).format("DD - MM - YYYY")}
+              Last modified: {moment(currentTree.lastModified).format("DD - MM - YYYY")}
             </Typography>
+            {Permission.havePermissionAsOwner(id) && (
+              <React.Fragment>
+                <Button className={classes.btnSecond} onClick={handleShow} style={{ marginTop: "20px" }}>
+                  Edit tree
+                </Button>
+                <Button
+                  className={classes.btnPrimary}
+                  onClick={handleDelete}
+                  style={{ marginLeft: "10px", marginTop: "20px" }}
+                >
+                  Delete tree
+                </Button>
+              </React.Fragment>)
+            }
           </Grid>
-        </Grid>
-        <Grid item container xs={12}>
-          <Grid item xs={8}>
-            <Typography>Public mode: {currentTree.publicMode ? "Public" : "Private"}</Typography>
-          </Grid>
-          {Permission.havePermissionAsOwner(id) && (
-            <Grid item xs={4}>
-              <Button className={classes.btnSecond} onClick={handleShow}>
-                Edit tree
-              </Button>
-              <Button
-                className={classes.btnPrimary}
-                onClick={handleDelete}
-                style={{ marginLeft: "10px" }}
-              >
-                Delete tree
-              </Button>
-            </Grid>)
-          }
         </Grid>
       </Grid>
       <Modal

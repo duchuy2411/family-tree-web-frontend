@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, Card, Typography, Avatar, Modal, TextField, Button } from "@material-ui/core";
+import { Grid, Card, CardActionArea, CardMedia, CardActions, CardContent, Typography, Avatar, Modal, TextField, Button, Box } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import _ from "lodash";
@@ -10,7 +10,7 @@ import {
 } from "../../Home/homeSlice";
 import { selectUser } from "../../../store/authSlice";
 import Permission from "../../../utils/permission";
-
+import CONST from "../../../utils/const";
 const Contribute = (props) => {
   const { openEditor, value, owner, editors, handleSubmitEditor, handleChangeText, handleCloseEditor, handleClickEditor, handleRemoveEditor } = props;
   const { id } = useParams();
@@ -19,46 +19,48 @@ const Contribute = (props) => {
   const currentUser = useSelector(selectUser);
   const listTrees = useSelector(selectTrees);
 
-  return (
-    <Grid container>
-      <Grid item xs={2} className={classes.padding}>
-        <Card className={classes.cardContribute}>
-          <Avatar
-            variant="rounded"
-            src={_.get(owner, "avatarUrl", null)}
-            className={classes.avatar}
-          ></Avatar>
-          <Typography className={classes.name}>Owner: {_.get(owner, "username", "")}</Typography>
+  const renderCard = (image, nameUser, role, isDelete = false) => {
+    return (
+      <Grid item xs={3} className={classes.padding}>
+        <Card className={classes.root}>
+          <CardActionArea>
+            <CardMedia
+              className={classes.media}
+              image={image || CONST.sourceDefaultImg}
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="h2">
+                {nameUser}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {role}
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+          <CardActions>
+            {isDelete && Permission.havePermissionAsOwner(id) &&
+              (
+                <Button size="small" color="secondary" onClick={() => handleRemoveEditor(nameUser)}>
+                  Delete
+                </Button>
+              )
+            }
+            {!isDelete && Permission.havePermissionAsOwner(id) && (
+              <Button size="small" color="primary" onClick={handleClickEditor}>
+                Add editors
+              </Button>
+            )}
+          </CardActions>
         </Card>
       </Grid>
+    );
+  };
+
+  return (
+    <Grid container>
+      {renderCard(_.get(owner, "avatarUrl", null), _.get(owner, "username", ""), "Owner")}
       {_.get(editors, "length") > 0 &&
-        editors.map((ele) => (
-          <Grid key={ele.id} item xs={2} className={classes.padding}>
-            <Card className={classes.cardContribute}>
-              <Avatar
-                variant="rounded"
-                src={_.get(ele, "avatarUrl", null)}
-                className={classes.avatar}
-              ></Avatar>
-              <Typography className={classes.name}>
-                Editors: {_.get(ele, "username", "")}
-              </Typography>
-              <Button color="primary" onClick={() => handleRemoveEditor(_.get(ele, "username", ""))}>
-                Delete
-              </Button>
-            </Card>
-          </Grid>
-        ))}
-      {Permission.havePermissionAsOwner(id) && (
-        <Grid item xs={2} className={classes.padding}>
-          <Card className={classes.cardContribute}>
-            <Grid xs={12} className={classes.borderTrike} onClick={handleClickEditor}>
-              {" "}
-              +{" "}
-            </Grid>
-            <Typography className={classes.name}> Add editors </Typography>
-          </Card>
-        </Grid>)
+        editors.map((ele) => renderCard(_.get(ele, "avatarUrl", null), _.get(ele, "username", ""), "Editors", true))
       }
       <Modal
         open={openEditor}

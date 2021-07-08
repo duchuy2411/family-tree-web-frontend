@@ -11,7 +11,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     width: "80%",
   },
   paperPanel: {
-    backgroundColor: colors.pink,
+    backgroundColor: colors.blue5,
     padding: theme.spacing(2),
     borderRadius: 10,
   },
@@ -20,7 +20,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   },
   calendar: {
     padding: theme.spacing(2),
-    backgroundColor: colors.pink,
+    backgroundColor: colors.blue5,
     border: "none",
   },
   fullWidth: {
@@ -41,6 +41,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   },
   textField: {
     width: "100%",
+    margin: theme.spacing(1)
   },
   textError: {
     color: "red",

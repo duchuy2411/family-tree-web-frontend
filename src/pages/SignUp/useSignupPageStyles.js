@@ -4,7 +4,7 @@ import colors from "assets/colorPalette";
 const useSignupPageStyles = makeStyles((theme) => ({
   root: {
     // padding: "0 15vw",
-    backgroundColor: "#F2E1DA",
+    backgroundColor: colors.blue5,
   },
   wrapper: {
     height: "100vh",
@@ -16,7 +16,7 @@ const useSignupPageStyles = makeStyles((theme) => ({
     // backgroundColor: "red",
   },
   paperLeftSide: {
-    backgroundColor: "#905842",
+    backgroundColor: colors.blue1,
     height: "60vh",
     width: "100%",
     display: "flex",
@@ -34,7 +34,7 @@ const useSignupPageStyles = makeStyles((theme) => ({
   },
   subText: {
     marginBottom: 8,
-    color: colors.brown,
+    color: colors.blue2,
   },
   rightSide: {
     padding: 16,
@@ -49,7 +49,7 @@ const useSignupPageStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 2, 0, 2),
   },
   btnLogin: {
-    color: "#905842",
+    color: colors.blue2,
     backgroundColor: "#fff",
     "&:hover": {
       backgroundColor: fade("#fff", 0.6),
@@ -70,10 +70,10 @@ const useSignupPageStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    color: "#905842",
+    color: colors.blue2,
     marginBottom: theme.spacing(1),
     "&:hover": {
-      color: fade(colors.brown, 0.6),
+      color: fade(colors.blue2, 0.6),
     },
   },
 }));
