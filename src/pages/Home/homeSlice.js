@@ -7,7 +7,7 @@ import treeManagementAPI from "api/treeManagement";
 
 export const getPublicTreesWithPagination = createAsyncThunk(
   "managementTree/getPublicTreesWithPagination",
-  async ({ createBefore, page, itemsPerPage }, thunkAPI) => {
+  async ({ createBefore, page, itemsPerPage }) => {
     const response = await treeManagementAPI.getAllPublicTreesWithPagination({
       createBefore: createBefore,
       page: page,
@@ -22,11 +22,27 @@ export const getPublicTreesWithPagination = createAsyncThunk(
 
 export const getPrivateTreesWithPagination = createAsyncThunk(
   "managementTree/getPrivateTreesWithPagination",
-  async ({ createBefore, page, itemsPerPage }, thunkAPI) => {
+  async ({ createBefore, page, itemsPerPage }) => {
     const response = await treeManagementAPI.getAllPrivateTreesWithPagination({
       createBefore: createBefore,
       page: page,
       itemsPerPage: itemsPerPage,
+    });
+
+    const { data, message, errors } = response.data;
+
+    return { data, message, errors };
+  }
+);
+
+export const getTreesFromKeywordWithPagination = createAsyncThunk(
+  "managementTree/getTreesFromKeywordWithPagination",
+  async ({ query, createBefore, page, itemsPerPage }) => {
+    const response = await treeManagementAPI.getTreesFromKeywordWithPagination({
+      query,
+      createBefore,
+      page,
+      itemsPerPage,
     });
 
     const { data, message, errors } = response.data;
@@ -129,6 +145,24 @@ export const slice = createSlice({
       state.trees = action.payload.data.result;
 
       Permission.mapPermission([...action.payload.data.result]);
+    },
+
+    // search trees by keyword
+    [getTreesFromKeywordWithPagination.pending]: (state) => {
+      state.isFetchList = true;
+    },
+    [getTreesFromKeywordWithPagination.rejected]: (state, action) => {
+      if (state.isFetchList) {
+        state.isFetchList = false;
+        state.message = "";
+        state.errors = action.error;
+      }
+    },
+    [getTreesFromKeywordWithPagination.fulfilled]: (state, action) => {
+      state.isFetchList = false;
+      state.errors = action.payload.errors;
+      state.message = action.payload.message;
+      state.trees = action.payload.data.result;
     },
   },
 });

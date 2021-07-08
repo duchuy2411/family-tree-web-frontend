@@ -1,10 +1,10 @@
 import React from "react";
 
 // MUI
-import { InputBase, makeStyles, Paper } from "@material-ui/core";
+import { InputBase, makeStyles, Paper, IconButton } from "@material-ui/core";
 
 // icons
-import SearchIcon from "@material-ui/icons/Search";
+import { Clear, Search as SearchIcon } from "@material-ui/icons";
 
 import classNames from "classnames";
 
@@ -25,10 +25,13 @@ const useStyles = makeStyles((theme) => ({
   searchInput: {
     width: "100%",
   },
+  hide: {
+    visibility: "hidden",
+  },
 }));
 
 export default function SearchBox(props) {
-  const { ariaLabel, className, search, handleChangeSearch } = props;
+  const { ariaLabel, className, search, handleChangeSearch, handleClearInput } = props;
 
   const classes = useStyles();
   const searchBoxClasses = classNames({
@@ -46,6 +49,16 @@ export default function SearchBox(props) {
         value={search}
         onChange={handleChangeSearch}
       />
+      <IconButton
+        onClick={handleClearInput}
+        disableRipple
+        size="small"
+        className={classNames({
+          [classes.hide]: !search,
+        })}
+      >
+        <Clear />
+      </IconButton>
     </Paper>
   );
 }
