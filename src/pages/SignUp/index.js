@@ -15,6 +15,7 @@ import api from "../../utils/api";
 import { authActions, selectIsLoading } from "../../store/authSlice";
 import colors from "assets/colorPalette";
 import LoadingInside from "components/LoadingInside";
+import { Alert } from "@material-ui/lab";
 
 export default function SignUpPage() {
   const classes = useSignupPageStyles();
@@ -50,8 +51,6 @@ export default function SignUpPage() {
       // eslint-disable-next-line no-unused-vars
       const { message, errors } = response.data;
 
-      setError(errors);
-
       if (user) {
         history.push("/login");
         setError("");
@@ -61,8 +60,8 @@ export default function SignUpPage() {
       dispatch(authActions.setIsLoading(false)); // disable loading
       setIsLoading(false);
     } catch (e) {
-      //console.log("Error in handleSignUp: ", e);
-      setError(e.response.errors);
+      console.log("Error in handleSignUp: ", e.response.data.message);
+      setError(e.response.data.message);
       setIsLoading(false);
     }
   };
@@ -126,6 +125,8 @@ export default function SignUpPage() {
               {"Let's create a new account!"}
             </Typography>
           </Grid>
+
+          {error && <Alert severity="error">{error}</Alert>}
 
           {/* Username */}
           <Grid item xs={12} className={classes.gridItemPadding}>
