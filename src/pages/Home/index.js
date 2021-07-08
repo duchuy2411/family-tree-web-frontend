@@ -296,7 +296,7 @@ export default function HomePage() {
       )}
       <div className={classes.wrapper}>
         <Hidden mdUp>
-          <div className={classes.btnNewTree}>
+          <div className={classes.btnNewTree} style={{ marginBottom: 20 }}>
             <form className={classes.searchForm} onSubmit={handleSubmitSearch}>
               <SearchBox
                 ariaLabel="Search for family"
@@ -377,7 +377,7 @@ export default function HomePage() {
         ) : (
           <div className={classes.treeList}>
             {familyTreeList}
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <div style={{ display: "flex", justifyContent: "center" }}>
               <Pagination
                 count={totalPages}
                 page={currentPage}

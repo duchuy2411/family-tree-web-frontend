@@ -136,8 +136,13 @@ const useTreeItemStyles = makeStyles((theme) => ({
   nameTree: {
     color: colors.white,
     backgroundColor: colors.blue4,
-    padding: theme.spacing(5),
-    borderRadius: "5px"
+    padding: "2vw",
+    borderRadius: "5px",
+  },
+  moreMenu: {
+    "-webkit-box-shadow": "2px 2px 10px 2px rgba(224,224,224,1)",
+    "-moz-box-shadow": "2px 2px 10px 2px rgba(224,224,224,1)",
+    "box-shadow": "2px 2px 10px 2px rgba(224,224,224,1)",
   },
 }));
 

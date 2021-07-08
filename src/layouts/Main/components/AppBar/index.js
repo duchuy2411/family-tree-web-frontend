@@ -262,7 +262,11 @@ const MenuAppBar = () => {
 
           {/* right area */}
           {currentUser && (
-            <div>
+            <div
+              style={{
+                display: "flex",
+              }}
+            >
               <Badge
                 component={IconButton}
                 className={classNames({
@@ -276,7 +280,7 @@ const MenuAppBar = () => {
                 max={99}
                 overlap="circle"
               >
-                <NotificationsIcon style={{ color: "white" }}/>
+                <NotificationsIcon style={{ color: "white" }} />
               </Badge>
 
               <Popover

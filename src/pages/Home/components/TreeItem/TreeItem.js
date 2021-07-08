@@ -166,15 +166,7 @@ export default function TreeItem({
             // style={{ backgroundColor: "aqua" }}
           >
             {/* family name */}
-            <Grid
-              item
-              xl={3}
-              lg={3}
-              md={5}
-              sm={10}
-              xs={12}
-              className={classes.nameTree}
-            >
+            <Grid item xl={3} lg={3} md={5} sm={12} xs={12} className={classes.nameTree}>
               <Typography className={classes.typoName}>
                 <strong>{name}</strong>
               </Typography>
@@ -277,6 +269,9 @@ export default function TreeItem({
               transformOrigin={{
                 vertical: "top",
                 horizontal: "center",
+              }}
+              classes={{
+                paper: classes.moreMenu,
               }}
             >
               {filterOption(id, options).map((option, index) => (
