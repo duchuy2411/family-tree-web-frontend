@@ -278,7 +278,7 @@ export default function ListMember(props) {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[5, 10, 15]}
         component="div"
         count={list.length}
         rowsPerPage={rowsPerPage}

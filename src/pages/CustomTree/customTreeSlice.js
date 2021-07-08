@@ -153,6 +153,16 @@ export const exportJSON = (treeId) => async () => {
   return false;
 };
 
+export const getListConnectUser = () => async (dispatch) => {
+  const rs = await api.getListConnectUser({});
+  if (rs.status === 200) {
+    const data = _.get(rs.data, "data");
+    return data;
+  }
+  swal(_.get(rs, "title", "Something wrong!!"));
+  return false;
+};
+
 export const selectNodeDataArrayRedux = (state) => state.custom_tree.nodeDataArrayRedux;
 export const selectLinkDataArrayRedux = (state) => state.custom_tree.linkDataArrayRedux;
 export const isLoading = (state) => state.custom_tree.isLoading;

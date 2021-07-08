@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core";
-import { Delete, Lens } from "@material-ui/icons";
+import { Close, Lens } from "@material-ui/icons";
 import classNames from "classnames";
 import colors from "../../../../assets/colorPalette";
 import { convertTimeToPeriod } from "utils/notifications";
@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: 8,
     transition: "background-color 0.5s ease",
     "&:hover": {
-      backgroundColor: colors.pink,
+      backgroundColor: colors.blue5,
       "& $markAsReadButtonVisibility": {
         visibility: "visible",
       },
@@ -50,10 +50,10 @@ const useStyles = makeStyles(() => ({
   },
   iconUnread: {
     fontSize: "small",
-    color: colors.brown,
+    color: colors.blue2,
   },
   highlighted: {
-    color: colors.brown,
+    color: colors.blue2,
     fontWeight: "bold",
   },
   loading: {
@@ -69,7 +69,17 @@ const useStyles = makeStyles(() => ({
   },
   circularProgress: {
     marginLeft: -24, //its half size
-    color: colors.brown,
+    color: colors.blue2,
+  },
+  deleteBtn: {
+    position: "absolute",
+    top: "4px",
+    right: "4px",
+    padding: "1px",
+    borderRadius: "50%",
+    "&:hover": {
+      backgroundColor: colors.white,
+    },
   },
 }));
 
@@ -137,12 +147,11 @@ export default function NotificationsList(props) {
                   [classes.hidden]: notification.isRead,
                 })}
               />
+              <Close className={classes.deleteBtn} />
               <IconButton
                 onClick={handleDeleteNotification(notification.id)}
                 className={classNames(classes.markAsReadButton, classes.markAsReadButtonVisibility)}
-              >
-                <Delete />
-              </IconButton>
+              />
             </ListItem>
           ))
         )}

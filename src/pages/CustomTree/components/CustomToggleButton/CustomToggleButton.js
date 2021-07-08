@@ -30,9 +30,9 @@ const StyledToggleButton = withStyles((theme) => ({
     "&$selected": {
       boxShadow: "0px 0px 8px 1px rgba(0, 0, 0, 0.1)",
       color: theme.palette.action.active,
-      backgroundColor: colors.pink,
+      backgroundColor: colors.blue5,
       "&:hover": {
-        backgroundColor: fade(colors.pink, 0.8),
+        backgroundColor: fade(colors.blue5, 0.8),
       },
       "& + &": {
         borderLeft: 0,
@@ -45,7 +45,7 @@ const StyledToggleButton = withStyles((theme) => ({
     "&:hover": {
       textDecoration: "none",
       // Reset on mouse devices
-      backgroundColor: fade(colors.pink, 0.7),
+      backgroundColor: fade(colors.blue5, 0.7),
       "@media (hover: none)": {
         backgroundColor: "transparent",
       },
@@ -83,8 +83,8 @@ export default function CustomToggleButton(props) {
               >
                 Export to JSON
                 <i className="fas fa-download" />
-              </StyledToggleButton>)
-            }
+              </StyledToggleButton>
+            )}
             <StyledToggleButton value="edit" aria-label="edit tree" onClick={handleDownloadImage}>
               Download Tree Image
               <i className="fas fa-download" />

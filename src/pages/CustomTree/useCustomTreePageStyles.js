@@ -9,7 +9,7 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     height: "80vh",
   },
   paperPanel: {
-    backgroundColor: colors.pink,
+    backgroundColor: colors.blue5,
     padding: theme.spacing(2),
     borderRadius: 10,
     maxHeight: "40vh",
@@ -28,10 +28,10 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
   modeButtons: {
     backgroundColor: colors.white,
     "&:focus": {
-      backgroundColor: colors.pink,
+      backgroundColor: colors.blue5,
     },
     "&:hover": {
-      backgroundColor: fade(colors.pink, 0.3),
+      backgroundColor: fade(colors.blue5, 0.3),
     },
     borderRadius: theme.spacing(3),
     padding: theme.spacing(1, 3),
@@ -40,6 +40,9 @@ const useCustomTreePageStyles = makeStyles((theme) => ({
     position: "fixed",
     top: 130,
     right: 30,
+  },
+  searchBox: {
+    backgroundColor: colors.blue5,
   },
 }));
 export default useCustomTreePageStyles;

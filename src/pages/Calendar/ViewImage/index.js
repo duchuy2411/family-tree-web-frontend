@@ -20,15 +20,17 @@ const ShowImage = (props) => {
   return (
     <div
       style={{
-        backgroundImage: `url(${curImg})`,
+        backgroundColor: "black",
         width: "100%",
         height: "700px",
         opacity: 1,
-        backgroundSize: "cover",
-        backgroundColor: "white",
         position: "relative",
+        display: "flex",
+        justifyContent: "center"
       }}
-    ></div>
+    >
+      <img src={curImg} style={{ maxWidth: "100%", maxHeight: "100%", position: "relative" }}/>
+    </div>
   );
 };
 

@@ -19,6 +19,7 @@ import Loading from "../../../../components/LoadingInside";
 import CONSTANTS from "../../../../utils/const";
 import { uploadImage, isLoading } from "../../customTreeSlice";
 import "./index.css";
+import colors from "assets/colorPalette";
 
 // const fs = require("fs")
 
@@ -27,10 +28,10 @@ const { SPOUSE, MOTHER, FATHER, CHILDREN } = CONSTANTS;
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#905842",
+      main: colors.blue2,
     },
     secondary: {
-      main: "#F2E1DA",
+      main: colors.blue5,
     },
   },
 });
@@ -58,10 +59,6 @@ const useStyles = makeStyles((theme) => ({
   textAlignCenter: {
     textAlign: "center",
   },
-  // textArea: {
-  //   padding: theme.spacing(1),
-  //   width: "100%",
-  // },
   customButton: {
     textAlign: "center",
     margin: theme.spacing(2),
@@ -70,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     color: "black",
     boxShadow: "0 0 10px 3px gray",
     transition: "transform 1s",
-    backgroundColor: "#F2E1DA",
+    backgroundColor: colors.white,
     "&:hover": {
       transform: "scale(1.2)",
       backgroundColor: "#F2E1DA",
@@ -84,11 +81,14 @@ const useStyles = makeStyles((theme) => ({
     margin: "7px 0px",
     width: "100%",
     borderRadius: 15,
-    backgroundColor: "#F2E1DA",
+    backgroundColor: colors.white,
     padding: "10px",
+    "&:selected": {
+      border: "none"
+    }
   },
   inputFields: {
-    backgroundColor: "#F2E1DA",
+    backgroundColor: colors.white,
     borderRadius: 15,
     border: "none",
     outline: "none",
@@ -115,6 +115,7 @@ function ModalUpdate(props) {
     nodeSelect,
     handleSelectRelationship,
     showModal,
+    loading,
   } = props;
 
   const [file, setFile] = useState("");
@@ -152,7 +153,7 @@ function ModalUpdate(props) {
       setError(tempError);
       return false;
     }
-
+    
     var form = document.querySelector("form");
     var formData = new FormData(form);
     let rs = null;
@@ -323,7 +324,6 @@ function ModalUpdate(props) {
                   value={form.note}
                   onChange={(e) => handleChangeAddForm(e, "note")}
                   className={classes.textArea}
-                  style={{ border: "1px solid #F2E1DA" }}
                 />
               </Grid>
             </Grid>
@@ -414,7 +414,7 @@ function ModalUpdate(props) {
                   style={{ marginLeft: "10px" }}
                 >
                   {"Save"}
-                  {saveLoading && <CircularProgress style={{height: "20px"}} />}
+                  {loading && <CircularProgress style={{height: "20px"}} />}
                 </Button>
               ) : (
                 <Button
@@ -424,7 +424,7 @@ function ModalUpdate(props) {
                   style={{ marginLeft: "10px" }}
                 >
                   {"Save"}
-                  {saveLoading && <CircularProgress style={{height: "20px"}} />}
+                  {loading && <CircularProgress style={{height: "20px"}} />}
                 </Button>
               )}
             </div>

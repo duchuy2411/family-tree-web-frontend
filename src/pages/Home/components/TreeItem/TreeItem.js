@@ -173,7 +173,7 @@ export default function TreeItem({
               md={5}
               sm={10}
               xs={12}
-              // style={{ backgroundColor: "red" }}
+              className={classes.nameTree}
             >
               <Typography className={classes.typoName}>
                 <strong>{name}</strong>

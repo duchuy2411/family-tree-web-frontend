@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import moment from "moment";
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@material-ui/core/";
+import { Paper } from "@material-ui/core/";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 import { ExpandMore } from "@material-ui/icons";
@@ -219,74 +219,38 @@ const TreeManagement = () => {
 
   return (
     <div className={classes.rootAccording}>
-      <Accordion className={classes.section}>
-        <AccordionSummary
-          expandIcon={<ExpandMore />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-          className={classes.tab}
-        >
-          <Typography className={classes.heading}>{"Tree's information"}</Typography>
-        </AccordionSummary>
-        <AccordionDetails className={classes.details}>
-          {currentTree && (
-            <TreeInformation
-              formTree={formTree}
-              currentTree={currentTree}
-              open={open}
-              handleClose={handleClose}
-              handleShow={handleShow}
-              handleChange={handleChange}
-              handleUpdate={handleUpdate}
-              handleDelete={handleDelete}
-              handleSubmit={handleSubmit}
-            />)
-          }
-        </AccordionDetails>
-      </Accordion>
-      <Accordion className={classes.section}>
-        <AccordionSummary
-          expandIcon={<ExpandMore />}
-          aria-controls="panel2a-content"
-          id="panel2a-header"
-          className={classes.tab}
-        >
-          <Typography className={classes.heading}>Contribute</Typography>
-        </AccordionSummary>
-        <AccordionDetails className={classes.details}>
-          {currentTree &&
-            <Contribute
-              owner={_.get(currentTree, "owner")}
-              editors={_.get(currentTree, "editors")}
-              value={value}
-              openEditor={openEditor}
-              handleChangeText={handleChangeText}
-              handleCloseEditor={handleCloseEditor}
-              handleClickEditor={handleClickEditor}
-              handleSubmitEditor={handleSubmitEditor}
-              handleRemoveEditor={handleRemoveEditor}
-            />
-          }
-        </AccordionDetails>
-      </Accordion>
-      <Accordion className={classes.section} defaultExpanded={true}>
-        <AccordionSummary
-          expandIcon={<ExpandMore />}
-          aria-controls="panel3a-content"
-          id="panel3a-header"
-          className={classes.tab}
-        >
-          <Typography className={classes.heading}>List member</Typography>
-        </AccordionSummary>
-        <AccordionDetails className={classes.details}>
-          <ListMember
-            list={list}
-            valSearch={valSearch}
-            handleChangeFormSearch={handleChangeFormSearch}
-            handleSubmitSearch={handleSubmitSearch}
-          />
-        </AccordionDetails>
-      </Accordion>
+      {currentTree && (
+        <TreeInformation
+          formTree={formTree}
+          currentTree={currentTree}
+          open={open}
+          handleClose={handleClose}
+          handleShow={handleShow}
+          handleChange={handleChange}
+          handleUpdate={handleUpdate}
+          handleDelete={handleDelete}
+          handleSubmit={handleSubmit}
+        />)
+      }
+      {currentTree &&
+        <Contribute
+          owner={_.get(currentTree, "owner")}
+          editors={_.get(currentTree, "editors")}
+          value={value}
+          openEditor={openEditor}
+          handleChangeText={handleChangeText}
+          handleCloseEditor={handleCloseEditor}
+          handleClickEditor={handleClickEditor}
+          handleSubmitEditor={handleSubmitEditor}
+          handleRemoveEditor={handleRemoveEditor}
+        />
+      }
+      <ListMember
+        list={list}
+        valSearch={valSearch}
+        handleChangeFormSearch={handleChangeFormSearch}
+        handleSubmitSearch={handleSubmitSearch}
+      />
     </div>
   );
 };

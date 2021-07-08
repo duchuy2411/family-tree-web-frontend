@@ -2,19 +2,20 @@ import React from "react";
 import { Paper, makeStyles, Grid, Typography } from "@material-ui/core";
 import _ from "lodash";
 import classNames from "classnames";
+import colors from "assets/colorPalette";
 
 const useStyles = makeStyles(() => ({
   root: {},
   typoBold: {
     fontWeight: 900,
-    backgroundColor: "#905842",
+    backgroundColor: colors.blue4,
     marginTop: "2px",
     borderRadius: "5px",
     cursor: "pointer",
     padding: "4px 20px",
-    color: "white",
+    color: colors.white,
     "&:hover": {
-      backgroundColor: "#ac7a67",
+      backgroundColor: colors.blue3,
     },
   },
 }));
@@ -27,7 +28,7 @@ export default function ListMember(props) {
     [className]: className,
   });
 
-  const memberRows = _.filter(listSearch, ele => ele.type !== "U").map((member, index) => {
+  const memberRows = _.filter(listSearch, (ele) => ele.type !== "U").map((member, index) => {
     return (
       <div onClick={() => handleClickItemSearch(member.key)} key={index}>
         <Grid container>

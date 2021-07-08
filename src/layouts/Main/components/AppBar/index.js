@@ -164,7 +164,7 @@ const MenuAppBar = () => {
 
   // get all notifications on mount
   useEffect(() => {
-    dispatch(getAllNotifications()); // TODO: uncomment this line when attach API for Calendar
+    dispatch(getAllNotifications());
   }, [dispatch]);
 
   // -- end notifications
@@ -276,7 +276,7 @@ const MenuAppBar = () => {
                 max={99}
                 overlap="circle"
               >
-                <NotificationsIcon />
+                <NotificationsIcon style={{ color: "white" }}/>
               </Badge>
 
               <Popover

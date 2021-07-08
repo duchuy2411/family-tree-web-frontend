@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/core";
 const useCardMemberStyles = makeStyles((theme) => ({
   root: {},
   card: {
-    backgroundColor: colors.pink,
+    backgroundColor: colors.blue5,
     borderRadius: theme.spacing(1),
   },
   avatarContainer: {
@@ -27,6 +27,14 @@ const useCardMemberStyles = makeStyles((theme) => ({
     fontSize: 18,
     fontWeight: "bold",
   },
+  linkIcon: {
+    color: colors.blue3,
+    fontSize: theme.spacing(5),
+    "&:hover": {
+      color: colors.blue4,
+      cursor: "pointer"
+    }
+  }
 }));
 
 export default useCardMemberStyles;

@@ -14,30 +14,42 @@ const GroupImage = (props) => {
   return (
     <Grid container xs={12}>
       {arrayImages.length === 1 && (
-        <Grid xs={12} className="group-1" onClick={() => showImage(0)}>
-          <div className="img-1" style={{ backgroundImage: `url(${arrayImages[0]})` }} />
+        <Grid xs={12} onClick={() => showImage(0)}>
+          <div className="img-1 group-1">
+            <img src={arrayImages[0]} />
+          </div>
         </Grid>
       )}
       {arrayImages.length === 2 && (
         <>
-          <Grid xs={6} className="group-2" onClick={() => showImage(0)}>
-            <div className="img-1" style={{ backgroundImage: `url(${arrayImages[0]})` }} />
+          <Grid xs={6} onClick={() => showImage(0)}>
+            <div className="img-1 group-2">
+              <img src={arrayImages[0]} />
+            </div>
           </Grid>
-          <Grid xs={6} className="group-2" onClick={() => showImage(1)}>
-            <div className="img-1" style={{ backgroundImage: `url(${arrayImages[1]})` }} />
+          <Grid xs={6} onClick={() => showImage(1)}>
+            <div className="img-1 group-2">
+              <img src={arrayImages[1]} />
+            </div>
           </Grid>
         </>
       )}
       {arrayImages.length >= 3 && (
         <>
-          <Grid xs={12} className="group31" onClick={() => showImage(0)}>
-            <div className="img-1" style={{ backgroundImage: `url(${arrayImages[0]})` }} />
+          <Grid xs={12} onClick={() => showImage(0)}>
+            <div className="img-1 group31">
+              <img src={arrayImages[0]}/>
+            </div>
           </Grid>
-          <Grid xs={6} className="group32" onClick={() => showImage(1)}>
-            <div className="img-1" style={{ backgroundImage: `url(${arrayImages[1]})` }} />
+          <Grid xs={6} onClick={() => showImage(1)}>
+            <div className="img-1 group32">
+              <img src={arrayImages[1]}/>
+            </div>
           </Grid>
-          <Grid xs={6} className={{ group32: true, last: arrayImages.length >= 3 }}>
-            <div className="img-1" style={{ backgroundImage: `url(${arrayImages[2]})` }} />
+          <Grid xs={6} className={{ last: arrayImages.length >= 3 }}>
+            <div className="img-1 group32">
+              <img src={arrayImages[2]}/>
+            </div>
             {arrayImages.length > 3 && (
               <div className="gray-img" onClick={() => showImage(2)}>
                 <div className="more-img">+{arrayImages.length - 3}</div>
