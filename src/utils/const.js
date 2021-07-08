@@ -55,7 +55,7 @@ const CONSTANTS = {
   Error: {
     required: "This field is required!",
     invalid: "Data of this field is invalid!",
-    dob: "Day of Birth must be smaller than Day of Dead!",
+    dob: "Date of birth must be smaller than Day of Dead!",
   },
   DAY_OF_WEEK: {
     0: "Monday",
