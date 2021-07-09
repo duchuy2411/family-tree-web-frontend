@@ -246,7 +246,7 @@ const MenuAppBar = () => {
             <Button
               className={classNames({
                 [classes.navButton]: true,
-                [classes.navButtonHighlight]: pathname === PATHS.CALENDAR,
+                [classes.navButtonHighlight]: pathname.toString().includes("calendar"),
               })}
               component={NavLink}
               to={PATHS.CALENDAR(id || firstId)}
